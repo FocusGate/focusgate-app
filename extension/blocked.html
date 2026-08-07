@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Blocked — FocusGate</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="blocked" id="view-active">
+      <div class="blocked__lock">🔒</div>
+      <h1 class="blocked__title">Stay in <span>the Zone.</span></h1>
+      <p class="blocked__subtitle">This site is locked for the rest of your session. Finish your focus session to unlock it — no bypass, no exceptions.</p>
+
+      <div class="blocked__countdown">
+        <div class="blocked__countdown-label">Time remaining</div>
+        <div class="blocked__countdown-value" id="countdown">--:--</div>
+      </div>
+
+      <div class="blocked__motivation">
+        <p class="blocked__quote" id="blocked-quote">Deep work over distraction.</p>
+        <p class="blocked__goal" id="blocked-goal" hidden></p>
+      </div>
+    </div>
+
+    <!-- Shown once the session ends while this tab is still sitting here — replaces the
+         countdown hitting 00:00 with a clear "you're done" moment instead. -->
+    <div class="blocked blocked--complete" id="view-complete" hidden>
+      <div class="blocked__complete-icon">🎉</div>
+      <h1 class="blocked__complete-title">Session Complete!</h1>
+      <p class="blocked__complete-subtitle">You successfully stayed focused and completed your session.</p>
+      <button class="blocked__complete-btn" id="unblock-btn">Unblock Site</button>
+    </div>
+
+    <script src="blocked.js"></script>
+  </body>
+</html>

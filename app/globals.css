@@ -1,0 +1,224 @@
+@import "tailwindcss";
+
+:root {
+  --fg-bg: #060606;
+  --fg-gold: #b08d57;
+  --fg-gold-bright: #F59E0B;
+  /* the "Apple spring" ease — matches the GSAP `EASE` in lib/gsap.ts */
+  --fg-ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+* { box-sizing: border-box; }
+
+/* Grid items default to min-width:auto, which stops them shrinking below their content's
+   min-content width — at any viewport, not just mobile. That let a section's own
+   overflow:hidden silently clip content instead of letting it wrap, which produced crops
+   that a "does the page scroll horizontally" check wouldn't catch. min-width:0 on the
+   items (not the tracks) fixes this while leaving each grid's own fr ratios untouched. */
+.fg-split > *, .fg-stats3 > *, .fg-price3 > * { min-width: 0; }
+
+html, body {
+  background: var(--fg-bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Horizontal-scroll guard lives on html, not body: html is the element Lenis actually
+   scrolls (confirmed via html.scrollTop tracking window.scrollY while body never moves).
+   Setting overflow-x on body auto-computes body's overflow-y to "auto" per spec, which
+   silently turns body into a scroll container and steals the containing block for every
+   position:sticky descendant on the page — since body itself never scrolls, that broke
+   sticky everywhere (e.g. the landing page's games showcase stack never stuck). */
+html { overflow-x: hidden; }
+body { color: #fff; }
+
+a { color: #c9ccd2; text-decoration: none; }
+a:hover { color: #fff; }
+
+::selection { background: #fff; color: #000; }
+
+/* ---------- keyframes ported from FocusGate.dc.html ---------- */
+@keyframes fg-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@keyframes fg-float { 0%,100% { transform: translateY(0); opacity: 0.18; } 50% { transform: translateY(-24px); opacity: 0.5; } }
+@keyframes fg-pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.35; transform: scale(0.7); } }
+@keyframes fg-legend-border { 0% { border-color: #F59E0B; box-shadow: 0 0 60px rgba(245,158,11,0.5); } 50% { border-color: #ffffff; box-shadow: 0 0 90px rgba(255,255,255,0.45); } 100% { border-color: #F59E0B; box-shadow: 0 0 60px rgba(245,158,11,0.5); } }
+@keyframes fg-gem-rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes fg-shimmer-sweep { from { transform: translateX(0) rotate(20deg); } to { transform: translateX(260%) rotate(20deg); } }
+@keyframes fg-gold-particle { 0%,100% { opacity: 0.15; transform: translateY(0); } 50% { opacity: 0.85; transform: translateY(-16px); } }
+@keyframes fg-hover-up { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+/* Mythic-tier badge cards: a slow coral pulse so the tier reads as "rarer than Epic" even
+   without the full animated-border treatment Legendary gets. */
+@keyframes fg-mythic-pulse {
+  0%, 100% { box-shadow: 0 14px 30px rgba(0,0,0,0.5), 0 0 46px rgba(251,113,133,0.35); }
+  50% { box-shadow: 0 14px 30px rgba(0,0,0,0.5), 0 0 64px rgba(251,113,133,0.6); }
+}
+@keyframes fg-heartbeat { 0%, 100% { transform: scale(1); opacity: 1; } 12% { transform: scale(1.4); opacity: 0.65; } 24% { transform: scale(1); } 36% { transform: scale(1.28); opacity: 0.8; } 50% { transform: scale(1); } }
+
+.fg-reveal { opacity: 0; transform: translateY(16px); }
+
+.fg-live-pill { animation: fg-hover-up 3s ease-in-out infinite; border: 1px solid rgba(176,141,87,0.5); box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: border-color 0.3s var(--fg-ease), box-shadow 0.3s var(--fg-ease); }
+
+.fg-presence-dot { animation: fg-pulse 1.6s ease-in-out infinite; box-shadow: 0 0 6px rgba(34,197,94,0.8); }
+.fg-live-pill:hover { border-color: #e0c48f; box-shadow: 0 12px 40px rgba(176,141,87,0.4), 0 0 24px rgba(176,141,87,0.35); }
+
+.fg-timer-card { transition: transform 0.4s var(--fg-ease), border-color 0.4s var(--fg-ease), box-shadow 0.4s var(--fg-ease); }
+.fg-timer-card:hover { transform: translateY(-4px); border-color: rgba(255,255,255,0.34) !important; box-shadow: 0 55px 95px rgba(0,0,0,0.7), 0 0 90px rgba(255,255,255,0.13) !important; }
+
+.fg-blocked-list { max-height: 0; opacity: 0; overflow: hidden; transition: max-height 0.5s var(--fg-ease), opacity 0.4s var(--fg-ease), margin-top 0.4s var(--fg-ease); }
+.fg-timer-card:hover .fg-blocked-list, .fg-blocked-list.fg-open { max-height: 170px; opacity: 1; margin-top: 14px; }
+.fg-blocked-chev { display: inline-block; transition: transform 0.4s var(--fg-ease); }
+.fg-timer-card:hover .fg-blocked-chev, .fg-blocked-list.fg-open ~ * .fg-blocked-chev { transform: rotate(180deg); }
+
+.fg-scroll::-webkit-scrollbar { height: 6px; }
+.fg-scroll::-webkit-scrollbar-thumb { background: #26262b; border-radius: 999px; }
+.fg-scroll::-webkit-scrollbar-track { background: transparent; }
+
+.fg-float-nav { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 1180px; z-index: 200; border-radius: 999px; background: transparent; border: 1px solid transparent; box-shadow: none; transition: background 0.3s var(--fg-ease), border-color 0.3s var(--fg-ease), box-shadow 0.3s var(--fg-ease), backdrop-filter 0.3s var(--fg-ease); }
+.fg-float-nav.scrolled { background: rgba(10,10,10,0.8); border-color: #1E293B; box-shadow: 0 12px 40px rgba(0,0,0,0.45); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+
+.fg-cta-nav { background: #b08d57; color: #fff; padding: 10px 20px; border-radius: 999px; font-size: 13px; font-weight: 700; text-decoration: none; box-shadow: 0 0 20px rgba(176,141,87,0.4); transition: box-shadow 0.3s var(--fg-ease), transform 0.3s var(--fg-ease); }
+.fg-cta-nav:hover { box-shadow: 0 0 34px rgba(176,141,87,0.75); transform: translateY(-1px); color: #fff; }
+
+.fg-hamburger { display: none; background: transparent; border: none; cursor: pointer; padding: 6px; align-items: center; justify-content: center; }
+@media (max-width: 760px) {
+  .fg-cta-nav { display: none; }
+  .fg-hamburger { display: inline-flex; }
+  /* The mobile menu has its own "Get Early Access" link reusing .fg-cta-nav for the pill
+     styling — the rule above is only meant to hide the *desktop* nav's copy in favor of
+     the hamburger, so it needs an exception here or the mobile menu's own CTA vanishes too. */
+  .fg-mobile-menu .fg-cta-nav { display: inline-block; }
+}
+
+.fg-navlink:hover { color: #d8bd8f !important; }
+
+.fg-badge { transition: transform 0.3s var(--fg-ease), box-shadow 0.3s var(--fg-ease); }
+.fg-badge:hover { transform: translateY(-8px) scale(1.1); z-index: 3; }
+
+/* Safety net at every viewport size, not just mobile: a stat card's number+suffix (e.g.
+   "47 seconds") wraps at the space, but the longer word alone can still be wider than its
+   own column — browsers don't break inside a word by default, so it spills past the card's
+   edge instead of wrapping again. This lets it break as a last resort instead of overflowing. */
+.fg-statcard-num { overflow-wrap: break-word; word-break: break-word; }
+
+/* A 2-column split of a big heading against a padded stat-tile card was never going to
+   work at tablet widths just by shrinking fonts — there isn't enough room for either
+   column. Stacking to one column (same trick as the mobile breakpoint) gives both the
+   full content width instead, which is the actual fix.
+   The threshold is 1200px, not the more typical 1024px "tablet" cutoff: the grid's own
+   container caps out at max-width:1240px, and the math only works out comfortably once
+   the viewport is close to that cap — at 1024–1200px the two-column split still doesn't
+   leave enough room per column, which is what caused the same crowding to resurface just
+   above the first cutoff I tried. */
+@media (max-width: 1200px) {
+  .fg-split { grid-template-columns: minmax(0, 1fr) !important; }
+  .fg-stats3 { grid-template-columns: minmax(0, 1fr) !important; }
+  .fg-price3 { grid-template-columns: minmax(0, 1fr) !important; }
+  .fg-sec { padding: 100px 28px !important; }
+}
+
+@media (max-width: 760px) {
+  .fg-nav-links { display: none !important; }
+  .fg-h1 { font-size: 60px !important; }
+  .fg-h2 { font-size: 42px !important; }
+  .fg-sec { padding: 90px 22px !important; }
+
+  /* Friction Triggers overview: 2x2 card grid stacks to one column — the app sidebar
+     already eats 240px, so this needs to collapse well before the marketing page's
+     760px/1200px thresholds would otherwise suggest. */
+  .fg-friction-grid { grid-template-columns: minmax(0, 1fr) !important; }
+
+  /* "The Science" stat tiles (Problem section): three fixed-content tiles in a row
+     were forced past the viewport since flex items default to min-width:auto. */
+  .fg-science-card { padding: 26px 20px !important; }
+  .fg-statcard-row { gap: 8px !important; }
+  .fg-statcard { padding: 14px 10px !important; }
+  .fg-statcard-num { font-size: 15px !important; }
+
+  /* Flip clock (Locked In Mode): three fixed 92px digit units plus colons ran well past
+     a 375px screen on their own, before even counting the card's own padding. */
+  .fg-timer-card { padding: 20px 18px !important; gap: 12px !important; }
+  .fg-flip-unit { width: 58px !important; height: 68px !important; border-radius: 10px !important; }
+  .fg-flip-face span { font-size: 34px !important; }
+  .fg-flip-label { font-size: 9px !important; margin-top: 6px !important; }
+  .fg-flip-colon { width: 10px !important; font-size: 26px !important; margin-top: 14px !important; }
+  .fg-timer-badge { padding: 6px 13px 6px 10px !important; }
+  .fg-timer-badge span { font-size: 10px !important; }
+
+  /* App shell (dashboard/badges/stats/friends/settings): swap the fixed 240px sidebar
+     for a bottom tab bar — same show/hide pattern as .fg-hamburger/.fg-nav-links above. */
+  .fg-app-sidebar { display: none !important; }
+  .fg-mobile-app-nav { display: flex !important; }
+  .fg-app-main { padding: 24px 18px 96px !important; }
+
+  /* Two-column "heavy content" splits (form panes, insight cards) — same fix as
+     .fg-split on the landing page: stack instead of shrinking each column. */
+  .fg-app-2col { grid-template-columns: minmax(0, 1fr) !important; }
+}
+
+/* ---------- app shell mobile nav ---------- */
+.fg-mobile-app-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  justify-content: space-around;
+  align-items: center;
+  padding: 8px 6px calc(8px + env(safe-area-inset-bottom, 0px));
+  background: rgba(10,10,10,0.92);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+.fg-mobile-app-nav-link { display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 10px; font-weight: 600; text-decoration: none; padding: 4px 8px; }
+
+/* ---------- mobile menu ---------- */
+.fg-mobile-menu { position: fixed; inset: 0; z-index: 300; background: rgba(6,6,6,0.98); backdrop-filter: blur(10px); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 32px; opacity: 0; pointer-events: none; transition: opacity 0.3s var(--fg-ease); }
+.fg-mobile-menu.fg-open { opacity: 1; pointer-events: auto; }
+.fg-mobile-menu a { font-size: 22px; font-weight: 600; color: #d8d8dc; letter-spacing: 0.02em; }
+.fg-mobile-menu a:hover { color: #b08d57; }
+
+/* ---------- gold custom cursor ---------- */
+.fg-cursor { position: fixed; top: 0; left: 0; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%; background: #F59E0B; box-shadow: 0 0 12px rgba(245,158,11,0.8); pointer-events: none; z-index: 9999; mix-blend-mode: normal; will-change: transform; }
+@media (hover: none), (pointer: coarse) { .fg-cursor { display: none; } }
+body.fg-has-cursor, body.fg-has-cursor * { cursor: none !important; }
+
+/* ---------- flip clock ---------- */
+.fg-flip-wrap { position: relative; display: inline-flex; align-items: center; justify-content: center; }
+.fg-flip-unit { position: relative; width: 92px; height: 108px; border-radius: 14px; box-shadow: 0 20px 40px rgba(0,0,0,0.55); }
+.fg-flip-unit::after { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: rgba(0,0,0,0.6); transform: translateY(-0.5px); z-index: 5; pointer-events: none; }
+
+.fg-flip-half { position: absolute; left: 0; right: 0; height: 50%; overflow: hidden; }
+.fg-flip-half.fg-top { top: 0; }
+.fg-flip-half.fg-bottom { bottom: 0; }
+
+.fg-flip-fold { position: absolute; left: 0; right: 0; height: 50%; transform-style: preserve-3d; backface-visibility: hidden; z-index: 6; }
+.fg-flip-fold.fg-fold-top { top: 0; transform-origin: bottom; border-radius: 14px 14px 0 0; overflow: hidden; }
+.fg-flip-fold.fg-fold-bottom { bottom: 0; transform-origin: top; border-radius: 0 0 14px 14px; overflow: hidden; }
+
+.fg-flip-face { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; background: linear-gradient(180deg, #1b160e, #0A0A0A); }
+.fg-flip-half.fg-top .fg-flip-face, .fg-flip-fold.fg-fold-top .fg-flip-face { border-radius: 14px 14px 0 0; }
+.fg-flip-half.fg-bottom .fg-flip-face, .fg-flip-fold.fg-fold-bottom .fg-flip-face { border-radius: 0 0 14px 14px; }
+.fg-flip-face span { font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif; font-weight: 800; font-size: 56px; color: #F59E0B; text-shadow: 0 0 22px rgba(245,158,11,0.45); font-variant-numeric: tabular-nums; line-height: 1; display: block; }
+.fg-flip-face.fg-face-top span { transform: translateY(50%); }
+.fg-flip-face.fg-face-bottom span { transform: translateY(-50%); }
+.fg-flip-label { text-align: center; color: #6b5f47; font-size: 11px; letter-spacing: 0.22em; margin-top: 10px; font-weight: 600; }
+.fg-flip-colon { width: 22px; text-align: center; font-family: 'Geist', sans-serif; font-weight: 800; font-size: 44px; color: #F59E0B; align-self: flex-start; margin-top: 26px; transition: opacity 0.15s ease, text-shadow 0.15s ease; }
+.fg-flip-colon.fg-dim { opacity: 0.25; text-shadow: none; }
+.fg-flip-colon.fg-bright { opacity: 1; text-shadow: 0 0 10px rgba(245,158,11,0.8); }
+
+.fg-timer-badge { display: inline-flex; align-items: center; gap: 9px; padding: 7px 16px 7px 12px; border-radius: 999px; background: rgba(10,10,10,0.7); border: 1px solid rgba(245,158,11,0.4); }
+.fg-timer-dot { width: 8px; height: 8px; border-radius: 50%; background: #F59E0B; box-shadow: 0 0 10px #F59E0B; }
+
+.fg-cannot-end { transition: none; }
+.fg-cannot-end.fg-shake { animation: fg-shake 0.4s ease-in-out; }
+@keyframes fg-shake { 10%,90% { transform: translateX(-1px); } 20%,80% { transform: translateX(2px); } 30%,50%,70% { transform: translateX(-6px); } 40%,60% { transform: translateX(6px); } }
+
+/* Standalone version of the shake above — reusable anywhere a wrong-answer/error nudge is
+   needed without pairing it with .fg-cannot-end's own transition reset. */
+.fg-shake-standalone { animation: fg-shake 0.4s ease-in-out; }
+
+@keyframes fg-complete-flash { 0% { opacity: 0; } 15% { opacity: 1; background: rgba(245,158,11,0.55); } 100% { opacity: 1; background: rgba(245,158,11,0.12); } }
+
+.fg-blocked-pill { position: relative; }
+.fg-blocked-pill .fg-tooltip { position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%) translateY(4px); background: #0A0A0A; border: 1px solid rgba(245,158,11,0.5); color: #F59E0B; font-size: 11px; font-weight: 600; padding: 5px 10px; border-radius: 8px; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.3s var(--fg-ease), transform 0.3s var(--fg-ease); }
+.fg-blocked-pill:hover .fg-tooltip { opacity: 1; transform: translateX(-50%) translateY(0); }

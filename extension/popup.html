@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>FocusGate</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="popup">
+      <div class="popup__brand">
+        <span class="popup__brand-name">🔒 FocusGate</span>
+        <span class="popup__badge" id="header-badge">IDLE</span>
+      </div>
+
+      <p class="popup__sync-warning" id="sync-warning" hidden></p>
+
+      <!-- The current screen's markup is built here on demand by popup.js — nothing for
+           any flow (Emergency Unblock, Take a Break, etc.) sits in this file waiting to
+           be shown; it doesn't exist until its button is actually clicked. -->
+      <div id="popup-root"></div>
+
+      <p class="popup__flow-error" id="flow-error" hidden></p>
+
+      <!-- Account state — small and out of the way on purpose; the panel above is the point. -->
+      <div class="popup__account-footer" id="account-footer" hidden>
+        Synced as <span id="auth-name"></span> · <button class="popup__link-btn" id="auth-signout">Sign out</button>
+      </div>
+
+      <div class="popup__footer">
+        <a class="popup__footer-link" href="https://focusgate.app/privacy" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
+        <span class="popup__version" id="version-marker"></span>
+      </div>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
