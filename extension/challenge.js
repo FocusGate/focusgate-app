@@ -285,30 +285,38 @@ function memoryMatch(seconds) {
   render();
 }
 
-// ---------- Geography Quiz (flag-emoji variant of GeographyQuizGate.tsx) ----------
+// ---------- Geography Quiz (mirrors GeographyQuizGate.tsx's continent trivia) ----------
+// No flag emoji here on purpose — Windows renders flag-emoji sequences as literal
+// two-letter codes ("FR") with no color-emoji font installed, which is exactly the
+// "what is AU" abbreviation problem this quiz format exists to get away from. A plain
+// inline map-pin SVG can't degrade to text like that.
+
+const MAP_PIN_SVG =
+  '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>';
 
 const COUNTRIES = [
-  { name: "France", flag: "🇫🇷" },
-  { name: "Germany", flag: "🇩🇪" },
-  { name: "Brazil", flag: "🇧🇷" },
-  { name: "Japan", flag: "🇯🇵" },
-  { name: "Egypt", flag: "🇪🇬" },
-  { name: "Canada", flag: "🇨🇦" },
-  { name: "Australia", flag: "🇦🇺" },
-  { name: "India", flag: "🇮🇳" },
-  { name: "Mexico", flag: "🇲🇽" },
-  { name: "Norway", flag: "🇳🇴" },
-  { name: "Kenya", flag: "🇰🇪" },
-  { name: "Argentina", flag: "🇦🇷" },
+  { name: "France", continent: "Europe" },
+  { name: "Germany", continent: "Europe" },
+  { name: "Norway", continent: "Europe" },
+  { name: "Brazil", continent: "South America" },
+  { name: "Argentina", continent: "South America" },
+  { name: "Japan", continent: "Asia" },
+  { name: "India", continent: "Asia" },
+  { name: "Egypt", continent: "Africa" },
+  { name: "Kenya", continent: "Africa" },
+  { name: "Canada", continent: "North America" },
+  { name: "Mexico", continent: "North America" },
+  { name: "Australia", continent: "Oceania" },
 ];
+
+const CONTINENTS = ["Europe", "Asia", "Africa", "North America", "South America", "Oceania"];
 
 function buildRound() {
   const QUESTION_COUNT = 3;
   const pool = shuffle(COUNTRIES).slice(0, QUESTION_COUNT);
-  const namePool = COUNTRIES.map((c) => c.name);
   return pool.map((c) => {
-    const distractors = shuffle(namePool.filter((n) => n !== c.name)).slice(0, 3);
-    return { flag: c.flag, answer: c.name, options: shuffle([c.name, ...distractors]) };
+    const distractors = shuffle(CONTINENTS.filter((cont) => cont !== c.continent)).slice(0, 3);
+    return { country: c.name, answer: c.continent, options: shuffle([c.continent, ...distractors]) };
   });
 }
 
@@ -326,8 +334,8 @@ function geographyQuiz(seconds) {
           <span>Question ${index + 1} / ${round.length}</span>
           <span class="${timeLeft <= 10 ? "challenge__time--danger" : ""}">${timeLeft}s left</span>
         </div>
-        <div class="challenge__flag">${current.flag}</div>
-        <div class="challenge__question">Which country is this?</div>
+        <div class="challenge__flag" style="color:${ACCENTS["geography-quiz"]}; display:flex; justify-content:center;">${MAP_PIN_SVG}</div>
+        <div class="challenge__question">Where is <strong style="color:${ACCENTS["geography-quiz"]}">${current.country}</strong> located?</div>
         <div class="challenge__grid challenge__grid--2">
           ${current.options.map((opt) => `<button class="challenge__option" data-value="${opt}">${opt}</button>`).join("")}
         </div>

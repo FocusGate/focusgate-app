@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import WorldMap from "@/components/app/games/WorldMap";
+import { MapPin } from "lucide-react";
 import { logBreakGateAttempt, type GameSlug } from "@/lib/supabase";
 
 const DEFAULT_GATE_SECONDS = 30;
@@ -9,24 +9,32 @@ const QUESTION_COUNT = 3;
 const ACCENT = "#FB923C";
 const GAME_SLUG: GameSlug = "geography-quiz";
 
-// A smaller pool than the standalone Geography Quiz — this gate is map-only per spec
-// ("World map with country highlighted... 4 options"), no flags or landmarks.
+// Was "which of these tiny highlighted specks on a squished world map is this country" —
+// technically a real map, but at the size this renders (a whole world crammed into ~160px
+// of height) most countries are indistinguishable blobs, so it played like guessing a
+// country code rather than actual geography. Swapped for "where in the world is this
+// country" continent trivia — picking a continent is a question people can actually reason
+// their way through. (Flag emoji were tried here first and dropped: Windows renders flag
+// sequences as literal two-letter codes like "FR" with no color-emoji font, which is
+// exactly the "what is AU" abbreviation problem this rewrite exists to get away from.)
 const COUNTRIES = [
-  { name: "France", mapName: "France" },
-  { name: "Germany", mapName: "Germany" },
-  { name: "Brazil", mapName: "Brazil" },
-  { name: "Japan", mapName: "Japan" },
-  { name: "Egypt", mapName: "Egypt" },
-  { name: "Canada", mapName: "Canada" },
-  { name: "Australia", mapName: "Australia" },
-  { name: "India", mapName: "India" },
-  { name: "Mexico", mapName: "Mexico" },
-  { name: "Norway", mapName: "Norway" },
-  { name: "Kenya", mapName: "Kenya" },
-  { name: "Argentina", mapName: "Argentina" },
+  { name: "France", continent: "Europe" },
+  { name: "Germany", continent: "Europe" },
+  { name: "Norway", continent: "Europe" },
+  { name: "Brazil", continent: "South America" },
+  { name: "Argentina", continent: "South America" },
+  { name: "Japan", continent: "Asia" },
+  { name: "India", continent: "Asia" },
+  { name: "Egypt", continent: "Africa" },
+  { name: "Kenya", continent: "Africa" },
+  { name: "Canada", continent: "North America" },
+  { name: "Mexico", continent: "North America" },
+  { name: "Australia", continent: "Oceania" },
 ];
 
-type Question = { mapTarget: string; answer: string; options: string[] };
+const CONTINENTS = ["Europe", "Asia", "Africa", "North America", "South America", "Oceania"];
+
+type Question = { country: string; answer: string; options: string[] };
 
 function shuffle<T>(arr: T[]): T[] {
   const copy = [...arr];
@@ -39,16 +47,16 @@ function shuffle<T>(arr: T[]): T[] {
 
 function buildRound(): Question[] {
   const pool = shuffle(COUNTRIES).slice(0, QUESTION_COUNT);
-  const namePool = COUNTRIES.map((c) => c.name);
   return pool.map((c) => {
-    const distractors = shuffle(namePool.filter((n) => n !== c.name)).slice(0, 3);
-    return { mapTarget: c.mapName, answer: c.name, options: shuffle([c.name, ...distractors]) };
+    const distractors = shuffle(CONTINENTS.filter((cont) => cont !== c.continent)).slice(0, 3);
+    return { country: c.name, answer: c.continent, options: shuffle([c.continent, ...distractors]) };
   });
 }
 
-/** In-session 30-second break gate: 3 map questions, one total timer for the whole round.
- *  Per spec — "Fail one — no break" — any single wrong answer fails the round immediately,
- *  unlike the standalone Geography Quiz which just tallies a percentage over 10 questions.
+/** In-session 30-second break gate: 3 continent-trivia questions, one total timer for the
+ *  whole round. Per spec — "Fail one — no break" — any single wrong answer fails the round
+ *  immediately, unlike the standalone Geography Quiz which just tallies a percentage over
+ *  10 questions.
  *
  *  `practiceMode` reframes this as The Lounge's "Brain Games" — something to do with your
  *  hands while resting, not a gate to pass. No timer, no fail-on-wrong-answer, no logged
@@ -130,12 +138,14 @@ export default function GeographyQuizGate({
   return (
     <div style={{ width: "100%", maxWidth: 420, textAlign: "center" }}>
       <div style={{ display: "flex", justifyContent: "center", gap: 16, marginBottom: 6, fontSize: 13, fontWeight: practiceMode ? 500 : 700 }}>
-        <span style={{ color: practiceMode ? "#57534E" : "#9a9da4" }}>{practiceMode ? "Which country is this?" : `Question ${index + 1} / ${round.length}`}</span>
+        <span style={{ color: practiceMode ? "#57534E" : "#9a9da4" }}>{practiceMode ? "Brain break" : `Question ${index + 1} / ${round.length}`}</span>
         {!practiceMode && <span style={{ color: timeLeft <= 10 ? "#f87171" : ACCENT }}>{timeLeft}s left</span>}
       </div>
-      <div style={{ color: "#fff", fontSize: 15, fontWeight: 700, margin: "12px 0" }}>Which country is highlighted?</div>
-      <div style={{ width: "100%", height: 160, marginBottom: 16 }}>
-        <WorldMap highlightName={current.mapTarget} accent={ACCENT} />
+      <div style={{ display: "flex", justifyContent: "center", margin: "18px 0 10px" }}>
+        <MapPin size={44} color={ACCENT} strokeWidth={1.8} />
+      </div>
+      <div style={{ color: "#fff", fontSize: 17, fontWeight: 700, marginBottom: 20 }}>
+        Where is <span style={{ color: ACCENT }}>{current.country}</span> located?
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 10 }}>
         {current.options.map((option) => {
