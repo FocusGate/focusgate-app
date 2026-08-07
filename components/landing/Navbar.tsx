@@ -33,7 +33,7 @@ export default function Navbar() {
         className="fg-float-nav"
         style={{ backdropFilter, WebkitBackdropFilter: backdropFilter, background, borderColor, boxShadow }}
       >
-        <div style={{ padding: "12px 22px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div style={{ padding: "12px 22px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 24 }}>
           <a href="#" style={{ display: "flex", alignItems: "center", gap: 11, textDecoration: "none" }}>
             <FocusGateMark />
             <span

@@ -79,7 +79,14 @@ a:hover { color: #fff; }
 .fg-cta-nav:hover { box-shadow: 0 0 34px rgba(176,141,87,0.75); transform: translateY(-1px); color: #fff; }
 
 .fg-hamburger { display: none; background: transparent; border: none; cursor: pointer; padding: 6px; align-items: center; justify-content: center; }
-@media (max-width: 760px) {
+/* 1024px, not the more typical 760px "mobile" cutoff: the desktop nav's 4 links + logo +
+   CTA pill only actually have room in the fixed-width (max-width:1180px) floating pill
+   once the viewport is comfortably above tablet width. Below ~950px the items were still
+   rendering (not yet hidden by the old 760px cutoff) but with zero room for the
+   space-between gaps, so the logo and "FEATURES" ended up touching and the right-side
+   items crammed together right at the edge of overflowing. */
+@media (max-width: 1024px) {
+  .fg-nav-links { display: none !important; }
   .fg-cta-nav { display: none; }
   .fg-hamburger { display: inline-flex; }
   /* The mobile menu has its own "Get Early Access" link reusing .fg-cta-nav for the pill
@@ -116,7 +123,8 @@ a:hover { color: #fff; }
 }
 
 @media (max-width: 760px) {
-  .fg-nav-links { display: none !important; }
+  /* .fg-nav-links's own hide rule now lives in the 1024px breakpoint above, alongside
+     .fg-cta-nav/.fg-hamburger — all three toggle together. */
   .fg-h1 { font-size: 60px !important; }
   .fg-h2 { font-size: 42px !important; }
   .fg-sec { padding: 90px 22px !important; }
