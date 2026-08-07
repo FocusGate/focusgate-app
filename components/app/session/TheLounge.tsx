@@ -18,7 +18,7 @@ const WARM = {
 };
 
 type Mode = "chill" | "games";
-type Sound = "silence" | "rain" | "lofi";
+type Sound = "silence" | "focus" | "chill" | "ambient" | "rain" | "waves";
 type GameSlug = "math-sprint" | "memory-match" | "geography-quiz";
 
 const DUST = Array.from({ length: 14 }, (_, i) => ({
@@ -29,6 +29,25 @@ const DUST = Array.from({ length: 14 }, (_, i) => ({
   delay: i % 6,
   dur: 9 + (i % 5),
 }));
+
+/** Deterministic (no Math.random — this renders on the server too, and a mismatched
+ *  client re-roll would be a hydration error) layout for one row of book spines: each
+ *  book's width/height/color/opacity comes from a simple formula over its index, and x
+ *  positions accumulate left-to-right so spines sit flush against each other on the shelf. */
+function layoutBookRow(count: number, seed: number, startX: number) {
+  let x = startX;
+  const books: { x: number; w: number; h: number; fill: string; opacity: number }[] = [];
+  for (let i = 0; i < count; i++) {
+    const n = seed + i;
+    const w = 9 + ((n * 5) % 11);
+    const h = 32 + ((n * 7) % 20);
+    books.push({ x, w, h, fill: [WARM.stone, WARM.taupe, WARM.cream][n % 3], opacity: 0.28 + ((n * 13) % 32) / 100 });
+    x += w + 3;
+  }
+  return books;
+}
+const BOOK_ROW_TOP = layoutBookRow(6, 1, 8);
+const BOOK_ROW_BOTTOM = layoutBookRow(6, 20, 8);
 
 /**
  * The Lounge — what a break looks like now that it no longer unblocks any sites. Sites
@@ -265,8 +284,9 @@ function BreathingCircle({ pct, circumference, label }: { pct: number; circumfer
 }
 
 /** Flat-illustration reading nook, purely decorative, sitting behind the countdown circle:
- *  two soft bean-bag blobs, a warm lamp glow, and a small plant silhouette — all shape/CSS,
- *  no image assets. Absolutely positioned so it never affects layout of the real content. */
+ *  two soft bean-bag blobs, a warm lamp glow, a small plant silhouette, a bookshelf, and a
+ *  crescent moon — all shape/CSS/SVG, no image assets. Absolutely positioned so it never
+ *  affects layout of the real content. */
 function LoungeScene() {
   return (
     <div style={{ position: "absolute", inset: 0, pointerEvents: "none", overflow: "hidden" }}>
@@ -284,6 +304,21 @@ function LoungeScene() {
           filter: "blur(20px)",
         }}
       />
+      {/* crescent moon, upper right — a quiet nighttime-reading-room touch alongside the lamp glow */}
+      <svg width="70" height="70" viewBox="0 0 70 70" style={{ position: "absolute", right: 40, top: 28, opacity: 0.4 }}>
+        <path d="M40 8a27 27 0 1 0 0 54c-9-4-15-15-15-27s6-23 15-27Z" fill={WARM.cream} />
+      </svg>
+      {/* bookshelf, top-left — the "library" half of the reading nook */}
+      <svg width="150" height="150" viewBox="0 0 150 150" style={{ position: "absolute", left: 22, top: -8, opacity: 0.42 }}>
+        <rect x="2" y="4" width="140" height="130" rx="4" fill="none" stroke={WARM.stone} strokeWidth="3" />
+        <line x1="2" y1="70" x2="142" y2="70" stroke={WARM.stone} strokeWidth="3" />
+        {BOOK_ROW_TOP.map((b, i) => (
+          <rect key={`t${i}`} x={b.x} y={66 - b.h} width={b.w} height={b.h} rx="1" fill={b.fill} opacity={b.opacity} />
+        ))}
+        {BOOK_ROW_BOTTOM.map((b, i) => (
+          <rect key={`b${i}`} x={b.x} y={130 - b.h} width={b.w} height={b.h} rx="1" fill={b.fill} opacity={b.opacity} />
+        ))}
+      </svg>
       {/* bean bags */}
       <div
         style={{
@@ -384,12 +419,15 @@ function GamePickButton({ label, onClick }: { label: string; onClick: () => void
 
 function SoundToggle({ sound, onChange }: { sound: Sound; onChange: (s: Sound) => void }) {
   const OPTIONS: { value: Sound; label: string }[] = [
+    { value: "focus", label: "🎯 Focus" },
+    { value: "chill", label: "🎧 Chill" },
+    { value: "ambient", label: "🌌 Ambient" },
     { value: "rain", label: "🌧️ Rain" },
-    { value: "lofi", label: "🎧 Lo-fi" },
+    { value: "waves", label: "🌊 Waves" },
     { value: "silence", label: "🤫 Silence" },
   ];
   return (
-    <div style={{ display: "flex", gap: 8 }}>
+    <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "center", maxWidth: 340 }}>
       {OPTIONS.map((o) => (
         <button
           key={o.value}
@@ -412,19 +450,63 @@ function SoundToggle({ sound, onChange }: { sound: Sound; onChange: (s: Sound) =
   );
 }
 
+/** A single soft, upward-swept chirp — one or two quick pitch-rising sine blips —
+ *  synthesized fresh per call (never looped), so overlapping calls can't collide or cut
+ *  each other short. Each oscillator is short-lived and self-stops via `.stop()`, so
+ *  there's nothing here that needs tracking/teardown the way the looping ambient layers do. */
+function playBirdChirp(ctx: AudioContext) {
+  const now = ctx.currentTime;
+  const chirpCount = 1 + Math.floor(Math.random() * 2);
+  for (let i = 0; i < chirpCount; i++) {
+    const start = now + i * 0.16;
+    const osc = ctx.createOscillator();
+    osc.type = "sine";
+    const baseFreq = 2200 + Math.random() * 900;
+    osc.frequency.setValueAtTime(baseFreq, start);
+    osc.frequency.exponentialRampToValueAtTime(baseFreq * 1.4, start + 0.07);
+    osc.frequency.exponentialRampToValueAtTime(baseFreq * 0.85, start + 0.13);
+
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.0001, start);
+    gain.gain.linearRampToValueAtTime(0.045, start + 0.02);
+    gain.gain.linearRampToValueAtTime(0.0001, start + 0.13);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(start);
+    osc.stop(start + 0.15);
+  }
+}
+
 /**
  * Real, self-contained ambient audio via the Web Audio API — no audio files (none exist in
- * this project, and fetching third-party ones isn't something to do unprompted). "Rain" is
- * filtered looped noise; "lo-fi" is three soft detuned sine tones forming a slow pad chord.
+ * this project, and fetching third-party ones isn't something to do unprompted). Six
+ * choices, each synthesized fresh:
+ *  - Focus: true binaural beats (two sine tones, one per ear via stereo panning, 10Hz
+ *    apart — the low end of the "alpha" range commonly cited in focus-audio research;
+ *    the evidence is mixed, but this is the standard technique such tracks use).
+ *  - Chill: three soft detuned sine tones forming a slow pad chord.
+ *  - Ambient: lowpass-filtered noise with a very slow LFO sweeping the filter cutoff, so
+ *    the texture drifts rather than sitting static.
+ *  - Rain: filtered looped noise.
+ *  - Waves: filtered noise again, but with a slow LFO swelling the volume up and down to
+ *    read as surf rather than rain's steadier patter.
+ * A sparse, quiet bird-chirp layer rides on top of whichever of the five is playing — a
+ * window-onto-a-garden touch for the library mood. Silence stays real silence (no chirps).
  * Everything is built and torn down per mount/mode change; nothing persists once the
  * component unmounts (break ends) or the mode changes back to silence.
  */
 function useAmbientSound(sound: Sound) {
   const ctxRef = useRef<AudioContext | null>(null);
   const nodesRef = useRef<AudioNode[]>([]);
+  const birdTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     function teardown() {
+      if (birdTimeoutRef.current !== null) {
+        clearTimeout(birdTimeoutRef.current);
+        birdTimeoutRef.current = null;
+      }
       for (const n of nodesRef.current) {
         try {
           if ("stop" in n && typeof (n as AudioScheduledSourceNode).stop === "function") {
@@ -447,14 +529,16 @@ function useAmbientSound(sound: Sound) {
     const ctx = ctxRef.current;
     if (ctx.state === "suspended") void ctx.resume();
 
-    if (sound === "rain") {
-      const bufferSeconds = 2;
-      const buffer = ctx.createBuffer(1, ctx.sampleRate * bufferSeconds, ctx.sampleRate);
+    function makeNoiseBuffer(seconds: number) {
+      const buffer = ctx.createBuffer(1, ctx.sampleRate * seconds, ctx.sampleRate);
       const data = buffer.getChannelData(0);
       for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+      return buffer;
+    }
 
+    if (sound === "rain") {
       const source = ctx.createBufferSource();
-      source.buffer = buffer;
+      source.buffer = makeNoiseBuffer(2);
       source.loop = true;
 
       const filter = ctx.createBiquadFilter();
@@ -470,7 +554,63 @@ function useAmbientSound(sound: Sound) {
       source.start();
 
       nodesRef.current = [source, filter, gain];
-    } else if (sound === "lofi") {
+    } else if (sound === "waves") {
+      const source = ctx.createBufferSource();
+      source.buffer = makeNoiseBuffer(3);
+      source.loop = true;
+
+      const filter = ctx.createBiquadFilter();
+      filter.type = "lowpass";
+      filter.frequency.value = 700;
+
+      const gain = ctx.createGain();
+      gain.gain.value = 0.05;
+
+      // Swell: a slow LFO riding on the gain itself so volume rises and falls like surf,
+      // rather than rain's steadier patter off the same noise-through-lowpass base.
+      const swell = ctx.createOscillator();
+      swell.frequency.value = 0.12; // roughly one swell every ~8 seconds
+      const swellGain = ctx.createGain();
+      swellGain.gain.value = 0.035;
+      swell.connect(swellGain);
+      swellGain.connect(gain.gain);
+
+      source.connect(filter);
+      filter.connect(gain);
+      gain.connect(ctx.destination);
+      source.start();
+      swell.start();
+
+      nodesRef.current = [source, filter, gain, swell, swellGain];
+    } else if (sound === "ambient") {
+      const source = ctx.createBufferSource();
+      source.buffer = makeNoiseBuffer(4);
+      source.loop = true;
+
+      const filter = ctx.createBiquadFilter();
+      filter.type = "lowpass";
+      filter.frequency.value = 500;
+
+      // Very slow LFO sweeping the cutoff — the texture drifts instead of sitting static,
+      // which is what separates "ambient" from just quieter rain.
+      const lfo = ctx.createOscillator();
+      lfo.frequency.value = 0.05;
+      const lfoGain = ctx.createGain();
+      lfoGain.gain.value = 250;
+      lfo.connect(lfoGain);
+      lfoGain.connect(filter.frequency);
+
+      const gain = ctx.createGain();
+      gain.gain.value = 0.04;
+
+      source.connect(filter);
+      filter.connect(gain);
+      gain.connect(ctx.destination);
+      source.start();
+      lfo.start();
+
+      nodesRef.current = [source, filter, lfo, lfoGain, gain];
+    } else if (sound === "chill") {
       const freqs = [130.81, 164.81, 196.0]; // a soft C3-E3-G3 pad
       const master = ctx.createGain();
       master.gain.value = 0.05;
@@ -497,7 +637,47 @@ function useAmbientSound(sound: Sound) {
         oscNodes.push(osc, g);
       }
       nodesRef.current = oscNodes;
+    } else if (sound === "focus") {
+      // Binaural beats: 200Hz in the left ear, 210Hz in the right — the brain perceives a
+      // 10Hz "beat" that neither ear actually hears alone. Needs stereo (headphones or
+      // real stereo speakers) to work as intended; on a single mono speaker it just
+      // sounds like two close, faintly warbling tones, which is still fine as ambience.
+      const left = ctx.createOscillator();
+      left.type = "sine";
+      left.frequency.value = 200;
+      const right = ctx.createOscillator();
+      right.type = "sine";
+      right.frequency.value = 210;
+
+      const leftPan = ctx.createStereoPanner();
+      leftPan.pan.value = -1;
+      const rightPan = ctx.createStereoPanner();
+      rightPan.pan.value = 1;
+
+      const gain = ctx.createGain();
+      gain.gain.value = 0.045;
+
+      left.connect(leftPan);
+      right.connect(rightPan);
+      leftPan.connect(gain);
+      rightPan.connect(gain);
+      gain.connect(ctx.destination);
+      left.start();
+      right.start();
+
+      nodesRef.current = [left, right, leftPan, rightPan, gain];
     }
+
+    // Bird chirps: a soft, sparse layer under whichever track is chosen above — reads as
+    // an open window near a garden, not a competing element.
+    function scheduleBird() {
+      const delay = 6000 + Math.random() * 9000;
+      birdTimeoutRef.current = setTimeout(() => {
+        playBirdChirp(ctx);
+        scheduleBird();
+      }, delay);
+    }
+    scheduleBird();
 
     return teardown;
   }, [sound]);
