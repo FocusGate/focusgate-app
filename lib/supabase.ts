@@ -853,12 +853,25 @@ export async function getGroupPresence(groupId: string): Promise<PresenceEntry[]
   if (sessionsError) throw sessionsError;
 
   const cutoff = Date.now() - PRESENCE_STALE_MS;
-  return (sessions ?? [])
+  const entries = (sessions ?? [])
     .filter((s) => new Date(s.start_time).getTime() >= cutoff)
     .map((s) => {
       const user = (Array.isArray(s.users) ? s.users[0] : s.users) as UserRow | null;
       return { userId: s.user_id, name: user?.name ?? "Someone", startedAt: s.start_time };
-    });
+    })
+    .sort((a, b) => new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime());
+
+  // A user can end up with more than one completed=false/end_time=null row at once — e.g.
+  // closing the laptop mid-session (never properly ended) and then starting a fresh one
+  // later. Callers (GroupPresenceRow, GroupCard) key their list by userId, so without this
+  // dedup they'd render — and React would warn on — duplicate entries for the same person.
+  // Sorted newest-first above, so keeping the first occurrence per user keeps their most
+  // recent session.
+  const byUser = new Map<string, PresenceEntry>();
+  for (const entry of entries) {
+    if (!byUser.has(entry.userId)) byUser.set(entry.userId, entry);
+  }
+  return Array.from(byUser.values());
 }
 
 export type SessionFeedItem = {
