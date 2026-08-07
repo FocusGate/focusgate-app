@@ -6,11 +6,13 @@ import { Monitor, Smartphone } from "lucide-react";
 import { RevealGroup, RevealItem } from "@/components/motion/Reveal";
 import { joinRoadmapWaitlist, type RoadmapPlatform } from "@/lib/supabase";
 
-// Muted vs. bright gold are deliberately different tokens here — the whole point of this
-// section is to read as "not yet available" against the vibrant "available now" feel of
-// Pricing right above it. #F59E0B is the app's live accent (see Problem.tsx's eyebrow,
-// The Gates, FlipClock); #B45309 is reserved for this section's ribbons/badges only.
-const MUTED_GOLD = "#B45309";
+// #b08d57 is FocusGate's signature brand gold — the same color as the wordmark in the
+// Navbar, the Pricing "BEST DEAL" card, and the BetaBanner headline — used here for the
+// ribbons/badges/form so this section still reads as "ours," just quieter than the
+// vibrant "available now" feel of Pricing right above it. #F59E0B is a separate, brighter
+// accent used elsewhere in the app (Problem.tsx's eyebrow, The Gates, FlipClock).
+const MUTED_GOLD = "#b08d57";
+const MUTED_GOLD_RGB = "176, 141, 87"; // same color as MUTED_GOLD, decomposed for rgba() alpha blends below
 const BRIGHT_GOLD = "#F59E0B";
 
 type RoadmapCardData = {
@@ -100,7 +102,7 @@ function RoadmapCard({ card }: { card: RoadmapCardData }) {
           position: "relative",
           overflow: "hidden",
           background: "#0b0b0d",
-          border: "1px solid rgba(180,83,9,0.3)",
+          border: `1px solid rgba(${MUTED_GOLD_RGB}, 0.3)`,
           borderRadius: 20,
           padding: "32px 28px",
           textAlign: "left",
@@ -132,9 +134,9 @@ function RoadmapCard({ card }: { card: RoadmapCardData }) {
             style={{
               display: "inline-block",
               marginTop: 12,
-              background: "rgba(180,83,9,0.14)",
+              background: `rgba(${MUTED_GOLD_RGB}, 0.14)`,
               color: MUTED_GOLD,
-              border: "1px solid rgba(180,83,9,0.4)",
+              border: `1px solid rgba(${MUTED_GOLD_RGB}, 0.4)`,
               fontSize: 11,
               fontWeight: 700,
               letterSpacing: "0.07em",
@@ -159,7 +161,7 @@ function RoadmapCard({ card }: { card: RoadmapCardData }) {
             right: 28,
             bottom: 20,
             background: "#17171a",
-            border: "1px solid rgba(180,83,9,0.45)",
+            border: `1px solid rgba(${MUTED_GOLD_RGB}, 0.45)`,
             borderRadius: 10,
             padding: "9px 13px",
             fontSize: 12,
@@ -221,9 +223,9 @@ export default function Roadmap() {
               type="button"
               onClick={() => setPlatform(opt.id)}
               style={{
-                background: platform === opt.id ? "rgba(180,83,9,0.15)" : "transparent",
+                background: platform === opt.id ? `rgba(${MUTED_GOLD_RGB}, 0.15)` : "transparent",
                 color: platform === opt.id ? MUTED_GOLD : "#8a8d94",
-                border: `1px solid ${platform === opt.id ? "rgba(180,83,9,0.5)" : "#26262b"}`,
+                border: `1px solid ${platform === opt.id ? `rgba(${MUTED_GOLD_RGB}, 0.5)` : "#26262b"}`,
                 padding: "7px 14px",
                 borderRadius: 999,
                 fontSize: 12,
@@ -266,9 +268,9 @@ export default function Roadmap() {
                 type="submit"
                 disabled={status === "loading"}
                 style={{
-                  background: "rgba(180,83,9,0.15)",
+                  background: `rgba(${MUTED_GOLD_RGB}, 0.15)`,
                   color: MUTED_GOLD,
-                  border: "1px solid rgba(180,83,9,0.45)",
+                  border: `1px solid rgba(${MUTED_GOLD_RGB}, 0.45)`,
                   padding: "12px 22px",
                   borderRadius: 10,
                   fontSize: 14,

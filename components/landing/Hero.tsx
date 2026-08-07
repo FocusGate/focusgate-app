@@ -150,8 +150,7 @@ export default function Hero() {
         </motion.h1>
 
         <p style={{ color: "#9a9da4", fontSize: 19, lineHeight: 1.6, maxWidth: "62ch", textWrap: "pretty" }}>
-          Built to make quitting harder than finishing — and doesn&apos;t look like it&apos;s from 2010. Free
-          Chrome extension. Locked in, in 60 seconds.
+          The only blocker that makes quitting harder than finishing. Free Chrome extension. Locked in, in 60 seconds.
         </p>
 
         <div style={{ display: "flex", gap: 14, flexWrap: "wrap", justifyContent: "center", marginTop: 6 }}>
