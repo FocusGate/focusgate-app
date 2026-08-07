@@ -1070,7 +1070,7 @@ export type BreakNote = {
 
 /**
  * Records a break request. `requestedSeconds` is the precise, custom-slider duration (1
- * second to 15 minutes — see lib/stats.ts's MIN/MAX_BREAK_SECONDS); the legacy
+ * to 15 minutes — see lib/stats.ts's MIN/MAX_BREAK_SECONDS); the legacy
  * `break_duration_minutes` column is still populated (rounded) alongside the new
  * `break_duration_seconds` for anything that hasn't moved off it. Returns the new row's id
  * so the caller can later report how long the break actually ran via

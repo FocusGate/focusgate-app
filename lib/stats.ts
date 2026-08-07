@@ -247,10 +247,10 @@ export function hasConsecutiveISOWeeks(weeks: string[], run: number): boolean {
 
 // ---------- break notes (Friction Triggers) ----------
 
-/** Break notes are a fixed 5-10 word window — short enough to not be its own chore,
+/** Break notes are a fixed 3-10 word window — short enough to not be its own chore,
  *  long enough that "idk" doesn't qualify. Not user-configurable (the old 30/50/100
  *  character picker on /the-gates is gone) — this replaces it everywhere. */
-export const MIN_BREAK_NOTE_WORDS = 5;
+export const MIN_BREAK_NOTE_WORDS = 3;
 export const MAX_BREAK_NOTE_WORDS = 10;
 
 /** How many Take a Break requests a session's length earns it — one per 30 minutes of
@@ -263,8 +263,9 @@ export function maxBreaksForDuration(durationMinutes: number): number {
 
 // ---------- break duration (The Lounge) ----------
 // Breaks used to be a fixed 5 minutes. Now the person taking the break picks how long they
-// actually need, 1 second to 15 minutes, via a slider — these bounds are the slider's range.
-export const MIN_BREAK_SECONDS = 1;
+// actually need, 1 to 15 minutes, via a slider (shown only after they've earned it by
+// passing a Break Gate) — these bounds are the slider's range.
+export const MIN_BREAK_SECONDS = 60;
 export const MAX_BREAK_SECONDS = 15 * 60;
 export const DEFAULT_BREAK_SECONDS = 5 * 60;
 

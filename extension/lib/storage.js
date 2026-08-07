@@ -61,7 +61,10 @@ const PENDING_BREAK_CHALLENGE_KEY = "focusgate_pending_break_challenge";
  * @property {boolean} breakNotesEnabled
  * @property {string} challenge   - a GameSlug, or "ask" to let challenge.js offer all three
  * @property {number} seconds     - the gate game's own time limit
- * @property {number} requestedBreakSeconds - how long the break itself runs once the gate is passed (1s-15min, from the popup's duration slider)
+ *
+ * Break length itself (1-15 min) isn't part of this — challenge.js only asks for it after
+ * the gate is passed, and sends it straight back in the BREAK_CHALLENGE_RESULT message
+ * rather than stashing it here ahead of time.
  */
 
 /** @returns {Promise<PendingBreakChallenge | null>} */

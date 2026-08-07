@@ -27,16 +27,16 @@ import {
 } from "@/lib/stats";
 
 type GateChoice = Exclude<BreakGateChallenge, "ask">;
-type Step = "loading" | "duration" | "note" | "choose" | "gate" | "failed" | "limit-reached";
+type Step = "loading" | "note" | "choose" | "gate" | "duration" | "failed" | "limit-reached";
 
-/** Three layers of friction before any break — pick how long you need, write your reason
- *  (if that layer's on), then always prove you deserve it with a gate game; only then does
- *  the break (The Lounge) actually start. The gate itself isn't optional — only the note
- *  layer, which game it is, and the gate's time limit stay configurable on /the-gates. A
- *  failed gate never reaches the "granted" callback — the session was never paused, so
- *  there's nothing to resume, and the duration picked before the gate is simply discarded.
- *  Before any of that, the session's own length caps how many breaks it earns at all (see
- *  maxBreaksForDuration) — a longer session earns more. */
+/** Three layers of friction before any break — write your reason (if that layer's on),
+ *  then always prove you deserve it with a gate game, and only once you've actually earned
+ *  it do you pick how long you need (The Lounge starts right after). The gate itself isn't
+ *  optional — only the note layer, which game it is, and the gate's time limit stay
+ *  configurable on /the-gates. A failed gate never reaches the "granted" callback — the
+ *  session was never paused, so there's nothing to resume, and no duration was ever picked
+ *  to discard. Before any of that, the session's own length caps how many breaks it earns
+ *  at all (see maxBreaksForDuration) — a longer session earns more. */
 export default function BreakFlowModal({
   userId,
   sessionId,
@@ -73,10 +73,16 @@ export default function BreakFlowModal({
           setStep("limit-reached");
           return;
         }
-        setStep("duration");
+        if (p.break_notes_enabled) {
+          setStep("note");
+        } else {
+          // A challenge is mandatory — there's no "both layers off, break just
+          // granted" path anymore, only note-then-gate or gate-only.
+          enterGateFlow(p);
+        }
       })
-      // Fail open to the strictest default rather than silently skipping every layer.
-      .catch(() => setStep("duration"));
+      // Fail open to the strictest layer rather than silently skipping every one.
+      .catch(() => setStep("note"));
   }, [userId, sessionId, sessionDurationMinutes]);
 
   function enterGateFlow(p: UserPreferences) {
@@ -85,17 +91,6 @@ export default function BreakFlowModal({
     } else {
       setChoice(p.break_gate_default_challenge);
       setStep("gate");
-    }
-  }
-
-  function handleDurationContinue() {
-    if (!prefs) return;
-    if (prefs.break_notes_enabled) {
-      setStep("note");
-    } else {
-      // A challenge is mandatory — there's no "both layers off, break just
-      // granted" path anymore, only note-then-gate or gate-only.
-      enterGateFlow(prefs);
     }
   }
 
@@ -108,14 +103,21 @@ export default function BreakFlowModal({
     enterGateFlow(prefs);
   }
 
-  async function handleResult(passed: boolean) {
+  // A failed gate ends the flow right here — nothing was ever earned, so there's no
+  // duration to pick. A pass moves to "duration": only once you've actually proven you
+  // deserve a break do you get to say how long it is.
+  function handleResult(passed: boolean) {
     if (passed) {
-      const { id } = await saveBreakNote(userId, sessionId, noteText, requestedSeconds, false).catch(() => ({ id: "" }));
-      onGranted(requestedSeconds, noteText, id);
+      setStep("duration");
     } else {
       setStep("failed");
       setTimeout(onDenied, 1800);
     }
+  }
+
+  async function handleDurationConfirm() {
+    const { id } = await saveBreakNote(userId, sessionId, noteText, requestedSeconds, false).catch(() => ({ id: "" }));
+    onGranted(requestedSeconds, noteText, id);
   }
 
   return (
@@ -149,51 +151,6 @@ export default function BreakFlowModal({
         )}
 
         {step === "loading" && <div style={{ padding: "40px 0", textAlign: "center", color: "#7a7d84", fontSize: 14 }}>Loading…</div>}
-
-        {step === "duration" && (
-          <>
-            <h3 style={{ color: "#fff", fontSize: 20, fontWeight: 800, margin: 0 }}>How long do you need?</h3>
-            <p style={{ color: "#9a9da4", fontSize: 14, marginTop: 8 }}>
-              Your sites stay blocked either way — this is just how long your session clock pauses for.
-            </p>
-            <div style={{ textAlign: "center", marginTop: 28, marginBottom: 8 }}>
-              <span style={{ color: "#F59E0B", fontSize: 32, fontWeight: 800, fontVariantNumeric: "tabular-nums" }}>
-                {formatBreakDuration(requestedSeconds)}
-              </span>
-            </div>
-            <input
-              type="range"
-              min={MIN_BREAK_SECONDS}
-              max={MAX_BREAK_SECONDS}
-              step={1}
-              value={requestedSeconds}
-              onChange={(e) => setRequestedSeconds(Number(e.target.value))}
-              style={{ width: "100%", accentColor: "#F59E0B", cursor: "pointer" }}
-              aria-label="Break duration"
-            />
-            <div style={{ display: "flex", justifyContent: "space-between", color: "#5b5e66", fontSize: 11, marginTop: 4 }}>
-              <span>1 sec</span>
-              <span>15 min</span>
-            </div>
-            <button
-              onClick={handleDurationContinue}
-              style={{
-                marginTop: 22,
-                width: "100%",
-                background: "#F59E0B",
-                color: "#0a0a0a",
-                border: "none",
-                padding: 14,
-                borderRadius: 999,
-                fontSize: 15,
-                fontWeight: 800,
-                cursor: "pointer",
-              }}
-            >
-              Continue
-            </button>
-          </>
-        )}
 
         {step === "note" && (
           <>
@@ -271,11 +228,56 @@ export default function BreakFlowModal({
           </div>
         )}
 
+        {step === "duration" && (
+          <>
+            <h3 style={{ color: "#fff", fontSize: 20, fontWeight: 800, margin: 0 }}>Nice work. How long do you need?</h3>
+            <p style={{ color: "#9a9da4", fontSize: 14, marginTop: 8 }}>
+              Your sites stay blocked either way — this is just how long your session clock pauses for.
+            </p>
+            <div style={{ textAlign: "center", marginTop: 28, marginBottom: 8 }}>
+              <span style={{ color: "#F59E0B", fontSize: 32, fontWeight: 800, fontVariantNumeric: "tabular-nums" }}>
+                {formatBreakDuration(requestedSeconds)}
+              </span>
+            </div>
+            <input
+              type="range"
+              min={MIN_BREAK_SECONDS}
+              max={MAX_BREAK_SECONDS}
+              step={1}
+              value={requestedSeconds}
+              onChange={(e) => setRequestedSeconds(Number(e.target.value))}
+              style={{ width: "100%", accentColor: "#F59E0B", cursor: "pointer" }}
+              aria-label="Break duration"
+            />
+            <div style={{ display: "flex", justifyContent: "space-between", color: "#5b5e66", fontSize: 11, marginTop: 4 }}>
+              <span>1 min</span>
+              <span>15 min</span>
+            </div>
+            <button
+              onClick={handleDurationConfirm}
+              style={{
+                marginTop: 22,
+                width: "100%",
+                background: "#F59E0B",
+                color: "#0a0a0a",
+                border: "none",
+                padding: 14,
+                borderRadius: 999,
+                fontSize: 15,
+                fontWeight: 800,
+                cursor: "pointer",
+              }}
+            >
+              Start My Break
+            </button>
+          </>
+        )}
+
         {step === "failed" && (
           <div className="fg-shake-standalone" style={{ textAlign: "center", padding: "20px 0" }}>
             <div style={{ fontSize: 32 }}>🔒</div>
             <h3 style={{ color: "#fff", fontSize: 18, fontWeight: 800, marginTop: 12 }}>Session continues.</h3>
-            <p style={{ color: "#f87171", fontSize: 14, marginTop: 6 }}>No break for you.</p>
+            <p style={{ color: "#f87171", fontSize: 14, marginTop: 6 }}>Try again next time.</p>
           </div>
         )}
 

@@ -231,6 +231,10 @@ export default function LockedInOverlay({
 
       {mode === "pomodoro" && <PomodoroProgress cycles={pomodoroCycles} completed={pomodoroCyclesDone} />}
 
+      {/* Exactly 2 buttons, clearly distinct: gold/neutral for the gated, friction-first
+          path ("Request a Break" — note, then gate, then a duration you pick once you've
+          earned it) vs. red/warning for the fast, ungated real-emergency path. Mirrors the
+          extension popup's active screen 1:1. */}
       {!paused && !showBreakFlow && !showEmergencyFlow && (
         <div style={{ display: "flex", gap: 12 }}>
           {manualBreaksAllowed && (
@@ -240,9 +244,9 @@ export default function LockedInOverlay({
                 display: "flex",
                 alignItems: "center",
                 gap: 8,
-                background: "transparent",
-                color: "#9a9da4",
-                border: "1px solid rgba(255,255,255,0.15)",
+                background: "rgba(245,158,11,0.1)",
+                color: "#F59E0B",
+                border: "1px solid rgba(245,158,11,0.35)",
                 padding: "10px 18px",
                 borderRadius: 999,
                 fontSize: 13,
@@ -251,7 +255,7 @@ export default function LockedInOverlay({
               }}
             >
               <Coffee size={15} />
-              Take a break
+              Request a Break
             </button>
           )}
           <button
@@ -260,9 +264,9 @@ export default function LockedInOverlay({
               display: "flex",
               alignItems: "center",
               gap: 8,
-              background: "transparent",
+              background: "rgba(239,68,68,0.1)",
               color: "#f87171",
-              border: "1px solid rgba(239,68,68,0.3)",
+              border: "1px solid rgba(239,68,68,0.35)",
               padding: "10px 18px",
               borderRadius: 999,
               fontSize: 13,
@@ -271,7 +275,7 @@ export default function LockedInOverlay({
             }}
           >
             <Siren size={15} />
-            Emergency unblock
+            Emergency Unblock
           </button>
         </div>
       )}

@@ -310,24 +310,6 @@ textarea:focus {
   border-color: rgba(176, 141, 87, 0.55);
 }
 
-.popup__action-btn--outline {
-  background: transparent;
-  color: var(--fg-muted);
-  border: 1px solid var(--fg-border);
-}
-
-.popup__action-btn--outline:not(:disabled):hover {
-  color: var(--fg-text);
-  border-color: rgba(255, 255, 255, 0.25);
-}
-
-.popup__break-link {
-  display: block;
-  width: 100%;
-  text-align: center;
-  margin-top: 10px;
-}
-
 .popup__divider {
   border: none;
   border-top: 1px solid var(--fg-border);
@@ -812,6 +794,16 @@ textarea:focus {
   background: transparent;
   border: 1px solid var(--fg-border);
   color: var(--fg-muted);
+}
+
+.challenge__btn--gold {
+  background: var(--fg-gold);
+  color: #0a0a0a;
+}
+
+.challenge__btn--gold:disabled {
+  opacity: 0.6;
+  cursor: default;
 }
 
 .challenge__meta {

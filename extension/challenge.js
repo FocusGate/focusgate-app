@@ -1,19 +1,38 @@
 // challenge.js — the in-extension "prove you deserve this break" games. Ported from
 // components/app/friction/gates/*Gate.tsx (React) into plain DOM/JS since this extension
-// has no build step. Deliberately simplified in one place: Geography Quiz swaps the
-// dashboard's SVG world map (d3-geo + topojson + a world-atlas dataset — no path into an
-// unpacked, no-bundler extension) for a flag-emoji quiz over the same country list and
-// the same "3 questions, one shared timer, any miss fails" rules.
+// has no build step.
 //
 // This page only ever runs after popup.js's OPEN_BREAK_CHALLENGE opens it — there's no
 // path to start a break from here that skips the service worker's own checks (breaks
 // cap, active session, signed in) or that never mirrors what got granted back to
 // Supabase (see BREAK_CHALLENGE_RESULT in background.js).
+//
+// A pass doesn't grant the break immediately — it hands off to renderBreakDuration()
+// below for the "how long do you need?" screen (1-15 min), matching BreakFlowModal.tsx's
+// order: note, then gate, then only-once-you've-earned-it duration. Only *that* final step
+// actually sends BREAK_CHALLENGE_RESULT; a fail sends it immediately since there's nothing
+// further to earn.
 
 const root = document.getElementById("challenge-root");
 
 const ACCENTS = { "math-sprint": "#F59E0B", "memory-match": "#A78BFA", "geography-quiz": "#FB923C" };
 const LABELS = { "math-sprint": "Math Sprint", "memory-match": "Memory Match", "geography-quiz": "Geography Quiz" };
+
+// Break length, picked here (not before the gate) — mirrors lib/stats.ts's
+// MIN/MAX/DEFAULT_BREAK_SECONDS, which must stay in sync with background.js's own copy.
+const MIN_BREAK_SECONDS = 60;
+const MAX_BREAK_SECONDS = 15 * 60;
+const DEFAULT_BREAK_SECONDS = 5 * 60;
+
+/** "3 min 20 sec" / "45 sec" / "1 min" — mirrors lib/stats.ts's formatBreakDuration(). */
+function formatBreakDuration(totalSeconds) {
+  const s = Math.max(0, Math.round(totalSeconds));
+  const minutes = Math.floor(s / 60);
+  const seconds = s % 60;
+  if (minutes === 0) return `${seconds} sec`;
+  if (seconds === 0) return `${minutes} min`;
+  return `${minutes} min ${seconds} sec`;
+}
 
 let activeTimerId = null;
 let settled = false;
@@ -58,7 +77,7 @@ function renderNothingToDo() {
     <div class="challenge__card challenge__card--center">
       <div class="challenge__icon">🔒</div>
       <h1 class="challenge__title">Nothing to do here</h1>
-      <p class="challenge__subtitle">Open this from the "Take a Break" button in the FocusGate popup.</p>
+      <p class="challenge__subtitle">Open this from the "Request a Break" button in the FocusGate popup.</p>
       <button class="challenge__btn challenge__btn--ghost" id="close-btn">Close this tab</button>
     </div>
   `;
@@ -91,30 +110,83 @@ function startGame(slug, seconds) {
 
 // ---------- shared result screen ----------
 
-async function finish(passed, slug) {
+/** A fail ends the flow right here — nothing was earned, so there's no duration to pick,
+ *  and the result is reported immediately. A pass doesn't report anything yet: it hands
+ *  off to renderBreakDuration() below, which only sends BREAK_CHALLENGE_RESULT once a
+ *  length's actually been chosen. */
+function finish(passed, slug) {
   if (settled) return;
   settled = true;
   clearActiveTimer();
 
-  chrome.runtime.sendMessage({ type: "BREAK_CHALLENGE_RESULT", passed, game: slug }).catch(() => {});
-
-  root.innerHTML = passed
-    ? `
-      <div class="challenge__card challenge__card--center">
-        <div class="challenge__icon">☕</div>
-        <h1 class="challenge__title" style="color:${ACCENTS[slug]}">Break started</h1>
-        <p class="challenge__subtitle">Nice work — head back to what you were doing. This tab will close itself.</p>
-      </div>
-    `
-    : `
+  if (!passed) {
+    chrome.runtime.sendMessage({ type: "BREAK_CHALLENGE_RESULT", passed: false, game: slug }).catch(() => {});
+    root.innerHTML = `
       <div class="challenge__card challenge__card--center fg-shake">
         <div class="challenge__icon">🔒</div>
         <h1 class="challenge__title">Session continues.</h1>
-        <p class="challenge__subtitle challenge__subtitle--danger">No break for you.</p>
+        <p class="challenge__subtitle challenge__subtitle--danger">Try again next time.</p>
       </div>
     `;
+    setTimeout(closeTab, 1800);
+    return;
+  }
 
-  setTimeout(closeTab, passed ? 1400 : 1800);
+  renderBreakDuration(slug);
+}
+
+function renderBreakDuration(slug) {
+  let seconds = DEFAULT_BREAK_SECONDS;
+  root.innerHTML = `
+    <div class="challenge__card challenge__card--center">
+      <div class="challenge__icon">☕</div>
+      <h1 class="challenge__title" style="color:${ACCENTS[slug]}">Nice work.</h1>
+      <p class="challenge__subtitle">How long do you need?</p>
+      <div class="popup__break-duration-preview" id="duration-preview">${formatBreakDuration(seconds)}</div>
+      <input type="range" class="popup__break-duration-slider" id="duration-slider" min="${MIN_BREAK_SECONDS}" max="${MAX_BREAK_SECONDS}" step="1" value="${seconds}" />
+      <div class="popup__flow-range-labels"><span>1 min</span><span>15 min</span></div>
+      <button class="challenge__btn challenge__btn--gold" id="duration-continue">Start My Break</button>
+    </div>
+  `;
+  const slider = document.getElementById("duration-slider");
+  const preview = document.getElementById("duration-preview");
+  slider.addEventListener("input", () => {
+    seconds = Number(slider.value);
+    preview.textContent = formatBreakDuration(seconds);
+  });
+  document.getElementById("duration-continue").addEventListener("click", () => grantAndFinish(slug, seconds));
+}
+
+async function grantAndFinish(slug, seconds) {
+  const btn = document.getElementById("duration-continue");
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = "Starting…";
+  }
+  const result = await chrome.runtime
+    .sendMessage({ type: "BREAK_CHALLENGE_RESULT", passed: true, game: slug, requestedSeconds: seconds })
+    .catch(() => ({ ok: false }));
+
+  if (!result?.ok || result.granted === false) {
+    root.innerHTML = `
+      <div class="challenge__card challenge__card--center">
+        <div class="challenge__icon">⚠️</div>
+        <h1 class="challenge__title">Couldn&rsquo;t start your break</h1>
+        <p class="challenge__subtitle challenge__subtitle--danger">${result?.error ?? "Something went wrong — head back and try again."}</p>
+      </div>
+    `;
+    setTimeout(closeTab, 2200);
+    return;
+  }
+
+  root.innerHTML = `
+    <div class="challenge__card challenge__card--center">
+      <div class="challenge__icon">☕</div>
+      <h1 class="challenge__title" style="color:${ACCENTS[slug]}">Break started</h1>
+      <p class="challenge__subtitle">Nice work — head back to what you were doing. This tab will close itself.</p>
+    </div>
+  `;
+  setTimeout(closeTab, 1400);
 }
 
 function closeTab() {

@@ -5,7 +5,7 @@
 // session and mirror the block locally, run the tamper-resistant countdown, and (once a
 // session is running) refuse to lift the block early except through the same friction
 // mechanisms the dashboard itself offers — Emergency Unblock (which now ends the
-// session, matching LockedInOverlay.tsx) and Take a Break (a temporary pause), both
+// session, matching LockedInOverlay.tsx) and Request a Break (a temporary pause), both
 // recorded to Supabase exactly like the web app's own flows. Disabling the extension
 // itself is still possible via chrome://extensions, same as any Chrome extension — that
 // control belongs to the browser, not to this code.
@@ -51,10 +51,10 @@ import {
 
 const TICK_ALARM = "focusgate-tick";
 const MIN_REASON_LENGTH = 15; // mirrors EmergencyUnblockModal.tsx
-const MIN_BREAK_NOTE_WORDS = 5; // mirrors lib/stats.ts's MIN_BREAK_NOTE_WORDS
+const MIN_BREAK_NOTE_WORDS = 3; // mirrors lib/stats.ts's MIN_BREAK_NOTE_WORDS
 const MAX_BREAK_NOTE_WORDS = 10; // mirrors lib/stats.ts's MAX_BREAK_NOTE_WORDS
 // Breaks are custom-length now — mirrors lib/stats.ts's MIN/MAX/DEFAULT_BREAK_SECONDS.
-const MIN_BREAK_SECONDS = 1;
+const MIN_BREAK_SECONDS = 60;
 const MAX_BREAK_SECONDS = 15 * 60;
 const DEFAULT_BREAK_SECONDS = 5 * 60;
 
@@ -362,10 +362,11 @@ async function grantEmergencyUnblock(reason, wasPaid) {
   return { ok: true };
 }
 
-/** `requestedSeconds` is the custom slider duration from the popup's break-request screen
- *  (1 second to 15 minutes) — clamped again here since the message that carries it crosses
- *  a trust boundary. Blocking is deliberately left untouched: sites stay blocked through
- *  the whole break (see The Lounge on the dashboard side), so there's nothing to lift. */
+/** `requestedSeconds` is the custom slider duration from challenge.html's post-pass
+ *  "how long do you need?" screen (1 to 15 minutes) — chosen only after the gate game is
+ *  won, not before, so it's clamped again here since the message that carries it crosses a
+ *  trust boundary. Blocking is deliberately left untouched: sites stay blocked through the
+ *  whole break (see The Lounge on the dashboard side), so there's nothing to lift. */
 async function grantBreak(noteText, breakNotesEnabled, requestedSeconds) {
   const session = await getValidSession();
   if (!session?.active) return { ok: false, error: "No active session." };
@@ -549,9 +550,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             breakNotesEnabled: !!message.breakNotesEnabled,
             challenge: prefs.break_gate_default_challenge,
             seconds: GATE_SECONDS_BY_DIFFICULTY[prefs.break_gate_difficulty] ?? GATE_SECONDS_BY_DIFFICULTY.normal,
-            // How long the break itself should run once the gate is passed — distinct from
-            // `seconds` above, which is the gate game's own time limit.
-            requestedBreakSeconds: message.requestedSeconds ?? DEFAULT_BREAK_SECONDS,
+            // Break length isn't known yet at this point — challenge.html only asks for it
+            // after the gate is actually passed, and sends it back in BREAK_CHALLENGE_RESULT.
           });
           const tab = await chrome.tabs.create({ url: chrome.runtime.getURL("challenge.html") });
           sendResponse({ ok: true, tabId: tab.id });
@@ -587,7 +587,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           sendResponse({ ok: true, granted: false });
           break;
         }
-        const result = await grantBreak(pending?.note ?? "", !!pending?.breakNotesEnabled, pending?.requestedBreakSeconds);
+        // requestedSeconds comes from challenge.html's post-pass duration screen, not from
+        // the original OPEN_BREAK_CHALLENGE call — the whole point of the reorder is that
+        // duration is picked only after the gate's actually been earned.
+        const result = await grantBreak(pending?.note ?? "", !!pending?.breakNotesEnabled, message.requestedSeconds);
         sendResponse({ ok: result.ok, granted: result.ok, error: result.error, seconds: result.seconds });
         break;
       }

@@ -1,11 +1,9 @@
 // popup.js — the Locked-In control panel. Sessions still only ever start from the
 // dashboard, but once one is running this is where you actually use FocusGate day to
-// day: see time left, and reach the same friction-gated escape hatches the dashboard
-// has — Emergency Unblock (which ends the session) and Take a Break (a temporary pause)
-// — both recorded to the same Supabase tables. "Emergency Unblock" and "End Session
-// Early" on the active screen are two entry points into that one identical
-// confirm-then-reason flow, not two different features — there's still exactly one way
-// to end a session early, it just has two names depending on how you think about it.
+// day: see time left, and reach the same two friction-gated escape hatches the dashboard
+// has — "Request a Break" (note, then a gate game, then a duration you pick once you've
+// earned it — a temporary pause) and "Emergency Unblock" (ends the session outright) —
+// both recorded to the same Supabase tables.
 //
 // Everything below one state's markup is built with innerHTML on demand, not pre-written
 // into popup.html and toggled with `hidden` — there's exactly one screen's worth of DOM
@@ -17,22 +15,10 @@ const DASHBOARD_URL = "https://focusgate.app/dashboard";
 
 const MIN_REASON_LENGTH = 15; // mirrors EmergencyUnblockModal.tsx — must match background.js
 const MAX_FREE_EMERGENCY_UNBLOCKS_DISPLAY = 2; // mirrors lib/supabase.ts's MAX_FREE_EMERGENCY_UNBLOCKS, for copy only
-const MIN_BREAK_NOTE_WORDS = 5; // mirrors lib/stats.ts — must match background.js
+const MIN_BREAK_NOTE_WORDS = 3; // mirrors lib/stats.ts — must match background.js
 const MAX_BREAK_NOTE_WORDS = 10; // mirrors lib/stats.ts — must match background.js
-// Breaks are custom-length now — mirrors lib/stats.ts's MIN/MAX/DEFAULT_BREAK_SECONDS.
-const MIN_BREAK_SECONDS = 1;
-const MAX_BREAK_SECONDS = 15 * 60;
-const DEFAULT_BREAK_SECONDS = 5 * 60;
-
-/** "3 min 20 sec" / "45 sec" / "1 min" — mirrors lib/stats.ts's formatBreakDuration(). */
-function formatBreakDuration(totalSeconds) {
-  const s = Math.max(0, Math.round(totalSeconds));
-  const minutes = Math.floor(s / 60);
-  const seconds = s % 60;
-  if (minutes === 0) return `${seconds} sec`;
-  if (seconds === 0) return `${minutes} min`;
-  return `${minutes} min ${seconds} sec`;
-}
+// Break *length* (1-15 min) isn't picked here anymore — that slider now lives in
+// challenge.js's post-pass screen, shown only once the gate's actually been earned.
 
 const el = (id) => document.getElementById(id);
 
@@ -51,13 +37,12 @@ const versionMarkerEl = el("version-marker");
 // pick up the new files yet (see the reload steps in the delivery notes).
 versionMarkerEl.textContent = `v${chrome.runtime.getManifest().version}`;
 
-// True while an Emergency Unblock / Take a Break sub-flow is on screen — the 1-second
+// True while an Emergency Unblock / Request a Break sub-flow is on screen — the 1-second
 // status poll skips re-rendering while this is set, so it can't yank the popup back to
 // the main view mid-flow (e.g. while typing a reason).
 let inFlow = false;
 let emergencyReason = "";
 let breakNotesEnabledForCurrentFlow = false;
-let requestedBreakSeconds = DEFAULT_BREAK_SECONDS;
 
 // What's currently built into #popup-root — compared against on every poll so a plain
 // countdown tick (same state, new number) only patches a text node, while an actual
@@ -150,6 +135,12 @@ function renderIdle() {
   `;
 }
 
+// Exactly 2 buttons, clearly distinct: gold for the gated, friction-first path ("Request
+// a Break" — note, then gate, then a duration you pick once you've earned it) vs. red for
+// the fast, ungated real-emergency path. Mirrors LockedInOverlay.tsx's active screen 1:1.
+// (There used to be a third "End Session Early" button here that called the exact same
+// startEmergencyFlow as "Emergency Unblock" — a duplicate of the same action under a
+// second name, removed rather than kept as a redundant entry point.)
 function renderActive() {
   hideFlowError();
   rootEl.className = "view";
@@ -160,14 +151,12 @@ function renderActive() {
       <div class="popup__status-hint">No shortcuts — ending early still takes a real confirmation.</div>
     </div>
     <div class="popup__actions">
+      <button class="popup__action-btn popup__action-btn--break" id="btn-break">☕ Request a Break</button>
       <button class="popup__action-btn popup__action-btn--emergency" id="btn-emergency">Emergency Unblock</button>
-      <button class="popup__action-btn popup__action-btn--outline" id="btn-end-early">End Session Early</button>
     </div>
-    <button class="popup__link-btn popup__break-link" id="btn-break">☕ Take a Break instead</button>
   `;
-  el("btn-emergency").addEventListener("click", startEmergencyFlow);
-  el("btn-end-early").addEventListener("click", startEmergencyFlow);
   el("btn-break").addEventListener("click", startBreakFlow);
+  el("btn-emergency").addEventListener("click", startEmergencyFlow);
 }
 
 // Warm, dim-lit palette — deliberately not the gold/black Locked In look, matching The
@@ -194,9 +183,7 @@ function renderPaused() {
 // ---------- Emergency Unblock flow (mirrors EmergencyUnblockModal.tsx) ----------
 // Granting an emergency unblock now ends the session outright (matches the web app's
 // LockedInOverlay) rather than pausing it — the next refreshStatus() call after a
-// successful grant will show the idle screen once the session's gone. "Emergency
-// Unblock" and "End Session Early" on the active screen both call this — same one
-// friction-gated exit, two entry points into it.
+// successful grant will show the idle screen once the session's gone.
 
 function endFlow() {
   inFlow = false;
@@ -286,12 +273,13 @@ async function submitEmergency(wasPaid) {
   await refreshStatus();
 }
 
-// ---------- Take a Break flow (mirrors BreakFlowModal.tsx) ----------
+// ---------- Request a Break flow (mirrors BreakFlowModal.tsx) ----------
 // Order matches the dashboard exactly: write a note first if that layer's on, then
-// always a challenge — it isn't optional — then (and only then) the break actually
-// starts. A challenge game is too much for this popup to host — and the popup closes the
-// instant it loses focus anyway — so that layer hands off to its own tab
-// (challenge.html) instead of rendering inline.
+// always a challenge — it isn't optional — then (and only then, once it's actually been
+// earned) does the break duration get picked. A challenge game is too much for this popup
+// to host — and the popup closes the instant it loses focus anyway — so that layer hands
+// off to its own tab (challenge.html), which also hosts the post-pass duration picker,
+// instead of rendering any of it inline here.
 
 async function startBreakFlow() {
   inFlow = true;
@@ -311,40 +299,15 @@ async function startBreakFlow() {
 
   breakNotesEnabledForCurrentFlow = info.breakNotesEnabled;
   currentState = "flow";
-  renderBreakDuration();
+  if (breakNotesEnabledForCurrentFlow) {
+    renderBreakNote();
+  } else {
+    launchChallenge("");
+  }
 }
 
-/** Always the first break-request screen, note layer or not — matches BreakFlowModal.tsx's
- *  order (duration, then note, then the mandatory gate). */
-function renderBreakDuration() {
-  hideFlowError();
-  requestedBreakSeconds = DEFAULT_BREAK_SECONDS;
-  rootEl.className = "view popup__flow";
-  rootEl.innerHTML = `
-    <h3 class="popup__flow-title">How long do you need?</h3>
-    <p class="popup__flow-text">Sites stay blocked either way — this is just how long your session clock pauses.</p>
-    <div class="popup__break-duration-preview" id="break-duration-preview">${formatBreakDuration(requestedBreakSeconds)}</div>
-    <input type="range" class="popup__break-duration-slider" id="break-duration-slider" min="${MIN_BREAK_SECONDS}" max="${MAX_BREAK_SECONDS}" step="1" value="${requestedBreakSeconds}" />
-    <div class="popup__flow-range-labels"><span>1 sec</span><span>15 min</span></div>
-    <button class="popup__flow-btn popup__flow-btn--gold" id="break-duration-continue">Continue</button>
-    <button class="popup__flow-btn popup__flow-btn--ghost" id="break-duration-cancel">Cancel</button>
-  `;
-  const slider = el("break-duration-slider");
-  const preview = el("break-duration-preview");
-  slider.addEventListener("input", () => {
-    requestedBreakSeconds = Number(slider.value);
-    preview.textContent = formatBreakDuration(requestedBreakSeconds);
-  });
-  el("break-duration-continue").addEventListener("click", () => {
-    if (breakNotesEnabledForCurrentFlow) {
-      renderBreakNote();
-    } else {
-      launchChallenge("");
-    }
-  });
-  el("break-duration-cancel").addEventListener("click", endFlow);
-}
-
+/** Always the first break-request screen when the note layer's on — matches
+ *  BreakFlowModal.tsx's order (note, then the mandatory gate, then duration). */
 function renderBreakNote() {
   hideFlowError();
   rootEl.className = "view popup__flow";
@@ -353,7 +316,7 @@ function renderBreakNote() {
     <p class="popup__flow-text">Why do you need this break?</p>
     <textarea class="popup__flow-textarea" id="break-note-input" rows="3" placeholder="I need to…"></textarea>
     <div class="popup__flow-counter" id="break-note-counter">0 / ${MIN_BREAK_NOTE_WORDS}-${MAX_BREAK_NOTE_WORDS} words</div>
-    <button class="popup__flow-btn popup__flow-btn--gold" id="break-note-continue" disabled>Start break</button>
+    <button class="popup__flow-btn popup__flow-btn--gold" id="break-note-continue" disabled>Continue</button>
     <button class="popup__flow-btn popup__flow-btn--ghost" id="break-note-cancel">Cancel</button>
   `;
   const input = el("break-note-input");
@@ -385,13 +348,13 @@ function renderBreakLimit(message) {
 /** Opens challenge.html in its own tab and hands control over to it — win or lose, it
  *  reports the outcome straight to the service worker (BREAK_CHALLENGE_RESULT), so this
  *  popup doesn't need to stay open or track anything else. It usually won't stay open
- *  anyway: opening a new tab takes away the popup's focus, which closes it. */
+ *  anyway: opening a new tab takes away the popup's focus, which closes it. No duration
+ *  to pass along here — challenge.html asks for that itself, only after the gate's won. */
 async function launchChallenge(noteText) {
   const result = await chrome.runtime.sendMessage({
     type: "OPEN_BREAK_CHALLENGE",
     note: noteText,
     breakNotesEnabled: breakNotesEnabledForCurrentFlow,
-    requestedSeconds: requestedBreakSeconds,
   });
   if (!result.ok) {
     showFlowError(result.error);
