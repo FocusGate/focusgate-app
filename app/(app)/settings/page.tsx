@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Reorder } from "framer-motion";
 import { GripVertical } from "lucide-react";
 import Avatar from "@/components/app/Avatar";
+import SignOutConfirmDialog from "@/components/app/SignOutConfirmDialog";
 import PreferenceToggle from "@/components/app/settings/PreferenceToggle";
 import PasswordChangeForm from "@/components/app/settings/PasswordChangeForm";
 import DeleteAccountDialog from "@/components/app/settings/DeleteAccountDialog";
@@ -44,6 +45,7 @@ export default function SettingsPage() {
   const [nameSaved, setNameSaved] = useState(false);
 
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [signOutOpen, setSignOutOpen] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -132,6 +134,7 @@ export default function SettingsPage() {
 
   return (
     <>
+      <SignOutConfirmDialog open={signOutOpen} onClose={() => setSignOutOpen(false)} onConfirm={handleSignOut} />
       <DeleteAccountDialog open={deleteOpen} onClose={() => setDeleteOpen(false)} onConfirm={handleDeleteAccount} />
 
       <h1 style={{ fontSize: 28, fontWeight: 700 }}>Settings</h1>
@@ -303,7 +306,7 @@ export default function SettingsPage() {
 
         <div style={{ display: "flex", gap: 12, marginTop: 28, flexWrap: "wrap" }}>
           <button
-            onClick={handleSignOut}
+            onClick={() => setSignOutOpen(true)}
             style={{ background: "transparent", border: "1px solid rgba(255,255,255,0.15)", color: "#9a9da4", padding: "12px 22px", borderRadius: 12, fontSize: 14, fontWeight: 700, cursor: "pointer" }}
           >
             Sign out
