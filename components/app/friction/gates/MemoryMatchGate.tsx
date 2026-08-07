@@ -6,7 +6,13 @@ import { logBreakGateAttempt, type GameSlug } from "@/lib/supabase";
 
 const DEFAULT_GATE_SECONDS = 30;
 const ACCENT = "#A78BFA";
-const SYMBOLS = ["🧠", "🔥", "⚡", "🎯"];
+// The break-gate version keeps its original 4 pairs — it still has to be beatable inside
+// the same 30-second window the other two gates use, so making it bigger there would
+// quietly make Memory Match a harder gate than Math Sprint/Geography Quiz for the same
+// time budget. Brain Games (practiceMode, no timer at all) gets the full 8-pair board —
+// bigger, since there's nothing forcing it to stay small.
+const GATE_SYMBOLS = ["🧠", "🔥", "⚡", "🎯"];
+const PRACTICE_SYMBOLS = ["🧠", "🔥", "⚡", "🎯", "🌟", "🎨", "🎵", "🌙"];
 const GAME_SLUG: GameSlug = "memory-match";
 
 type Card = { id: number; symbol: string; matched: boolean };
@@ -20,17 +26,18 @@ function shuffle<T>(arr: T[]): T[] {
   return copy;
 }
 
-function buildDeck(): Card[] {
-  return shuffle([...SYMBOLS, ...SYMBOLS]).map((symbol, id) => ({ id, symbol, matched: false }));
+function buildDeck(symbols: string[]): Card[] {
+  return shuffle([...symbols, ...symbols]).map((symbol, id) => ({ id, symbol, matched: false }));
 }
 
-/** In-session 30-second break gate: find 4 pairs before time runs out. Unlike the
+/** In-session 30-second break gate: find every pair before time runs out. Unlike the
  *  standalone Memory Match page (a count-up stopwatch with no fail path), this variant
  *  needs a genuine countdown and a real "ran out of time" failure branch.
  *
  *  `practiceMode` reframes this as The Lounge's "Brain Games" — something to do with your
  *  hands while resting, not a gate to pass. No timer shown, no fail state, no logged
- *  attempt (it isn't a real gate attempt); solving a round just quietly deals a fresh one. */
+ *  attempt (it isn't a real gate attempt); a completed board never reshuffles or resets
+ *  until every pair is actually found, then it quietly deals a fresh one. */
 export default function MemoryMatchGate({
   userId,
   sessionId,
@@ -44,7 +51,8 @@ export default function MemoryMatchGate({
   onResult?: (passed: boolean) => void;
   practiceMode?: boolean;
 }) {
-  const [cards, setCards] = useState<Card[]>(() => buildDeck());
+  const symbols = practiceMode ? PRACTICE_SYMBOLS : GATE_SYMBOLS;
+  const [cards, setCards] = useState<Card[]>(() => buildDeck(symbols));
   const [matchedIds, setMatchedIds] = useState<Set<number>>(new Set());
   const [flipped, setFlipped] = useState<number[]>([]);
   const [timeLeft, setTimeLeft] = useState(seconds);
@@ -59,7 +67,7 @@ export default function MemoryMatchGate({
   }
 
   function dealFreshRound() {
-    setCards(buildDeck());
+    setCards(buildDeck(symbols));
     setMatchedIds(new Set());
     setFlipped([]);
     setTimeLeft(seconds);
@@ -79,7 +87,7 @@ export default function MemoryMatchGate({
   }, [timeLeft, settled, practiceMode]);
 
   useEffect(() => {
-    if (matchedIds.size < SYMBOLS.length) return;
+    if (matchedIds.size < symbols.length) return;
     if (practiceMode) {
       setTimeout(dealFreshRound, 700);
       return;
@@ -87,7 +95,7 @@ export default function MemoryMatchGate({
     if (settled) return;
     // eslint-disable-next-line react-hooks/set-state-in-effect -- transitioning to a passed gate once every pair is matched is the intended sync here
     finish(true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- finish/dealFreshRound close over state already captured via settled/matchedIds/practiceMode
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- finish/dealFreshRound close over state already captured via settled/matchedIds/practiceMode/symbols
   }, [matchedIds, settled, practiceMode]);
 
   function handleCardClick(id: number) {
@@ -119,19 +127,22 @@ export default function MemoryMatchGate({
     }
   }
 
+  const maxWidth = practiceMode ? 420 : 300;
+  const symbolSize = practiceMode ? 30 : 22;
+
   return (
-    <div style={{ width: "100%", maxWidth: 300, textAlign: "center" }}>
+    <div style={{ width: "100%", maxWidth, textAlign: "center" }}>
       {/* justify-content is center-only-when-there's-one-item: with the timer sibling present,
           space-between anchors each side independently so the timer's shrinking digit count
           (30s -> 9s) can't shift the pairs label sideways — a centered row re-centers its
           whole cluster on every width change, which read as "the screen moves with the timer." */}
       <div style={{ display: "flex", justifyContent: practiceMode ? "center" : "space-between", gap: 16, marginBottom: 16, fontSize: 13, fontWeight: practiceMode ? 500 : 700 }}>
         <span style={{ color: practiceMode ? "#57534E" : "#9a9da4" }}>
-          {matchedIds.size / 2} / {SYMBOLS.length} pairs
+          {matchedIds.size / 2} / {symbols.length} pairs
         </span>
         {!practiceMode && <span style={{ color: timeLeft <= 10 ? "#f87171" : ACCENT, fontVariantNumeric: "tabular-nums" }}>{timeLeft}s left</span>}
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8, perspective: 800 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: practiceMode ? 10 : 8, perspective: 800 }}>
         {cards.map((card) => {
           const faceUp = matchedIds.has(card.id) || flipped.includes(card.id);
           return (
@@ -158,7 +169,7 @@ export default function MemoryMatchGate({
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      fontSize: 22,
+                      fontSize: symbolSize,
                       transform: "rotateY(180deg)",
                       backfaceVisibility: "hidden",
                     }}

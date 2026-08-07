@@ -357,39 +357,65 @@ function memoryMatch(seconds) {
   render();
 }
 
-// ---------- Geography Quiz (mirrors GeographyQuizGate.tsx's continent trivia) ----------
+// ---------- Geography Quiz (mirrors GeographyQuizGate.tsx's mixed trivia) ----------
 // No flag emoji here on purpose — Windows renders flag-emoji sequences as literal
 // two-letter codes ("FR") with no color-emoji font installed, which is exactly the
 // "what is AU" abbreviation problem this quiz format exists to get away from. A plain
-// inline map-pin SVG can't degrade to text like that.
+// inline map-pin SVG can't degrade to text like that. One icon for all three question
+// types here (location/capital/landmark) rather than the web app's three lucide icons —
+// this extension has no icon library, and a single pin still reads fine for "geography."
 
 const MAP_PIN_SVG =
   '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>';
 
 const COUNTRIES = [
-  { name: "France", continent: "Europe" },
-  { name: "Germany", continent: "Europe" },
-  { name: "Norway", continent: "Europe" },
-  { name: "Brazil", continent: "South America" },
-  { name: "Argentina", continent: "South America" },
-  { name: "Japan", continent: "Asia" },
-  { name: "India", continent: "Asia" },
-  { name: "Egypt", continent: "Africa" },
-  { name: "Kenya", continent: "Africa" },
-  { name: "Canada", continent: "North America" },
-  { name: "Mexico", continent: "North America" },
-  { name: "Australia", continent: "Oceania" },
+  { name: "France", continent: "Europe", capital: "Paris", landmark: "The Eiffel Tower" },
+  { name: "Germany", continent: "Europe", capital: "Berlin", landmark: "The Brandenburg Gate" },
+  { name: "Norway", continent: "Europe", capital: "Oslo", landmark: "The Norwegian Fjords" },
+  { name: "Brazil", continent: "South America", capital: "Brasília", landmark: "Christ the Redeemer" },
+  { name: "Argentina", continent: "South America", capital: "Buenos Aires", landmark: "Iguazu Falls" },
+  { name: "Japan", continent: "Asia", capital: "Tokyo", landmark: "Mount Fuji" },
+  { name: "India", continent: "Asia", capital: "New Delhi", landmark: "The Taj Mahal" },
+  { name: "Egypt", continent: "Africa", capital: "Cairo", landmark: "The Pyramids of Giza" },
+  { name: "Kenya", continent: "Africa", capital: "Nairobi", landmark: "The Maasai Mara" },
+  { name: "Canada", continent: "North America", capital: "Ottawa", landmark: "Niagara Falls" },
+  { name: "Mexico", continent: "North America", capital: "Mexico City", landmark: "Chichén Itzá" },
+  { name: "Australia", continent: "Oceania", capital: "Canberra", landmark: "The Great Barrier Reef" },
 ];
 
 const CONTINENTS = ["Europe", "Asia", "Africa", "North America", "South America", "Oceania"];
+const QUESTION_TYPES = ["location", "capital", "landmark"];
+
+function buildQuestion(country, type) {
+  const accent = ACCENTS["geography-quiz"];
+  if (type === "location") {
+    const distractors = shuffle(CONTINENTS.filter((c) => c !== country.continent)).slice(0, 3);
+    return {
+      question: `Where is <strong style="color:${accent}">${country.name}</strong> located?`,
+      answer: country.continent,
+      options: shuffle([country.continent, ...distractors]),
+    };
+  }
+  if (type === "capital") {
+    const distractors = shuffle(COUNTRIES.filter((c) => c.name !== country.name).map((c) => c.capital)).slice(0, 3);
+    return {
+      question: `What is the capital of <strong style="color:${accent}">${country.name}</strong>?`,
+      answer: country.capital,
+      options: shuffle([country.capital, ...distractors]),
+    };
+  }
+  const distractors = shuffle(COUNTRIES.filter((c) => c.name !== country.name).map((c) => c.name)).slice(0, 3);
+  return {
+    question: `<strong style="color:${accent}">${country.landmark}</strong> is a famous landmark in which country?`,
+    answer: country.name,
+    options: shuffle([country.name, ...distractors]),
+  };
+}
 
 function buildRound() {
   const QUESTION_COUNT = 3;
   const pool = shuffle(COUNTRIES).slice(0, QUESTION_COUNT);
-  return pool.map((c) => {
-    const distractors = shuffle(CONTINENTS.filter((cont) => cont !== c.continent)).slice(0, 3);
-    return { country: c.name, answer: c.continent, options: shuffle([c.continent, ...distractors]) };
-  });
+  return pool.map((c) => buildQuestion(c, QUESTION_TYPES[Math.floor(Math.random() * QUESTION_TYPES.length)]));
 }
 
 function geographyQuiz(seconds) {
@@ -407,7 +433,7 @@ function geographyQuiz(seconds) {
           <span class="${timeLeft <= 10 ? "challenge__time--danger" : ""}">${timeLeft}s left</span>
         </div>
         <div class="challenge__flag" style="color:${ACCENTS["geography-quiz"]}; display:flex; justify-content:center;">${MAP_PIN_SVG}</div>
-        <div class="challenge__question">Where is <strong style="color:${ACCENTS["geography-quiz"]}">${current.country}</strong> located?</div>
+        <div class="challenge__question">${current.question}</div>
         <div class="challenge__grid challenge__grid--2">
           ${current.options.map((opt) => `<button class="challenge__option" data-value="${opt}">${opt}</button>`).join("")}
         </div>
