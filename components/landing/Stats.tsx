@@ -38,6 +38,7 @@ function Stat({
           lineHeight: 1,
           letterSpacing: desc ? "-0.03em" : "-0.02em",
           color: "#fff",
+          fontVariantNumeric: "tabular-nums",
         }}
       />
       <div style={{ color: "#fff", fontSize: 20, fontWeight: 600, marginTop: 20 }}>{label}</div>
@@ -114,6 +115,7 @@ function StatGold({ target, prefix, label }: { target: number; prefix?: string; 
           lineHeight: 1,
           letterSpacing: "-0.02em",
           color: "#b08d57",
+          fontVariantNumeric: "tabular-nums",
         }}
       />
       <div style={{ color: "#7a7d84", fontSize: 15, marginTop: 16 }}>{label}</div>

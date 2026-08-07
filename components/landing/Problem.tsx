@@ -49,6 +49,7 @@ function StatCard({ target, suffix, label }: { target: number; suffix: string; l
           fontWeight: 800,
           fontSize: 26,
           color: "#fff",
+          fontVariantNumeric: "tabular-nums",
         }}
       />
       <div style={{ color: "#7a7d84", fontSize: 12, lineHeight: 1.5, marginTop: 10 }}>{label}</div>

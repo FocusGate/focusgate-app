@@ -31,7 +31,11 @@ export default function StatCard({ label, target, prefix, suffix, decimals, comm
         {icon}
         {label}
       </div>
-      <div ref={ref} style={{ color: valueColor ?? "#fff", fontSize: 28, fontWeight: 800, marginTop: 8 }} />
+      {/* tabular-nums: without it, digits with different glyph widths (proportional fonts —
+          "1" is narrower than "8") shift the box's width on every count-up frame, which on
+          a narrow mobile viewport reads as the whole card (and its neighbors, sharing this
+          grid row) visibly twitching for the ~1.6s the animation runs. */}
+      <div ref={ref} style={{ color: valueColor ?? "#fff", fontSize: 28, fontWeight: 800, marginTop: 8, fontVariantNumeric: "tabular-nums" }} />
     </div>
   );
 }
