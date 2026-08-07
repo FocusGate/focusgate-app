@@ -821,6 +821,7 @@ textarea:focus {
   font-weight: 700;
   color: var(--fg-muted);
   margin-bottom: 18px;
+  font-variant-numeric: tabular-nums;
 }
 
 .challenge__time--danger {

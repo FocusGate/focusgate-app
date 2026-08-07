@@ -137,9 +137,13 @@ export default function GeographyQuizGate({
 
   return (
     <div style={{ width: "100%", maxWidth: 420, textAlign: "center" }}>
-      <div style={{ display: "flex", justifyContent: "center", gap: 16, marginBottom: 6, fontSize: 13, fontWeight: practiceMode ? 500 : 700 }}>
+      {/* justify-content is center-only-when-there's-one-item: with the timer sibling present,
+          space-between anchors each side independently so the timer's shrinking digit count
+          (30s -> 9s) can't shift the question label sideways — a centered row re-centers its
+          whole cluster on every width change, which read as "the screen moves with the timer." */}
+      <div style={{ display: "flex", justifyContent: practiceMode ? "center" : "space-between", gap: 16, marginBottom: 6, fontSize: 13, fontWeight: practiceMode ? 500 : 700 }}>
         <span style={{ color: practiceMode ? "#57534E" : "#9a9da4" }}>{practiceMode ? "Brain break" : `Question ${index + 1} / ${round.length}`}</span>
-        {!practiceMode && <span style={{ color: timeLeft <= 10 ? "#f87171" : ACCENT }}>{timeLeft}s left</span>}
+        {!practiceMode && <span style={{ color: timeLeft <= 10 ? "#f87171" : ACCENT, fontVariantNumeric: "tabular-nums" }}>{timeLeft}s left</span>}
       </div>
       <div style={{ display: "flex", justifyContent: "center", margin: "18px 0 10px" }}>
         <MapPin size={44} color={ACCENT} strokeWidth={1.8} />

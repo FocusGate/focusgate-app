@@ -121,11 +121,15 @@ export default function MemoryMatchGate({
 
   return (
     <div style={{ width: "100%", maxWidth: 300, textAlign: "center" }}>
-      <div style={{ display: "flex", justifyContent: "center", gap: 16, marginBottom: 16, fontSize: 13, fontWeight: practiceMode ? 500 : 700 }}>
+      {/* justify-content is center-only-when-there's-one-item: with the timer sibling present,
+          space-between anchors each side independently so the timer's shrinking digit count
+          (30s -> 9s) can't shift the pairs label sideways — a centered row re-centers its
+          whole cluster on every width change, which read as "the screen moves with the timer." */}
+      <div style={{ display: "flex", justifyContent: practiceMode ? "center" : "space-between", gap: 16, marginBottom: 16, fontSize: 13, fontWeight: practiceMode ? 500 : 700 }}>
         <span style={{ color: practiceMode ? "#57534E" : "#9a9da4" }}>
           {matchedIds.size / 2} / {SYMBOLS.length} pairs
         </span>
-        {!practiceMode && <span style={{ color: timeLeft <= 10 ? "#f87171" : ACCENT }}>{timeLeft}s left</span>}
+        {!practiceMode && <span style={{ color: timeLeft <= 10 ? "#f87171" : ACCENT, fontVariantNumeric: "tabular-nums" }}>{timeLeft}s left</span>}
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8, perspective: 800 }}>
         {cards.map((card) => {
