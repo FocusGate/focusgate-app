@@ -107,7 +107,7 @@ export default function TheGates() {
       className="fg-sec"
       style={{
         background: "radial-gradient(ellipse 1000px 500px at 50% 0%, rgba(245,158,11,0.05), transparent 60%), #060606",
-        padding: "150px 0 80px",
+        padding: "150px 0 60px",
         borderTop: "1px solid rgba(255,255,255,0.06)",
       }}
     >

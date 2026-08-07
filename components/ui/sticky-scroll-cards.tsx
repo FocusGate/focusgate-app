@@ -45,8 +45,14 @@ export function StickyScrollStack({
 }) {
   const container = useRef<HTMLDivElement>(null);
 
+  // pb here is scroll runway for the last card's sticky pin to release, not visual
+  // whitespace on its own — but the source pattern's pb-[30vh] left a noticeably bigger gap
+  // before whatever section follows than this page's fixed-pixel section paddings (150px
+  // top / 60-80px bottom elsewhere) ever produce, reading as an unintentional dead zone
+  // rather than a deliberate beat. 8vh is enough runway for the release to still feel
+  // smooth without the leftover gap.
   return (
-    <div ref={container} className={cn("relative flex w-full flex-col items-center justify-center pb-[30vh] pt-[4vh]", className)}>
+    <div ref={container} className={cn("relative flex w-full flex-col items-center justify-center pb-[8vh] pt-[2vh]", className)}>
       {items.map((item) => (
         <StickyStackCard key={item.key} content={item.content} topOffsetClass={topOffsetClass} />
       ))}
