@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import MathSprintGate from "@/components/app/friction/gates/MathSprintGate";
 import MemoryMatchGate from "@/components/app/friction/gates/MemoryMatchGate";
@@ -18,7 +18,6 @@ const WARM = {
 };
 
 type Mode = "chill" | "games";
-type Sound = "silence" | "focus" | "chill" | "ambient" | "rain" | "waves";
 type GameSlug = "math-sprint" | "memory-match" | "geography-quiz";
 
 const DUST = Array.from({ length: 14 }, (_, i) => ({
@@ -82,12 +81,9 @@ export default function TheLounge({
 }) {
   const [mode, setMode] = useState<Mode>("chill");
   const [game, setGame] = useState<GameSlug | null>(null);
-  const [sound, setSound] = useState<Sound>("silence");
 
   const pct = totalSeconds > 0 ? Math.max(0, Math.min(1, secondsLeft / totalSeconds)) : 0;
   const circumference = 2 * Math.PI * 108;
-
-  useAmbientSound(sound);
 
   return (
     <motion.div
@@ -156,8 +152,7 @@ export default function TheLounge({
               transition={{ duration: 0.35 }}
               style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}
             >
-              <span style={{ color: WARM.stone, fontSize: 12, letterSpacing: "0.08em", textTransform: "uppercase" }}>Ambient sound</span>
-              <SoundToggle sound={sound} onChange={setSound} />
+              <p style={{ color: WARM.stone, fontSize: 13, textAlign: "center", margin: 0, maxWidth: "36ch" }}>Just breathe. No pressure, nothing to do.</p>
             </motion.div>
           ) : (
             <motion.div
@@ -415,278 +410,4 @@ function GamePickButton({ label, onClick }: { label: string; onClick: () => void
       {label}
     </button>
   );
-}
-
-function SoundToggle({ sound, onChange }: { sound: Sound; onChange: (s: Sound) => void }) {
-  const OPTIONS: { value: Sound; label: string }[] = [
-    { value: "focus", label: "🎯 Focus" },
-    { value: "chill", label: "🎧 Chill" },
-    { value: "ambient", label: "🌌 Ambient" },
-    { value: "rain", label: "🌧️ Rain" },
-    { value: "waves", label: "🌊 Waves" },
-    { value: "silence", label: "🤫 Silence" },
-  ];
-  return (
-    <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "center", maxWidth: 340 }}>
-      {OPTIONS.map((o) => (
-        <button
-          key={o.value}
-          onClick={() => onChange(o.value)}
-          style={{
-            background: sound === o.value ? "rgba(254,243,199,0.14)" : "transparent",
-            border: `1px solid ${sound === o.value ? WARM.cream : WARM.stone}55`,
-            color: sound === o.value ? WARM.cream : WARM.taupe,
-            padding: "7px 14px",
-            borderRadius: 999,
-            fontSize: 12,
-            fontWeight: 600,
-            cursor: "pointer",
-          }}
-        >
-          {o.label}
-        </button>
-      ))}
-    </div>
-  );
-}
-
-/** A single soft, upward-swept chirp — one or two quick pitch-rising sine blips —
- *  synthesized fresh per call (never looped), so overlapping calls can't collide or cut
- *  each other short. Each oscillator is short-lived and self-stops via `.stop()`, so
- *  there's nothing here that needs tracking/teardown the way the looping ambient layers do. */
-function playBirdChirp(ctx: AudioContext) {
-  const now = ctx.currentTime;
-  const chirpCount = 1 + Math.floor(Math.random() * 2);
-  for (let i = 0; i < chirpCount; i++) {
-    const start = now + i * 0.16;
-    const osc = ctx.createOscillator();
-    osc.type = "sine";
-    const baseFreq = 2200 + Math.random() * 900;
-    osc.frequency.setValueAtTime(baseFreq, start);
-    osc.frequency.exponentialRampToValueAtTime(baseFreq * 1.4, start + 0.07);
-    osc.frequency.exponentialRampToValueAtTime(baseFreq * 0.85, start + 0.13);
-
-    const gain = ctx.createGain();
-    gain.gain.setValueAtTime(0.0001, start);
-    gain.gain.linearRampToValueAtTime(0.045, start + 0.02);
-    gain.gain.linearRampToValueAtTime(0.0001, start + 0.13);
-
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start(start);
-    osc.stop(start + 0.15);
-  }
-}
-
-/**
- * Real, self-contained ambient audio via the Web Audio API — no audio files (none exist in
- * this project, and fetching third-party ones isn't something to do unprompted). Six
- * choices, each synthesized fresh:
- *  - Focus: true binaural beats (two sine tones, one per ear via stereo panning, 10Hz
- *    apart — the low end of the "alpha" range commonly cited in focus-audio research;
- *    the evidence is mixed, but this is the standard technique such tracks use).
- *  - Chill: three soft detuned sine tones forming a slow pad chord.
- *  - Ambient: lowpass-filtered noise with a very slow LFO sweeping the filter cutoff, so
- *    the texture drifts rather than sitting static.
- *  - Rain: filtered looped noise.
- *  - Waves: filtered noise again, but with a slow LFO swelling the volume up and down to
- *    read as surf rather than rain's steadier patter.
- * A sparse, quiet bird-chirp layer rides on top of whichever of the five is playing — a
- * window-onto-a-garden touch for the library mood. Silence stays real silence (no chirps).
- * Everything is built and torn down per mount/mode change; nothing persists once the
- * component unmounts (break ends) or the mode changes back to silence.
- */
-function useAmbientSound(sound: Sound) {
-  const ctxRef = useRef<AudioContext | null>(null);
-  const nodesRef = useRef<AudioNode[]>([]);
-  const birdTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    function teardown() {
-      if (birdTimeoutRef.current !== null) {
-        clearTimeout(birdTimeoutRef.current);
-        birdTimeoutRef.current = null;
-      }
-      for (const n of nodesRef.current) {
-        try {
-          if ("stop" in n && typeof (n as AudioScheduledSourceNode).stop === "function") {
-            (n as AudioScheduledSourceNode).stop();
-          }
-          n.disconnect();
-        } catch {
-          // already stopped/disconnected — nothing to do
-        }
-      }
-      nodesRef.current = [];
-    }
-
-    teardown();
-    if (sound === "silence") return;
-
-    const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-    if (!AudioCtx) return;
-    if (!ctxRef.current) ctxRef.current = new AudioCtx();
-    const ctx = ctxRef.current;
-    if (ctx.state === "suspended") void ctx.resume();
-
-    function makeNoiseBuffer(seconds: number) {
-      const buffer = ctx.createBuffer(1, ctx.sampleRate * seconds, ctx.sampleRate);
-      const data = buffer.getChannelData(0);
-      for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
-      return buffer;
-    }
-
-    if (sound === "rain") {
-      const source = ctx.createBufferSource();
-      source.buffer = makeNoiseBuffer(2);
-      source.loop = true;
-
-      const filter = ctx.createBiquadFilter();
-      filter.type = "lowpass";
-      filter.frequency.value = 900;
-
-      const gain = ctx.createGain();
-      gain.gain.value = 0.05;
-
-      source.connect(filter);
-      filter.connect(gain);
-      gain.connect(ctx.destination);
-      source.start();
-
-      nodesRef.current = [source, filter, gain];
-    } else if (sound === "waves") {
-      const source = ctx.createBufferSource();
-      source.buffer = makeNoiseBuffer(3);
-      source.loop = true;
-
-      const filter = ctx.createBiquadFilter();
-      filter.type = "lowpass";
-      filter.frequency.value = 700;
-
-      const gain = ctx.createGain();
-      gain.gain.value = 0.05;
-
-      // Swell: a slow LFO riding on the gain itself so volume rises and falls like surf,
-      // rather than rain's steadier patter off the same noise-through-lowpass base.
-      const swell = ctx.createOscillator();
-      swell.frequency.value = 0.12; // roughly one swell every ~8 seconds
-      const swellGain = ctx.createGain();
-      swellGain.gain.value = 0.035;
-      swell.connect(swellGain);
-      swellGain.connect(gain.gain);
-
-      source.connect(filter);
-      filter.connect(gain);
-      gain.connect(ctx.destination);
-      source.start();
-      swell.start();
-
-      nodesRef.current = [source, filter, gain, swell, swellGain];
-    } else if (sound === "ambient") {
-      const source = ctx.createBufferSource();
-      source.buffer = makeNoiseBuffer(4);
-      source.loop = true;
-
-      const filter = ctx.createBiquadFilter();
-      filter.type = "lowpass";
-      filter.frequency.value = 500;
-
-      // Very slow LFO sweeping the cutoff — the texture drifts instead of sitting static,
-      // which is what separates "ambient" from just quieter rain.
-      const lfo = ctx.createOscillator();
-      lfo.frequency.value = 0.05;
-      const lfoGain = ctx.createGain();
-      lfoGain.gain.value = 250;
-      lfo.connect(lfoGain);
-      lfoGain.connect(filter.frequency);
-
-      const gain = ctx.createGain();
-      gain.gain.value = 0.04;
-
-      source.connect(filter);
-      filter.connect(gain);
-      gain.connect(ctx.destination);
-      source.start();
-      lfo.start();
-
-      nodesRef.current = [source, filter, lfo, lfoGain, gain];
-    } else if (sound === "chill") {
-      const freqs = [130.81, 164.81, 196.0]; // a soft C3-E3-G3 pad
-      const master = ctx.createGain();
-      master.gain.value = 0.05;
-      master.connect(ctx.destination);
-
-      const lfo = ctx.createOscillator();
-      lfo.frequency.value = 0.15;
-      const lfoGain = ctx.createGain();
-      lfoGain.gain.value = 0.015;
-      lfo.connect(lfoGain);
-      lfoGain.connect(master.gain);
-      lfo.start();
-
-      const oscNodes: AudioNode[] = [master, lfo, lfoGain];
-      for (const f of freqs) {
-        const osc = ctx.createOscillator();
-        osc.type = "sine";
-        osc.frequency.value = f;
-        const g = ctx.createGain();
-        g.gain.value = 0.6;
-        osc.connect(g);
-        g.connect(master);
-        osc.start();
-        oscNodes.push(osc, g);
-      }
-      nodesRef.current = oscNodes;
-    } else if (sound === "focus") {
-      // Binaural beats: 200Hz in the left ear, 210Hz in the right — the brain perceives a
-      // 10Hz "beat" that neither ear actually hears alone. Needs stereo (headphones or
-      // real stereo speakers) to work as intended; on a single mono speaker it just
-      // sounds like two close, faintly warbling tones, which is still fine as ambience.
-      const left = ctx.createOscillator();
-      left.type = "sine";
-      left.frequency.value = 200;
-      const right = ctx.createOscillator();
-      right.type = "sine";
-      right.frequency.value = 210;
-
-      const leftPan = ctx.createStereoPanner();
-      leftPan.pan.value = -1;
-      const rightPan = ctx.createStereoPanner();
-      rightPan.pan.value = 1;
-
-      const gain = ctx.createGain();
-      gain.gain.value = 0.045;
-
-      left.connect(leftPan);
-      right.connect(rightPan);
-      leftPan.connect(gain);
-      rightPan.connect(gain);
-      gain.connect(ctx.destination);
-      left.start();
-      right.start();
-
-      nodesRef.current = [left, right, leftPan, rightPan, gain];
-    }
-
-    // Bird chirps: a soft, sparse layer under whichever track is chosen above — reads as
-    // an open window near a garden, not a competing element.
-    function scheduleBird() {
-      const delay = 6000 + Math.random() * 9000;
-      birdTimeoutRef.current = setTimeout(() => {
-        playBirdChirp(ctx);
-        scheduleBird();
-      }, delay);
-    }
-    scheduleBird();
-
-    return teardown;
-  }, [sound]);
-
-  // Full context close on unmount (break ends) — not just node teardown.
-  useEffect(() => {
-    return () => {
-      ctxRef.current?.close().catch(() => {});
-      ctxRef.current = null;
-    };
-  }, []);
 }
