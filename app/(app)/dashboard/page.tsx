@@ -201,7 +201,8 @@ export default function DashboardPage() {
       <div style={{ marginTop: 36, background: "#0A0A0A", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 20, padding: 28 }}>
         <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 6, textAlign: "center" }}>Choose your session mode</h2>
         <p style={{ color: "#7a7d84", fontSize: 14, marginBottom: 22, textAlign: "center" }}>
-          Every mode runs on the same Locked In Mode enforcement underneath — modes just change the structure.
+          Tap a mode to set it up, then lock in. Every mode runs on the same enforcement underneath —
+          they just change the structure around it. Not sure which one? Custom is the flexible default.
         </p>
 
         <SessionModeFlow

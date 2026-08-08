@@ -328,11 +328,32 @@ function ModeCard({ mode, onClick }: { mode: (typeof ALL_MODE_CARDS)[number]; on
         variants={{ rest: { borderColor: "#26262b" }, hover: { borderColor: `${mode.accent}88` } }}
         style={{ position: "absolute", inset: 0, borderRadius: 16, border: "1px solid transparent", pointerEvents: "none" }}
       />
+      {mode.badge && (
+        <span
+          style={{
+            position: "absolute",
+            top: 14,
+            right: 14,
+            background: "rgba(245,158,11,0.14)",
+            border: "1px solid rgba(245,158,11,0.4)",
+            color: "#F59E0B",
+            fontSize: 10,
+            fontWeight: 700,
+            letterSpacing: "0.03em",
+            padding: "4px 9px",
+            borderRadius: 999,
+            whiteSpace: "nowrap",
+          }}
+        >
+          {mode.badge}
+        </span>
+      )}
       <div style={{ position: "relative", fontSize: 28 }}>{mode.emoji}</div>
       <div style={{ position: "relative", color: "#fff", fontWeight: 700, fontSize: 16, marginTop: 10 }}>{mode.name}</div>
       <div style={{ position: "relative", color: "#7a7d84", fontSize: 13, marginTop: 6, lineHeight: 1.45 }}>{mode.tagline}</div>
-      <div style={{ position: "relative", color: "#5b5e66", fontSize: 11, marginTop: 12, fontWeight: 600, letterSpacing: "0.04em", textTransform: "uppercase" }}>
-        {mode.typicalDuration}
+      <div style={{ position: "relative", display: "flex", alignItems: "center", gap: 10, marginTop: 12, flexWrap: "wrap" }}>
+        <span style={{ color: "#5b5e66", fontSize: 11, fontWeight: 600, letterSpacing: "0.04em", textTransform: "uppercase" }}>{mode.typicalDuration}</span>
+        {mode.requirement && <span style={{ color: "#f59e0b99", fontSize: 11, fontWeight: 600 }}>· {mode.requirement}</span>}
       </div>
     </motion.button>
   );

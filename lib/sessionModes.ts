@@ -14,12 +14,18 @@ export type ModeDefinition = {
   tagline: string;
   typicalDuration: string;
   accent: string; // hover accent — "a whisper, not a rainbow" per spec
+  /** Small pill shown on the card itself, e.g. "Recommended" — for steering a first-time,
+   *  not-sure-what-to-pick visitor toward the option that needs no prior setup. */
+  badge?: string;
+  /** A prerequisite the card can't satisfy on its own (e.g. Group Study needs an existing
+   *  friend group) — shown right on the card so clicking into it isn't a dead end. */
+  requirement?: string;
 };
 
 export const SESSION_MODES: ModeDefinition[] = [
   { id: "pomodoro", name: "Pomodoro Sprints", emoji: "🍅", tagline: "25 min focus, 5 min break, repeat.", typicalDuration: "~100 min (4 cycles)", accent: "#EF4444" },
   { id: "exam_cram", name: "Exam Cram", emoji: "📚", tagline: "Longer stretch. Higher stakes. No easy breaks.", typicalDuration: "2–4 hours", accent: "#D97706" },
-  { id: "group_study", name: "Group Study", emoji: "👥", tagline: "Lock in together. Stay accountable.", typicalDuration: "Set by you", accent: "#3B82F6" },
+  { id: "group_study", name: "Group Study", emoji: "👥", tagline: "Lock in together. Stay accountable.", typicalDuration: "Set by you", accent: "#3B82F6", requirement: "Requires a friend group" },
   { id: "all_nighter", name: "All Nighter", emoji: "🌙", tagline: "Long haul session. Built-in rest reminders.", typicalDuration: "4+ hours", accent: "#4F46E5" },
   { id: "deep_focus", name: "Deep Focus", emoji: "🎯", tagline: "One task. Zero interruptions. Maximum lock.", typicalDuration: "90 min, fixed", accent: "#F59E0B" },
 ];
@@ -31,9 +37,15 @@ export const CUSTOM_MODE: ModeDefinition = {
   tagline: "Pick your own duration. Manual breaks via Break Gates.",
   typicalDuration: "Set by you",
   accent: "#9CA3AF",
+  badge: "Recommended",
 };
 
-export const ALL_MODE_CARDS: ModeDefinition[] = [...SESSION_MODES, CUSTOM_MODE];
+// Custom leads — it's the option with no prior setup and nothing to decide besides a
+// duration, so it's the best default for a first-time or not-sure-what-to-pick visitor.
+// The web app's dashboard grid reads this order directly; the landing page's marketing
+// carousel (components/landing/ModesCarousel.tsx) keeps its own separate copy and isn't
+// affected by this ordering.
+export const ALL_MODE_CARDS: ModeDefinition[] = [CUSTOM_MODE, ...SESSION_MODES];
 
 export function getModeDefinition(mode: SessionMode): ModeDefinition {
   return ALL_MODE_CARDS.find((m) => m.id === mode) ?? CUSTOM_MODE;
