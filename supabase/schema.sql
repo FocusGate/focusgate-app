@@ -562,3 +562,30 @@ alter table public.roadmap_signups enable row level security;
 -- as the waitlist table above.
 drop policy if exists "roadmap_signups insert anyone" on public.roadmap_signups;
 create policy "roadmap_signups insert anyone" on public.roadmap_signups for insert with check (true);
+
+-- ---------- Live break/pause state: single source of truth for web app + extension ----------
+-- Both surfaces used to track "currently on a break" purely in their own local state — React
+-- state on the web app (LockedInOverlay.tsx), chrome.storage.local on the extension
+-- (background.js) — with nothing tying them together. Starting a break on one was invisible
+-- to the other, and The Lounge only ever existed on the web app. These columns on the
+-- session's own row make Supabase that shared source of truth: whichever surface starts a
+-- break writes here, and both read from here — the web app via Realtime (below), the
+-- extension via polling (a service worker can't reliably hold a persistent Realtime
+-- WebSocket open across Chrome's MV3 idle-suspension, so background.js polls instead; see
+-- extension/background.js's syncFromDashboard/mergeRemotePause).
+alter table public.sessions add column if not exists pause_until timestamptz;
+alter table public.sessions add column if not exists pause_type text check (pause_type in ('break', 'auto'));
+alter table public.sessions add column if not exists pause_break_note_id uuid references public.break_notes (id) on delete set null;
+alter table public.sessions add column if not exists pause_requested_seconds integer;
+alter table public.sessions add column if not exists pause_skippable boolean not null default true;
+alter table public.sessions add column if not exists pause_reminder_text text;
+-- Denormalized alongside pause_break_note_id rather than joined on read — both the web
+-- app's Realtime payload and the extension's poll response need the note text directly,
+-- with no second round trip to break_notes just to display it.
+alter table public.sessions add column if not exists pause_note_text text;
+
+-- Realtime delivery so the web app's own open tab reflects a break started from the Chrome
+-- extension (or ended there) within about a second, not on next poll — same pattern as
+-- group_violations above. Requires Realtime enabled on the project (Database →
+-- Replication); this line alone silently no-ops if that project-level toggle is off.
+alter publication supabase_realtime add table public.sessions;

@@ -22,6 +22,15 @@ const MAX_BREAK_NOTE_WORDS = 10; // mirrors lib/stats.ts — must match backgrou
 
 const el = (id) => document.getElementById(id);
 
+/** The break note/reminder is the first user-authored (or at least user-adjacent) text
+ *  this popup ever renders via innerHTML — everything else here is either static markup or
+ *  values it fully controls itself. Escapes it the plain DOM way rather than trusting it. */
+function escapeHtml(str) {
+  const div = document.createElement("div");
+  div.textContent = str;
+  return div.innerHTML;
+}
+
 // The only elements that live in popup.html itself — everything else is injected.
 const headerBadgeEl = el("header-badge");
 const syncWarningEl = el("sync-warning");
@@ -161,16 +170,21 @@ function renderActive() {
 
 // Warm, dim-lit palette — deliberately not the gold/black Locked In look, matching The
 // Lounge on the dashboard side. This popup is too small for the full illustrated scene,
-// but the color shift + softer copy carries the same "permitted rest" mood.
-function renderPaused() {
+// but the color shift + softer copy carries the same "permitted rest" mood. Also shows the
+// break's own note (or, for an automatic Pomodoro/All Nighter break, its reminder text) —
+// this screen used to never surface *why* the break was taken, unlike the dashboard's Lounge.
+function renderPaused(pause) {
   hideFlowError();
   rootEl.className = "view popup__lounge";
+  const reasonText = pause?.noteText ? `“${pause.noteText}”` : pause?.reminderText || "";
+  const reasonHtml = reasonText ? `<p class="popup__lounge-note">${escapeHtml(reasonText)}</p>` : "";
   rootEl.innerHTML = `
     <div class="popup__status popup__status--lounge">
       <div class="popup__status-label">The Lounge</div>
       <div class="popup__clock popup__clock--lounge" id="paused-countdown">--:--</div>
       <div class="popup__status-hint">Sites stay blocked — this is just a mental pause. Take a breath.</div>
     </div>
+    ${reasonHtml}
     <button class="popup__link-btn popup__lounge-return" id="btn-end-break-early">I&rsquo;m ready, back to focus</button>
   `;
   el("btn-end-break-early").addEventListener("click", async () => {
@@ -390,7 +404,7 @@ function render(session, remainingMs, auth) {
     setHeaderBadge("ON BREAK", "break");
     if (currentState !== "paused") {
       currentState = "paused";
-      renderPaused();
+      renderPaused(session.pause);
     }
     const countdownEl = el("paused-countdown");
     if (countdownEl) countdownEl.textContent = formatRemaining(remainingMs);
@@ -424,6 +438,18 @@ async function refreshStatus() {
   render(session, remainingMs, auth);
 }
 
+// Network-backed — same SYNC_NOW the service worker's own alarm tick uses, just run much
+// more often while this popup is actually open (a service worker can't do this on its own:
+// Chrome clamps MV3 alarms to roughly a 1-minute minimum in production, so *its* pickup of
+// a dashboard-started break is bounded by that — this is what gets the popup, specifically,
+// to reflect a break started on the dashboard within a couple of seconds instead).
+async function refreshFast() {
+  if (inFlow) return;
+  const { session, remainingMs } = await chrome.runtime.sendMessage({ type: "SYNC_NOW" });
+  const { auth } = await chrome.runtime.sendMessage({ type: "GET_AUTH" });
+  render(session, remainingMs, auth);
+}
+
 authSignOutBtn.addEventListener("click", async () => {
   await chrome.runtime.sendMessage({ type: "SIGN_OUT" });
   await refreshStatus();
@@ -442,8 +468,10 @@ authSignOutBtn.addEventListener("click", async () => {
 })();
 
 const pollHandle = setInterval(refreshStatus, 1000);
+const fastSyncPollHandle = setInterval(refreshFast, 2000);
 const syncWarningPollHandle = setInterval(refreshSyncWarning, 5000);
 window.addEventListener("unload", () => {
   clearInterval(pollHandle);
+  clearInterval(fastSyncPollHandle);
   clearInterval(syncWarningPollHandle);
 });

@@ -1110,6 +1110,130 @@ export async function updateBreakNoteActualDuration(breakNoteId: string, actualS
   if (error) throw error;
 }
 
+// ---------- live break/pause state (shared source of truth with the extension) ----------
+// A break used to be pure local state — React state here, chrome.storage.local on the
+// extension — so starting one on either surface was invisible to the other, and reloading
+// mid-break lost it entirely. These functions read/write the pause_* columns on the
+// session's own row instead, which both surfaces now treat as the single source of truth
+// (see LockedInOverlay.tsx's applyRemotePause and extension/background.js's
+// mergeRemotePause).
+
+export type SessionPause = {
+  pauseUntil: string | null;
+  pauseType: "break" | "auto" | null;
+  breakNoteId: string | null;
+  requestedSeconds: number | null;
+  skippable: boolean;
+  reminderText: string | null;
+  noteText: string | null;
+};
+
+type SessionPauseColumns = {
+  pause_until: string | null;
+  pause_type: "break" | "auto" | null;
+  pause_break_note_id: string | null;
+  pause_requested_seconds: number | null;
+  pause_skippable: boolean;
+  pause_reminder_text: string | null;
+  pause_note_text: string | null;
+};
+
+const PAUSE_SELECT = "pause_until, pause_type, pause_break_note_id, pause_requested_seconds, pause_skippable, pause_reminder_text, pause_note_text";
+
+function mapPauseRow(row: SessionPauseColumns): SessionPause {
+  return {
+    pauseUntil: row.pause_until,
+    pauseType: row.pause_type,
+    breakNoteId: row.pause_break_note_id,
+    requestedSeconds: row.pause_requested_seconds,
+    skippable: row.pause_skippable,
+    reminderText: row.pause_reminder_text,
+    noteText: row.pause_note_text,
+  };
+}
+
+/** Current pause state for one session — call on mount so a page load mid-break (or a
+ *  break that started on the extension moments before this tab opened) is picked up
+ *  immediately, without waiting for the first Realtime event. */
+export async function getSessionPause(sessionId: string): Promise<SessionPause> {
+  const { data, error } = await supabase.from("sessions").select(PAUSE_SELECT).eq("id", sessionId).single();
+  if (error) throw error;
+  return mapPauseRow(data as SessionPauseColumns);
+}
+
+/** Starts (or replaces) the live pause on a session — writing this is what a break
+ *  "starting" *means* now, from either surface's point of view. Blocking by design (every
+ *  call site awaits and surfaces a failure rather than falling back to a local-only break):
+ *  a break that only exists in this tab's React state is exactly the split-brain state this
+ *  whole mechanism exists to eliminate. */
+export async function startSessionPause(
+  sessionId: string,
+  opts: {
+    untilIso: string;
+    type: "break" | "auto";
+    breakNoteId: string | null;
+    requestedSeconds: number;
+    skippable: boolean;
+    noteText: string;
+    reminderText?: string | null;
+  }
+): Promise<void> {
+  const { error } = await supabase
+    .from("sessions")
+    .update({
+      pause_until: opts.untilIso,
+      pause_type: opts.type,
+      pause_break_note_id: opts.breakNoteId,
+      pause_requested_seconds: opts.requestedSeconds,
+      pause_skippable: opts.skippable,
+      pause_reminder_text: opts.reminderText ?? null,
+      pause_note_text: opts.noteText,
+    })
+    .eq("id", sessionId);
+  if (error) throw error;
+}
+
+/** Clears the live pause — a break "ending," from either surface, whichever one actually
+ *  triggered it (naturally running out, or an early "back to focus"). The *other* surface
+ *  never calls this on its own behalf; it only reacts to seeing pause_until go null (see
+ *  applyRemotePause), so actual-duration reporting to break_notes never double-writes. */
+export async function endSessionPause(sessionId: string): Promise<void> {
+  const { error } = await supabase
+    .from("sessions")
+    .update({
+      pause_until: null,
+      pause_type: null,
+      pause_break_note_id: null,
+      pause_requested_seconds: null,
+      pause_skippable: true,
+      pause_reminder_text: null,
+      pause_note_text: null,
+    })
+    .eq("id", sessionId);
+  if (error) throw error;
+}
+
+/** Live pause-state updates for one session — the web app's own tab reflecting a break
+ *  started (or ended) from the Chrome extension within about a second. Same Realtime
+ *  pattern as subscribeToGroupViolations. Returns an unsubscribe function; callers must
+ *  invoke it on unmount. */
+export function subscribeToSessionPause(sessionId: string, onChange: (pause: SessionPause) => void): () => void {
+  const channel = supabase
+    .channel(`session-pause-${sessionId}`)
+    .on(
+      "postgres_changes",
+      { event: "UPDATE", schema: "public", table: "sessions", filter: `id=eq.${sessionId}` },
+      (payload) => {
+        onChange(mapPauseRow(payload.new as SessionPauseColumns));
+      }
+    )
+    .subscribe();
+
+  return () => {
+    supabase.removeChannel(channel);
+  };
+}
+
 /** How many (non-emergency) breaks have already been taken during this specific
  *  session — the count that maxBreaksForDuration()'s cap is checked against. */
 export async function getBreakNoteCountForSession(sessionId: string): Promise<number> {

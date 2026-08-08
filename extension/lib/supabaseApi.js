@@ -107,17 +107,79 @@ export async function fetchActiveSession(accessToken, userId) {
 }
 
 /**
- * Checks whether a specific session the extension is currently mirroring has since been
- * completed from elsewhere (e.g. the dashboard tab's own timer finished it) — the
- * extension needs to lift its local block the moment that happens, without re-completing
- * a row that's already done.
+ * Combined status check for a session the extension is currently mirroring: whether it's
+ * been completed from elsewhere (e.g. the dashboard tab's own timer finished it — the
+ * extension needs to lift its local block the moment that happens, without re-completing a
+ * row that's already done), and its live pause state. Both need checking on every sync, so
+ * this is one round trip instead of two.
+ *
+ * Pause is the same shared source of truth the web dashboard's LockedInOverlay reads via
+ * Supabase Realtime (lib/supabase.ts's subscribeToSessionPause) — this extension polls it
+ * instead. A service worker can't reliably hold a persistent Realtime WebSocket connection
+ * open across Chrome's MV3 idle-suspension (it gets torn down and the subscription lost),
+ * so background.js re-checks this on every alarm tick, and popup.js polls it directly and
+ * much more often while the popup itself is open (see popup.js's SYNC_NOW interval).
  */
-export async function fetchSessionCompleted(accessToken, sessionId) {
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/sessions?id=eq.${sessionId}&select=completed`, {
-    headers: restHeaders(accessToken),
-  });
+export async function fetchSessionStatus(accessToken, sessionId) {
+  const res = await fetch(
+    `${SUPABASE_URL}/rest/v1/sessions?id=eq.${sessionId}&select=completed,pause_until,pause_type,pause_break_note_id,pause_requested_seconds,pause_skippable,pause_reminder_text,pause_note_text`,
+    { headers: restHeaders(accessToken) }
+  );
   const rows = await parseOrThrow(res);
-  return rows[0]?.completed ?? true; // treat a deleted/missing row as "no longer active"
+  const row = rows[0];
+  if (!row) return { completed: true, pause: null }; // treat a deleted/missing row as "no longer active"
+
+  const untilMs = row.pause_until ? new Date(row.pause_until).getTime() : null;
+  const pause =
+    untilMs !== null && untilMs > Date.now()
+      ? {
+          until: untilMs,
+          type: row.pause_type,
+          breakNoteId: row.pause_break_note_id,
+          requestedSeconds: row.pause_requested_seconds,
+          skippable: row.pause_skippable,
+          reminderText: row.pause_reminder_text,
+          noteText: row.pause_note_text,
+        }
+      : null;
+
+  return { completed: row.completed, pause };
+}
+
+/** Writes (or clears, when `pause` is null) the live pause state on a session's own row —
+ *  see fetchSessionStatus's doc comment for why this exists. Blocking by design at every
+ *  call site that *starts* a break (grantBreak): a break only this extension's local
+ *  storage knows about is exactly the split-brain state this mechanism replaces. Ending a
+ *  break (resolvePauseIfActive, END_BREAK_EARLY) stays best-effort, matching the existing
+ *  updateBreakNoteActualDuration calls right next to them — the local resume has already
+ *  happened by that point regardless. */
+export async function updateSessionPause(accessToken, sessionId, pause) {
+  const body =
+    pause === null
+      ? {
+          pause_until: null,
+          pause_type: null,
+          pause_break_note_id: null,
+          pause_requested_seconds: null,
+          pause_skippable: true,
+          pause_reminder_text: null,
+          pause_note_text: null,
+        }
+      : {
+          pause_until: pause.untilIso,
+          pause_type: pause.type,
+          pause_break_note_id: pause.breakNoteId,
+          pause_requested_seconds: pause.requestedSeconds,
+          pause_skippable: pause.skippable,
+          pause_reminder_text: pause.reminderText ?? null,
+          pause_note_text: pause.noteText ?? null,
+        };
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/sessions?id=eq.${sessionId}`, {
+    method: "PATCH",
+    headers: restHeaders(accessToken),
+    body: JSON.stringify(body),
+  });
+  await parseOrThrow(res);
 }
 
 /**

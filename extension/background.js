@@ -36,7 +36,7 @@ import {
   fetchBlockedSites,
   fetchUserPreferences,
   fetchActiveSession,
-  fetchSessionCompleted,
+  fetchSessionStatus,
   fetchEmergencyUnblocksUsedThisMonth,
   fetchBreakNoteCountForSession,
   insertEmergencyUnblock,
@@ -47,6 +47,7 @@ import {
   notifyGroupsOfInterruption,
   flushBlockedAttempts,
   updateBreakNoteActualDuration,
+  updateSessionPause,
 } from "./lib/supabaseApi.js";
 
 const TICK_ALARM = "focusgate-tick";
@@ -195,8 +196,16 @@ async function syncFromDashboard() {
 
   if (session?.active && session.remoteSessionId) {
     try {
-      const completed = await fetchSessionCompleted(accessToken, session.remoteSessionId);
-      if (completed) await endSession({ skipRemoteSync: true });
+      const status = await fetchSessionStatus(accessToken, session.remoteSessionId);
+      if (status.completed) {
+        await endSession({ skipRemoteSync: true });
+        await clearLastSyncError();
+        return;
+      }
+      // A break started (or ended) on the dashboard needs to pause (or resume) this
+      // extension's own countdown exactly like one started here would — see
+      // mergeRemotePause's own comment for why this doesn't just trust local state.
+      await mergeRemotePause(session, status.pause);
       await clearLastSyncError();
     } catch (err) {
       await setLastSyncError(describeError(err));
@@ -253,6 +262,45 @@ function describeError(err) {
 }
 
 /**
+ * Reconciles the locally-mirrored pause against Supabase's copy — the shared source of
+ * truth a break started on either the dashboard or this extension writes to. Only
+ * *adopts* changes here; a pause this extension itself started or ended already updated
+ * Supabase directly (grantBreak, resolvePauseIfActive, END_BREAK_EARLY) and doesn't need
+ * round-tripping back through this function to take effect locally.
+ */
+async function mergeRemotePause(session, remotePause) {
+  const localUntil = session.pause?.until ?? null;
+  const remoteUntil = remotePause?.until ?? null;
+  if (remoteUntil === localUntil) return; // already in sync — the common case, every tick
+
+  if (remoteUntil) {
+    // A new (or different) pause is active remotely — adopt it, whether it started on the
+    // dashboard or on a different device running this same extension.
+    const updated = {
+      ...session,
+      pause: {
+        type: remotePause.type,
+        until: remoteUntil,
+        breakNoteId: remotePause.breakNoteId,
+        requestedSeconds: remotePause.requestedSeconds,
+        noteText: remotePause.noteText ?? "",
+        reminderText: remotePause.reminderText ?? null,
+      },
+    };
+    await setSession(updated);
+    updateBadgePaused(updated);
+  } else if (localUntil) {
+    // The pause that was active locally has been cleared remotely (ended from the
+    // dashboard) — adopt the clear without re-reporting actual duration; whichever
+    // surface actually ended it already did that.
+    const trustedNow = await getTrustedStartTime();
+    const resumed = { ...session, pause: null, lastCheck: { local: Date.now(), network: trustedNow } };
+    await setSession(resumed);
+    updateBadge(resumed);
+  }
+}
+
+/**
  * If the session is paused (on a break), checks — using trusted network time — whether
  * the pause window is over, and clears the pause if so. Returns the (possibly updated)
  * session either way. Blocking itself is untouched here on purpose: breaks no longer lift
@@ -273,11 +321,14 @@ async function resolvePauseIfActive(session) {
 
   // Best-effort: the break ran its full requested course. Failure here must never block
   // the resume above, which has already happened by this point.
-  if (session.pause.breakNoteId) {
-    const auth = await getAuth();
-    const accessToken = auth && (await getValidAccessToken());
-    if (accessToken) {
+  const auth = await getAuth();
+  const accessToken = auth && (await getValidAccessToken());
+  if (accessToken) {
+    if (session.pause.breakNoteId) {
       updateBreakNoteActualDuration(accessToken, session.pause.breakNoteId, session.pause.requestedSeconds ?? 0).catch(() => {});
+    }
+    if (session.remoteSessionId) {
+      updateSessionPause(accessToken, session.remoteSessionId, null).catch(() => {});
     }
   }
 
@@ -402,7 +453,27 @@ async function grantBreak(noteText, breakNotesEnabled, requestedSeconds) {
   }
 
   const trustedNow = await getTrustedStartTime();
-  const updated = { ...session, pause: { type: "break", until: trustedNow + seconds * 1000, breakNoteId, requestedSeconds: seconds } };
+  const until = trustedNow + seconds * 1000;
+
+  // Blocking by design: writing the shared pause state to Supabase is what a break
+  // "starting" *means* now — a break only this extension's local storage knows about is
+  // exactly the split-brain state this mechanism replaces (see updateSessionPause's own
+  // doc comment). If this fails, nothing local changes either, and the user can retry.
+  try {
+    await updateSessionPause(accessToken, session.remoteSessionId, {
+      untilIso: new Date(until).toISOString(),
+      type: "break",
+      breakNoteId,
+      requestedSeconds: seconds,
+      skippable: true,
+      noteText: noteText ?? "",
+      reminderText: null,
+    });
+  } catch {
+    return { ok: false, error: "Couldn't reach the dashboard — check your connection and try again." };
+  }
+
+  const updated = { ...session, pause: { type: "break", until, breakNoteId, requestedSeconds: seconds, noteText: noteText ?? "", reminderText: null } };
   await setSession(updated);
   updateBadgePaused(updated);
   return { ok: true, seconds };
@@ -613,10 +684,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         await setSession(resumed);
         updateBadge(resumed);
 
-        if (breakNoteId) {
-          const auth = await getAuth();
-          const accessToken = auth && (await getValidAccessToken());
-          if (accessToken) updateBreakNoteActualDuration(accessToken, breakNoteId, actualUsed).catch(() => {});
+        // Best-effort, same as resolvePauseIfActive's natural-expiry path — the local
+        // resume above has already happened, so a failure here just means the dashboard
+        // (or another device) learns about it a bit later, on its own next sync.
+        const auth = await getAuth();
+        const accessToken = auth && (await getValidAccessToken());
+        if (accessToken) {
+          if (breakNoteId) updateBreakNoteActualDuration(accessToken, breakNoteId, actualUsed).catch(() => {});
+          if (session.remoteSessionId) updateSessionPause(accessToken, session.remoteSessionId, null).catch(() => {});
         }
         sendResponse({ ok: true });
         break;

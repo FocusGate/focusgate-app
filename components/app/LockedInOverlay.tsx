@@ -12,7 +12,16 @@ import TheLounge from "@/components/app/session/TheLounge";
 import GroupPresenceRow from "@/components/app/session/GroupPresenceRow";
 import PomodoroProgress from "@/components/app/session/PomodoroProgress";
 import ModeCompleteExtra from "@/components/app/session/ModeCompleteExtra";
-import { updateBreakNoteActualDuration, reportGroupViolation, type NewlyUnlockedBadge } from "@/lib/supabase";
+import {
+  updateBreakNoteActualDuration,
+  reportGroupViolation,
+  getSessionPause,
+  startSessionPause,
+  endSessionPause,
+  subscribeToSessionPause,
+  type SessionPause,
+  type NewlyUnlockedBadge,
+} from "@/lib/supabase";
 import {
   type SessionMode,
   type ModeConfig,
@@ -80,11 +89,66 @@ export default function LockedInOverlay({
   const [showEmergencyFlow, setShowEmergencyFlow] = useState(false);
 
   const paused = breakState !== null;
+  const breakStateRef = useRef<BreakState | null>(null);
+  useEffect(() => {
+    breakStateRef.current = breakState;
+  }, [breakState]);
 
   // Deep Focus offers no Break Gates at all; Pomodoro's breaks are fully automatic, so a
   // manual request alongside them would just fight the cadence — both hide the button
   // entirely rather than disabling it.
   const manualBreaksAllowed = mode !== "deep_focus" && mode !== "pomodoro";
+
+  // A break started on the Chrome extension (or a page reload mid-break) needs to show up
+  // here without this tab having triggered it locally — Supabase's sessions row is the
+  // shared source of truth both surfaces read from now, not just this component's own
+  // state. `applyRemotePause` is deliberately idempotent against *this tab's own* writes:
+  // when handleBreakGranted/triggerAutoBreak below set breakState optimistically and then
+  // write to Supabase, the Realtime echo of that same write arrives here too, but the
+  // "already showing this pause" guard makes it a no-op rather than a restart.
+  function applyRemotePause(pause: SessionPause) {
+    const untilMs = pause.pauseUntil ? new Date(pause.pauseUntil).getTime() : null;
+    const isActive = untilMs !== null && untilMs > Date.now();
+
+    if (isActive) {
+      if (breakStateRef.current) return; // already showing this (or another) pause locally
+      // A pause just became authoritative — if this tab still has its own break-request
+      // modal open (e.g. the extension won the race and started one first), close it
+      // rather than risk rendering both it and The Lounge at once.
+      setShowBreakFlow(false);
+      const totalSeconds = pause.requestedSeconds ?? Math.max(0, Math.round((untilMs! - Date.now()) / 1000));
+      const secondsLeft = Math.max(0, Math.round((untilMs! - Date.now()) / 1000));
+      setBreakState({
+        secondsLeft,
+        totalSeconds,
+        note: pause.noteText ?? "",
+        breakNoteId: pause.breakNoteId ?? "",
+        autoTriggered: pause.pauseType === "auto",
+        skippable: pause.skippable,
+        reminderText: pause.reminderText ?? undefined,
+      });
+    } else if (breakStateRef.current) {
+      // Cleared remotely (ended from the extension, or from this same account elsewhere) —
+      // exit the visual without re-reporting actual duration; whichever surface actually
+      // ended it already did that via endBreak below.
+      exitBreakVisual();
+    }
+  }
+
+  useEffect(() => {
+    let cancelled = false;
+    getSessionPause(sessionId)
+      .then((p) => {
+        if (!cancelled) applyRemotePause(p);
+      })
+      .catch(() => {});
+    const unsubscribe = subscribeToSessionPause(sessionId, applyRemotePause);
+    return () => {
+      cancelled = true;
+      unsubscribe();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- applyRemotePause reads current state via breakStateRef, not a dependency; sessionId is stable for the life of a session
+  }, [sessionId]);
 
   const pomodoroCycles = (modeConfig as PomodoroConfig | null)?.cycles ?? POMODORO_DEFAULT_CYCLES;
   const [pomodoroCyclesDone, setPomodoroCyclesDone] = useState(0);
@@ -130,6 +194,7 @@ export default function LockedInOverlay({
       triggerAutoBreak(ALL_NIGHTER_CHECKPOINT_BREAK_MINUTES * 60, false, reminder);
     }
     autoBreakThresholdRef.current -= autoBreakStepRef.current;
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- triggerAutoBreak now also closes over sessionId (writing the shared pause state), which is stable for the life of a session — not a real missing dependency
   }, [seconds, paused, mode]);
 
   // Break countdown — sites stay blocked, but the main session clock doesn't tick.
@@ -142,29 +207,53 @@ export default function LockedInOverlay({
   useEffect(() => {
     if (!breakState || breakState.secondsLeft > 0) return;
     endBreak(breakState, 0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- endBreak now also closes over sessionId (clearing the shared pause state), which is stable for the life of a session — not a real missing dependency
   }, [breakState]);
 
   function triggerAutoBreak(seconds: number, skippable: boolean, reminderText?: string) {
     setBreakState({ secondsLeft: seconds, totalSeconds: seconds, note: "", breakNoteId: "", autoTriggered: true, skippable, reminderText });
+    // Best-effort, not blocking: a scheduled Pomodoro/All Nighter break happening locally
+    // even if this write fails is better than silently skipping the user's earned rest —
+    // unlike a manually *requested* break (BreakFlowModal), there's no user action to show
+    // an error against here, and the next successful sync corrects the drift.
+    const untilIso = new Date(Date.now() + seconds * 1000).toISOString();
+    startSessionPause(sessionId, {
+      untilIso,
+      type: "auto",
+      breakNoteId: null,
+      requestedSeconds: seconds,
+      skippable,
+      noteText: "",
+      reminderText: reminderText ?? null,
+    }).catch(() => {});
   }
 
   function handleBreakGranted(requestedSeconds: number, note: string, breakNoteId: string) {
+    // BreakFlowModal already wrote the shared pause state (blocking, with its own error
+    // handling) before calling this — this is purely the local optimistic UI update.
     setShowBreakFlow(false);
     setBreakState({ secondsLeft: requestedSeconds, totalSeconds: requestedSeconds, note, breakNoteId, autoTriggered: false, skippable: true });
+  }
+
+  function exitBreakVisual() {
+    setBreakState(null);
+    setShowBackToIt(true);
+    setTimeout(() => setShowBackToIt(false), 1700);
   }
 
   /** Ends the current break, whether it ran out naturally (secondsLeft already 0) or via
    *  "I'm ready, back to focus" (secondsLeft > 0). Reports the actual time used — best
    *  effort, wrapped so a network hiccup here can never block the session from resuming —
-   *  then plays the brief "Back to it." transition before the gold UI takes over again. */
+   *  clears the shared pause state (so the extension, or another tab, learns the break is
+   *  over within about a second), then plays the brief "Back to it." transition before the
+   *  gold UI takes over again. */
   function endBreak(state: BreakState, secondsLeftAtEnd: number) {
     const actualUsed = state.totalSeconds - secondsLeftAtEnd;
     if (state.breakNoteId) {
       updateBreakNoteActualDuration(state.breakNoteId, actualUsed).catch(() => {});
     }
-    setBreakState(null);
-    setShowBackToIt(true);
-    setTimeout(() => setShowBackToIt(false), 1700);
+    endSessionPause(sessionId).catch(() => {});
+    exitBreakVisual();
   }
 
   function handleEarlyReturn() {

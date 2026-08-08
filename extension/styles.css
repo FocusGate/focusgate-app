@@ -242,6 +242,15 @@ textarea:focus {
   text-shadow: 0 0 24px rgba(254, 243, 199, 0.3);
 }
 
+.popup__lounge-note {
+  margin: 14px 0 0;
+  color: var(--fg-lounge-taupe);
+  font-size: 12.5px;
+  font-style: italic;
+  line-height: 1.5;
+  text-align: center;
+}
+
 .popup__lounge-return {
   margin-top: 14px;
   display: inline-block;

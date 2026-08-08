@@ -8,6 +8,7 @@ import MemoryMatchGate from "./gates/MemoryMatchGate";
 import GeographyQuizGate from "./gates/GeographyQuizGate";
 import {
   saveBreakNote,
+  startSessionPause,
   getUserPreferences,
   getBreakNoteCountForSession,
   GATE_SECONDS_BY_DIFFICULTY,
@@ -62,6 +63,8 @@ export default function BreakFlowModal({
   const [requestedSeconds, setRequestedSeconds] = useState(DEFAULT_BREAK_SECONDS);
   const [noteText, setNoteText] = useState("");
   const [choice, setChoice] = useState<GateChoice | null>(null);
+  const [confirmingDuration, setConfirmingDuration] = useState(false);
+  const [durationError, setDurationError] = useState<string | null>(null);
 
   const maxBreaks = maxBreaksForDuration(sessionDurationMinutes);
 
@@ -115,9 +118,32 @@ export default function BreakFlowModal({
     }
   }
 
+  // The write below (startSessionPause) is what a break "starting" *means* now — both this
+  // tab and the Chrome extension read it as the shared source of truth, so unlike the
+  // note-save just above (best-effort; a lost note is a shame, not a correctness problem),
+  // this one is blocking: a failure here must not leave the user in a break only this tab
+  // knows about, which is exactly the split-brain state this whole mechanism replaces.
   async function handleDurationConfirm() {
+    if (confirmingDuration) return;
+    setConfirmingDuration(true);
+    setDurationError(null);
     const { id } = await saveBreakNote(userId, sessionId, noteText, requestedSeconds, false).catch(() => ({ id: "" }));
-    onGranted(requestedSeconds, noteText, id);
+    try {
+      const untilIso = new Date(Date.now() + requestedSeconds * 1000).toISOString();
+      await startSessionPause(sessionId, {
+        untilIso,
+        type: "break",
+        breakNoteId: id || null,
+        requestedSeconds,
+        skippable: true,
+        noteText,
+        reminderText: null,
+      });
+      onGranted(requestedSeconds, noteText, id);
+    } catch {
+      setConfirmingDuration(false);
+      setDurationError("Couldn't start your break — check your connection and try again.");
+    }
   }
 
   return (
@@ -255,6 +281,7 @@ export default function BreakFlowModal({
             </div>
             <button
               onClick={handleDurationConfirm}
+              disabled={confirmingDuration}
               style={{
                 marginTop: 22,
                 width: "100%",
@@ -265,11 +292,13 @@ export default function BreakFlowModal({
                 borderRadius: 999,
                 fontSize: 15,
                 fontWeight: 800,
-                cursor: "pointer",
+                cursor: confirmingDuration ? "default" : "pointer",
+                opacity: confirmingDuration ? 0.7 : 1,
               }}
             >
-              Start My Break
+              {confirmingDuration ? "Starting…" : "Start My Break"}
             </button>
+            {durationError && <p style={{ color: "#f87171", fontSize: 13, marginTop: 12, textAlign: "center" }}>{durationError}</p>}
           </>
         )}
 
