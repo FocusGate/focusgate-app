@@ -52,10 +52,21 @@ export async function signIn(email, password) {
   return auth;
 }
 
+// Coalesces concurrent refresh attempts into one shared in-flight promise. Popup.js's
+// fast SYNC_NOW poll (every 2s while open) and the background alarm tick can both notice
+// the token's about to expire within the same window; without this, each would
+// independently call refreshSession() with the *same* refresh token. Supabase rotates
+// refresh tokens on use — the first call to land invalidates it for every other
+// concurrent caller, which then fails even though the refresh genuinely succeeded.
+let refreshInFlight = null;
+
 /**
  * Returns a valid access token, transparently refreshing it first if it's expired or
- * about to expire. Returns null if signed out or the refresh token itself is dead (in
- * which case the stored auth is cleared, so the popup falls back to the sign-in form).
+ * about to expire. Returns null if signed out, if the refresh token itself is dead (in
+ * which case the stored auth is cleared, so the popup falls back to the sign-in form), or
+ * if the refresh attempt simply couldn't reach Supabase (network hiccup — the stored auth
+ * is left alone in that case, since a failed *request* says nothing about whether the
+ * refresh token itself is still good; the next call just tries again).
  */
 export async function getValidAccessToken() {
   const auth = await getAuth();
@@ -64,18 +75,33 @@ export async function getValidAccessToken() {
   const EXPIRY_BUFFER_MS = 60_000;
   if (Date.now() < auth.expiresAt - EXPIRY_BUFFER_MS) return auth.accessToken;
 
-  try {
-    const data = await refreshSession(auth.refreshToken);
-    const refreshed = {
-      ...auth,
-      accessToken: data.access_token,
-      refreshToken: data.refresh_token,
-      expiresAt: Date.now() + data.expires_in * 1000,
-    };
-    await setAuth(refreshed);
-    return refreshed.accessToken;
-  } catch {
-    await clearAuth();
-    return null;
-  }
+  if (refreshInFlight) return refreshInFlight;
+
+  refreshInFlight = (async () => {
+    try {
+      const data = await refreshSession(auth.refreshToken);
+      const refreshed = {
+        ...auth,
+        accessToken: data.access_token,
+        refreshToken: data.refresh_token,
+        expiresAt: Date.now() + data.expires_in * 1000,
+      };
+      await setAuth(refreshed);
+      return refreshed.accessToken;
+    } catch (err) {
+      // fetch() itself rejects with a TypeError when the request never completes at all
+      // (offline, DNS hiccup, connection reset) — there's no verdict from Supabase to act
+      // on, so leave the stored session alone and let the next attempt retry. Only an
+      // actual response *rejecting* the refresh token (parseOrThrow's Error, from a real
+      // HTTP error status) means the session is genuinely dead.
+      if (!(err instanceof TypeError)) {
+        await clearAuth();
+      }
+      return null;
+    } finally {
+      refreshInFlight = null;
+    }
+  })();
+
+  return refreshInFlight;
 }
