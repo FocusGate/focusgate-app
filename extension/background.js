@@ -20,6 +20,9 @@ import {
   getPendingBreakChallenge,
   setPendingBreakChallenge,
   clearPendingBreakChallenge,
+  getPendingGameAttempt,
+  setPendingGameAttempt,
+  clearPendingGameAttempt,
   getHasSynced,
   setHasSynced,
   getPendingBlockedAttempts,
@@ -632,18 +635,58 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         break;
       }
 
+      // Also returns any in-progress game attempt (see lib/storage.js) alongside the
+      // original request — challenge.js needs both to decide whether to resume an attempt
+      // already underway, treat one that expired while the tab was closed as a failure, or
+      // start fresh.
       case "GET_PENDING_BREAK_CHALLENGE": {
         const pending = await getPendingBreakChallenge();
-        sendResponse({ ok: !!pending, pending });
+        const gameAttempt = await getPendingGameAttempt();
+        sendResponse({ ok: !!pending, pending, gameAttempt });
+        break;
+      }
+
+      // A specific game just started (not the "choose your challenge" screen — picking
+      // isn't timed) — fixes this attempt's deadline so reopening the tab later can never
+      // extend it, only resume within whatever's left of it.
+      case "GAME_ATTEMPT_START": {
+        const deadlineAt = Date.now() + Math.max(0, message.seconds) * 1000;
+        await setPendingGameAttempt({ slug: message.slug, deadlineAt, state: message.state ?? null });
+        sendResponse({ ok: true, deadlineAt });
+        break;
+      }
+
+      // Board mutations (a card flip, a match resolving) — called often enough that this
+      // deliberately doesn't round-trip through getPendingGameAttempt() first; it just
+      // overwrites state for whichever slug/deadline is already stored, matching the one
+      // attempt that's ever live at a time.
+      case "GAME_ATTEMPT_UPDATE": {
+        const current = await getPendingGameAttempt();
+        if (!current || current.slug !== message.slug) {
+          sendResponse({ ok: false, error: "No matching attempt in progress." });
+          break;
+        }
+        await setPendingGameAttempt({ ...current, state: message.state });
+        sendResponse({ ok: true });
+        break;
+      }
+
+      case "GAME_ATTEMPT_CLEAR": {
+        await clearPendingGameAttempt();
+        sendResponse({ ok: true });
         break;
       }
 
       // challenge.html reports its outcome here rather than calling grantBreak() itself —
       // keeps every path that can actually lift the block funneled through this one
-      // service worker, same as START_EMERGENCY_UNBLOCK above.
+      // service worker, same as START_EMERGENCY_UNBLOCK above. Also the single funnel for
+      // "this attempt is over" — clears the game attempt here rather than trusting every
+      // settle path in challenge.js to remember to, including the one that fires when the
+      // deadline had already passed before the tab was even reopened.
       case "BREAK_CHALLENGE_RESULT": {
         const pending = await getPendingBreakChallenge();
         await clearPendingBreakChallenge();
+        await clearPendingGameAttempt();
 
         const auth = await getAuth();
         const accessToken = auth && (await getValidAccessToken());

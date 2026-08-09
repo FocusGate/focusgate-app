@@ -82,6 +82,38 @@ export async function clearPendingBreakChallenge() {
   await chrome.storage.local.remove(PENDING_BREAK_CHALLENGE_KEY);
 }
 
+// The gate game actually *in progress* — separate from PENDING_BREAK_CHALLENGE_KEY above,
+// which only ever records "what was requested," not moment-to-moment game state. Written
+// the instant a specific game starts (not at the "choose your challenge" screen — picking
+// isn't timed) and on every board mutation, so challenge.js can resume this exact attempt,
+// deadline included, if its tab gets closed and reopened before time runs out. Cleared only
+// once the attempt is actually settled — pass, fail, or the deadline passing unattended.
+const PENDING_GAME_ATTEMPT_KEY = "focusgate_pending_game_attempt";
+
+/**
+ * @typedef {Object} PendingGameAttempt
+ * @property {string} slug          - the GameSlug this attempt is for
+ * @property {number} deadlineAt    - epoch ms; fixed at attempt start, never extended by
+ *                                     reopening the tab — that's the whole point
+ * @property {unknown} state        - game-specific resumable state (Memory Match's board:
+ *                                     cards/matched/flipped — see memoryMatch.js)
+ */
+
+/** @returns {Promise<PendingGameAttempt | null>} */
+export async function getPendingGameAttempt() {
+  const result = await chrome.storage.local.get(PENDING_GAME_ATTEMPT_KEY);
+  return result[PENDING_GAME_ATTEMPT_KEY] ?? null;
+}
+
+/** @param {PendingGameAttempt} attempt */
+export async function setPendingGameAttempt(attempt) {
+  await chrome.storage.local.set({ [PENDING_GAME_ATTEMPT_KEY]: attempt });
+}
+
+export async function clearPendingGameAttempt() {
+  await chrome.storage.local.remove(PENDING_GAME_ATTEMPT_KEY);
+}
+
 // Uninstalling wipes every key in chrome.storage.local, including this one — that's
 // exactly the point. If this flag is missing the first time syncFromDashboard() runs
 // after a fresh sign-in and it finds a session already active on the dashboard, the most

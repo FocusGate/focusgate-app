@@ -36,11 +36,16 @@ function formatBreakDuration(totalSeconds) {
 
 let activeTimerId = null;
 let settled = false;
+let activeGameHandle = null; // FGMemoryMatch's { destroy() }, when memory-match is running
 
 function clearActiveTimer() {
   if (activeTimerId !== null) {
     clearInterval(activeTimerId);
     activeTimerId = null;
+  }
+  if (activeGameHandle) {
+    activeGameHandle.destroy();
+    activeGameHandle = null;
   }
 }
 
@@ -60,11 +65,34 @@ function randomInt(min, max) {
 // ---------- entry ----------
 
 (async function init() {
-  const { ok, pending } = await chrome.runtime.sendMessage({ type: "GET_PENDING_BREAK_CHALLENGE" });
+  const { ok, pending, gameAttempt } = await chrome.runtime.sendMessage({ type: "GET_PENDING_BREAK_CHALLENGE" });
   if (!ok || !pending) {
     renderNothingToDo();
     return;
   }
+
+  // A specific game was already underway when this tab last closed (or this popup/tab was
+  // simply reopened mid-attempt) — its deadline was fixed the moment it started and never
+  // moves, regardless of how long the tab's been shut. Past it: nothing to resume, this
+  // attempt failed by not finishing in time, same as running out the clock with the tab
+  // open would. Before it: pick back up exactly where it left off — same board, same
+  // countdown, not a fresh deal.
+  if (gameAttempt) {
+    settled = false;
+    if (Date.now() >= gameAttempt.deadlineAt) {
+      finish(false, gameAttempt.slug);
+      return;
+    }
+    if (gameAttempt.slug === "memory-match") {
+      memoryMatch(gameAttempt.deadlineAt, gameAttempt.state);
+    } else if (gameAttempt.slug === "geography-quiz") {
+      geographyQuiz(gameAttempt.deadlineAt);
+    } else {
+      mathSprint(gameAttempt.deadlineAt);
+    }
+    return;
+  }
+
   if (pending.challenge === "ask") {
     renderChooser(pending.seconds);
   } else {
@@ -101,11 +129,20 @@ function renderChooser(seconds) {
   });
 }
 
-function startGame(slug, seconds) {
+async function startGame(slug, seconds) {
   settled = false;
-  if (slug === "memory-match") memoryMatch(seconds);
-  else if (slug === "geography-quiz") geographyQuiz(seconds);
-  else mathSprint(seconds);
+  // Fixes this attempt's deadline in storage *before* the game itself starts counting
+  // down, so a tab close a moment later has something to resume against. Falls back to a
+  // locally-computed deadline if the message fails — the attempt still works for this
+  // tab's lifetime, it just won't survive a close/reopen.
+  const started = await chrome.runtime
+    .sendMessage({ type: "GAME_ATTEMPT_START", slug, seconds })
+    .catch(() => ({ deadlineAt: Date.now() + seconds * 1000 }));
+  const deadlineAt = started?.deadlineAt ?? Date.now() + seconds * 1000;
+
+  if (slug === "memory-match") memoryMatch(deadlineAt, null);
+  else if (slug === "geography-quiz") geographyQuiz(deadlineAt);
+  else mathSprint(deadlineAt);
 }
 
 // ---------- shared result screen ----------
@@ -218,19 +255,23 @@ function generateProblem() {
   return { text, answer, options: shuffle([answer, ...distractors]) };
 }
 
-function mathSprint(seconds) {
+function mathSprint(deadlineAt) {
   const QUESTION_COUNT = 5;
   let problem = generateProblem();
   let solved = 0;
-  let timeLeft = seconds;
+
+  function timeLeft() {
+    return Math.max(0, Math.ceil((deadlineAt - Date.now()) / 1000));
+  }
 
   function render() {
+    const tLeft = timeLeft();
     root.innerHTML = `
       <div class="challenge__card">
         <div class="challenge__game-title" style="color:${ACCENTS["math-sprint"]}">${LABELS["math-sprint"]}</div>
         <div class="challenge__meta">
           <span>${solved} / ${QUESTION_COUNT} solved</span>
-          <span class="${timeLeft <= 10 ? "challenge__time--danger" : ""}">${timeLeft}s left</span>
+          <span class="${tLeft <= 10 ? "challenge__time--danger" : ""}">${tLeft}s left</span>
         </div>
         <div class="challenge__problem">${problem.text} = ?</div>
         <div class="challenge__grid challenge__grid--2">
@@ -265,8 +306,7 @@ function mathSprint(seconds) {
   }
 
   activeTimerId = setInterval(() => {
-    timeLeft = Math.max(0, timeLeft - 1);
-    if (timeLeft === 0) {
+    if (timeLeft() <= 0) {
       finish(false, "math-sprint");
       return;
     }
@@ -277,84 +317,32 @@ function mathSprint(seconds) {
 }
 
 // ---------- Memory Match (mirrors MemoryMatchGate.tsx) ----------
+// The grid/board logic itself lives in memoryMatch.js, shared with the popup's Lounge
+// "Brain Games" tab — this just wraps it with the gate's own chrome (title, card frame)
+// and wires board mutations to GAME_ATTEMPT_UPDATE so an attempt survives this tab
+// closing and reopening mid-game (see init()'s gameAttempt handling above).
 
-function memoryMatch(seconds) {
-  const SYMBOLS = ["🧠", "🔥", "⚡", "🎯"];
-  const cards = shuffle([...SYMBOLS, ...SYMBOLS]).map((symbol, id) => ({ id, symbol }));
-  const matched = new Set();
-  let flipped = [];
-  let timeLeft = seconds;
-  let busy = false;
+function memoryMatch(deadlineAt, initialState) {
+  root.innerHTML = `
+    <div class="challenge__card">
+      <div class="challenge__game-title" style="color:${ACCENTS["memory-match"]}">${LABELS["memory-match"]}</div>
+      <div id="memory-match-board"></div>
+    </div>
+  `;
+  const board = document.getElementById("memory-match-board");
+  const seconds = Math.max(0, Math.ceil((deadlineAt - Date.now()) / 1000));
 
-  function render() {
-    root.innerHTML = `
-      <div class="challenge__card">
-        <div class="challenge__game-title" style="color:${ACCENTS["memory-match"]}">${LABELS["memory-match"]}</div>
-        <div class="challenge__meta">
-          <span>${matched.size / 2} / ${SYMBOLS.length} pairs</span>
-          <span class="${timeLeft <= 10 ? "challenge__time--danger" : ""}">${timeLeft}s left</span>
-        </div>
-        <div class="challenge__grid challenge__grid--4">
-          ${cards
-            .map((card) => {
-              const faceUp = matched.has(card.id) || flipped.includes(card.id);
-              const isMatched = matched.has(card.id);
-              return `<button class="challenge__card-tile ${faceUp ? "challenge__card-tile--up" : ""} ${isMatched ? "challenge__card-tile--matched" : ""}" data-id="${card.id}" ${faceUp ? "disabled" : ""}>${faceUp ? card.symbol : ""}</button>`;
-            })
-            .join("")}
-        </div>
-      </div>
-    `;
-    root.querySelectorAll(".challenge__card-tile").forEach((btn) => {
-      btn.addEventListener("click", () => handleCardClick(Number(btn.dataset.id)));
-    });
-  }
-
-  function handleCardClick(id) {
-    if (busy || settled || matched.has(id) || flipped.includes(id)) return;
-    if (flipped.length === 0) {
-      flipped = [id];
-      render();
-      return;
-    }
-    const nextFlipped = [flipped[0], id];
-    flipped = nextFlipped;
-    busy = true;
-    render();
-
-    const first = cards.find((c) => c.id === nextFlipped[0]);
-    const second = cards.find((c) => c.id === id);
-    if (first.symbol === second.symbol) {
-      setTimeout(() => {
-        matched.add(first.id);
-        matched.add(second.id);
-        flipped = [];
-        busy = false;
-        if (matched.size >= cards.length) {
-          finish(true, "memory-match");
-        } else {
-          render();
-        }
-      }, 300);
-    } else {
-      setTimeout(() => {
-        flipped = [];
-        busy = false;
-        render();
-      }, 550);
-    }
-  }
-
-  activeTimerId = setInterval(() => {
-    timeLeft = Math.max(0, timeLeft - 1);
-    if (timeLeft === 0) {
-      finish(false, "memory-match");
-      return;
-    }
-    render();
-  }, 1000);
-
-  render();
+  activeGameHandle = FGMemoryMatch.render(board, {
+    mode: "timed",
+    seconds,
+    initialState: initialState ? { ...initialState, deadlineAt } : null,
+    onStateChange(state) {
+      chrome.runtime.sendMessage({ type: "GAME_ATTEMPT_UPDATE", slug: "memory-match", state }).catch(() => {});
+    },
+    onSettle(passed) {
+      finish(passed, "memory-match");
+    },
+  });
 }
 
 // ---------- Geography Quiz (mirrors GeographyQuizGate.tsx's mixed trivia) ----------
@@ -418,19 +406,23 @@ function buildRound() {
   return pool.map((c) => buildQuestion(c, QUESTION_TYPES[Math.floor(Math.random() * QUESTION_TYPES.length)]));
 }
 
-function geographyQuiz(seconds) {
+function geographyQuiz(deadlineAt) {
   const round = buildRound();
   let index = 0;
-  let timeLeft = seconds;
+
+  function timeLeft() {
+    return Math.max(0, Math.ceil((deadlineAt - Date.now()) / 1000));
+  }
 
   function render() {
     const current = round[index];
+    const tLeft = timeLeft();
     root.innerHTML = `
       <div class="challenge__card">
         <div class="challenge__game-title" style="color:${ACCENTS["geography-quiz"]}">${LABELS["geography-quiz"]}</div>
         <div class="challenge__meta">
           <span>Question ${index + 1} / ${round.length}</span>
-          <span class="${timeLeft <= 10 ? "challenge__time--danger" : ""}">${timeLeft}s left</span>
+          <span class="${tLeft <= 10 ? "challenge__time--danger" : ""}">${tLeft}s left</span>
         </div>
         <div class="challenge__flag" style="color:${ACCENTS["geography-quiz"]}; display:flex; justify-content:center;">${MAP_PIN_SVG}</div>
         <div class="challenge__question">${current.question}</div>
@@ -466,8 +458,7 @@ function geographyQuiz(seconds) {
   }
 
   activeTimerId = setInterval(() => {
-    timeLeft = Math.max(0, timeLeft - 1);
-    if (timeLeft === 0) {
+    if (timeLeft() <= 0) {
       finish(false, "geography-quiz");
       return;
     }

@@ -11,11 +11,6 @@
 // before that.
 
 const DASHBOARD_URL = "https://focusgate.site/dashboard";
-// The Lounge (breathing circle, brain games, decorations) needs real screen space the
-// popup doesn't have — this opens the dedicated standalone page (app/(app)/lounge) in a
-// full tab instead, which finds this same paused session on its own and picks up the
-// live shared break state, same as the dashboard tab would if it were open.
-const LOUNGE_URL = "https://focusgate.site/lounge";
 
 const MIN_REASON_LENGTH = 15; // mirrors EmergencyUnblockModal.tsx — must match background.js
 const MAX_FREE_EMERGENCY_UNBLOCKS_DISPLAY = 2; // mirrors lib/supabase.ts's MAX_FREE_EMERGENCY_UNBLOCKS, for copy only
@@ -177,26 +172,96 @@ function renderActive() {
 // but the color shift + softer copy carries the same "permitted rest" mood. Also shows the
 // break's own note (or, for an automatic Pomodoro/All Nighter break, its reminder text) —
 // this screen used to never surface *why* the break was taken, unlike the dashboard's Lounge.
+// Which Lounge tab is showing — module-level, not per-render, on purpose: render() below
+// only calls renderPaused() once on the transition *into* the paused state, then just
+// updates the countdown text every tick without rebuilding this DOM. That's what makes a
+// Brain Games attempt (and this tab choice) survive the 1-second poll instead of resetting
+// under the user every tick — the same reason a Chrome popup closing does still lose it
+// (a closed popup's whole JS context is gone, module-level or not; there's nothing here to
+// persist across *that*, same as the untimed web practice mode losing progress on
+// navigating away — this is deliberately not the same "must survive closing" requirement
+// as the timed break-gate attempt in challenge.js).
+let loungeTab = "chill";
+let loungeGameHandle = null;
+
 function renderPaused(pause) {
   hideFlowError();
   rootEl.className = "view popup__lounge";
   const reasonText = pause?.noteText ? `“${pause.noteText}”` : pause?.reminderText || "";
   const reasonHtml = reasonText ? `<p class="popup__lounge-note">${escapeHtml(reasonText)}</p>` : "";
+  loungeTab = "chill";
+
   rootEl.innerHTML = `
+    <div class="popup__lounge-scene" aria-hidden="true">
+      <div class="popup__lounge-moon"></div>
+    </div>
     <div class="popup__status popup__status--lounge">
       <div class="popup__status-label">The Lounge</div>
       <div class="popup__clock popup__clock--lounge" id="paused-countdown">--:--</div>
       <div class="popup__status-hint">Sites stay blocked — this is just a mental pause. Take a breath.</div>
     </div>
     ${reasonHtml}
-    <a class="popup__flow-btn popup__flow-btn--link popup__lounge-enter" href="${LOUNGE_URL}" target="_blank" rel="noopener noreferrer">Enter the Lounge &rarr;</a>
+    <div class="popup__lounge-toggle" role="tablist">
+      <button class="popup__lounge-toggle-btn" data-tab="chill" id="lounge-tab-chill">Just Chill</button>
+      <button class="popup__lounge-toggle-btn" data-tab="games" id="lounge-tab-games">Brain Games</button>
+    </div>
+    <div id="lounge-body"></div>
     <button class="popup__link-btn popup__lounge-return" id="btn-end-break-early">I&rsquo;m ready, back to focus</button>
   `;
+
+  el("lounge-tab-chill").addEventListener("click", () => selectLoungeTab("chill"));
+  el("lounge-tab-games").addEventListener("click", () => selectLoungeTab("games"));
+  renderLoungeTabs();
+  renderLoungeBody();
+
   el("btn-end-break-early").addEventListener("click", async () => {
     el("btn-end-break-early").disabled = true;
+    if (loungeGameHandle) {
+      loungeGameHandle.destroy();
+      loungeGameHandle = null;
+    }
     await chrome.runtime.sendMessage({ type: "END_BREAK_EARLY" });
     await refreshStatus();
   });
+}
+
+function selectLoungeTab(tab) {
+  if (tab === loungeTab) return;
+  loungeTab = tab;
+  renderLoungeTabs();
+  renderLoungeBody();
+}
+
+function renderLoungeTabs() {
+  const chillBtn = el("lounge-tab-chill");
+  const gamesBtn = el("lounge-tab-games");
+  if (!chillBtn || !gamesBtn) return;
+  chillBtn.classList.toggle("popup__lounge-toggle-btn--active", loungeTab === "chill");
+  gamesBtn.classList.toggle("popup__lounge-toggle-btn--active", loungeTab === "games");
+  chillBtn.setAttribute("aria-selected", String(loungeTab === "chill"));
+  gamesBtn.setAttribute("aria-selected", String(loungeTab === "games"));
+}
+
+function renderLoungeBody() {
+  if (loungeGameHandle) {
+    loungeGameHandle.destroy();
+    loungeGameHandle = null;
+  }
+  const body = el("lounge-body");
+  if (!body) return;
+
+  if (loungeTab === "chill") {
+    body.innerHTML = `<p class="popup__lounge-chill-text">Just breathe. No pressure, nothing to do.</p>`;
+    return;
+  }
+
+  body.innerHTML = `
+    <p class="popup__lounge-games-text">Something to do with your hands while you rest your mind. No pressure, nothing to win.</p>
+    <div class="popup__lounge-game-frame">
+      <div id="lounge-game-board" class="popup__lounge-game-board"></div>
+    </div>
+  `;
+  loungeGameHandle = FGMemoryMatch.render(el("lounge-game-board"), { mode: "practice", pairs: 4 });
 }
 
 // ---------- Emergency Unblock flow (mirrors EmergencyUnblockModal.tsx) ----------

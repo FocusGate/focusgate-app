@@ -97,6 +97,15 @@ textarea:focus {
 
 .popup {
   width: 328px;
+  /* Chrome caps how tall it'll auto-size a popup window to fit content (varies by
+     version/OS, roughly 600px). Relying on that alone silently clips anything past the
+     cap with no way to reach it — explicitly bounding this container and giving it its
+     own scrollbar means content past the cap is still reachable instead of just gone.
+     This is what makes the new in-popup Lounge (scene + timer + note + toggle + a game)
+     usable — that's comfortably taller than 600px stacked in one 328px-wide column. */
+  max-height: 560px;
+  overflow-y: auto;
+  overflow-x: hidden;
   padding: 20px;
   display: flex;
   flex-direction: column;
@@ -251,13 +260,84 @@ textarea:focus {
   text-align: center;
 }
 
-/* Warm cream fill, not the gold used everywhere else in the popup — matches the "no
-   gold/black intensity in The Lounge" rule .popup__lounge / .popup__status--lounge above
-   already follow. */
-.popup__lounge-enter {
-  margin-top: 16px;
-  background: linear-gradient(180deg, var(--fg-lounge-cream), var(--fg-lounge-taupe));
+/* A stripped-down version of TheLounge.tsx's decorated scene — a soft gradient strip with
+   a crescent moon. No bookshelf/dust-mote SVGs here: this whole thing has to fit inside a
+   328px-wide, height-capped popup, so it's a hint of the dashboard's calming-reading-room
+   backdrop rather than a full reproduction of it. */
+.popup__lounge-scene {
+  height: 56px;
+  border-radius: 14px;
+  margin-bottom: 2px;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(180deg, rgba(120, 113, 108, 0.16), rgba(120, 113, 108, 0.03));
+}
+
+.popup__lounge-moon {
+  position: absolute;
+  top: 12px;
+  right: 18px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--fg-lounge-cream);
+  opacity: 0.55;
+  /* Carves a crescent out of a full circle the same way TheLounge.tsx's SVG moon does — an
+     offset second circle's shadow eats into it, cast in the page background color since
+     there's nothing to genuinely punch a hole in a solid div. */
+  box-shadow: -7px -2px 0 0 var(--fg-bg);
+}
+
+.popup__lounge-toggle {
+  margin-top: 14px;
+  display: flex;
+  background: rgba(120, 113, 108, 0.15);
+  border-radius: 999px;
+  padding: 3px;
+  gap: 3px;
+}
+
+.popup__lounge-toggle-btn {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: var(--fg-lounge-taupe);
+  padding: 7px 0;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s var(--ease), color 0.2s var(--ease);
+}
+
+.popup__lounge-toggle-btn--active {
+  background: var(--fg-lounge-cream);
   color: #1c1917;
+}
+
+.popup__lounge-chill-text,
+.popup__lounge-games-text {
+  margin: 12px 0 0;
+  color: var(--fg-lounge-stone);
+  font-size: 12.5px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.popup__lounge-games-text {
+  color: var(--fg-lounge-taupe);
+  margin-bottom: 10px;
+}
+
+.popup__lounge-game-frame {
+  background: rgba(254, 243, 199, 0.04);
+  border: 1px solid rgba(120, 113, 108, 0.3);
+  border-radius: 14px;
+  padding: 14px;
+}
+
+.popup__lounge-game-board {
+  margin: 0 auto;
 }
 
 .popup__lounge-return {
@@ -862,6 +942,17 @@ textarea:focus {
   gap: 10px;
 }
 
+/* Grid items default to min-width:auto, which floors them at their *content's* min-content
+   width instead of letting them shrink to the track's actual computed width — the same bug
+   already hit and fixed once in app/globals.css's .fg-split/.fg-stats3/.fg-price3 rule. A
+   <button> with no width reset was hitting exactly that at the popup's 328px width: cells
+   refused to shrink to fit 4-across, so the grid overflowed past .challenge__card's own
+   padding and right border instead of staying inside it. */
+.challenge__grid > * {
+  min-width: 0;
+  min-height: 0;
+}
+
 .challenge__grid--2 {
   grid-template-columns: repeat(2, 1fr);
 }
@@ -894,12 +985,14 @@ textarea:focus {
 }
 
 .challenge__card-tile {
+  width: 100%;
   aspect-ratio: 1 / 1;
   background: var(--fg-bg);
   border: 1px solid var(--fg-border);
   border-radius: 10px;
   font-size: 22px;
   cursor: pointer;
+  padding: 0;
 }
 
 .challenge__card-tile--up {
