@@ -99,14 +99,33 @@ export default function TheLounge({
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        justifyContent: "center",
+        // flex-start, not center: the 8-pair Brain Games board can be taller than shorter
+        // viewports. Centering a taller-than-viewport flex column clips the overflow evenly
+        // off *both* ends (invisibly cropping the card's own bottom border) since there's
+        // nowhere to scroll to see it. The content div's own `margin: "auto 0"` below still
+        // centers it whenever it actually fits — auto margins win over justifyContent when
+        // there's free space, and collapse to 0 (i.e. this flex-start) when there isn't.
+        justifyContent: "flex-start",
         padding: 24,
-        overflow: "hidden",
+        overflowY: "auto",
+        overflowX: "hidden",
       }}
     >
       <LoungeScene />
 
-      <div style={{ position: "relative", zIndex: 2, display: "flex", flexDirection: "column", alignItems: "center", gap: 22, width: "100%", maxWidth: 480 }}>
+      <div
+        style={{
+          position: "relative",
+          zIndex: 2,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: 22,
+          width: "100%",
+          maxWidth: 480,
+          margin: "auto 0",
+        }}
+      >
         <motion.p
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
