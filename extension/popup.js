@@ -12,6 +12,11 @@
 
 // TODO: replace with the real production dashboard URL once deployed.
 const DASHBOARD_URL = "https://focusgate.app/dashboard";
+// The Lounge (breathing circle, brain games, decorations) needs real screen space the
+// popup doesn't have — this opens the dedicated standalone page (app/(app)/lounge) in a
+// full tab instead, which finds this same paused session on its own and picks up the
+// live shared break state, same as the dashboard tab would if it were open.
+const LOUNGE_URL = "https://focusgate.app/lounge";
 
 const MIN_REASON_LENGTH = 15; // mirrors EmergencyUnblockModal.tsx — must match background.js
 const MAX_FREE_EMERGENCY_UNBLOCKS_DISPLAY = 2; // mirrors lib/supabase.ts's MAX_FREE_EMERGENCY_UNBLOCKS, for copy only
@@ -185,6 +190,7 @@ function renderPaused(pause) {
       <div class="popup__status-hint">Sites stay blocked — this is just a mental pause. Take a breath.</div>
     </div>
     ${reasonHtml}
+    <a class="popup__flow-btn popup__flow-btn--link popup__lounge-enter" href="${LOUNGE_URL}" target="_blank" rel="noopener noreferrer">Enter the Lounge &rarr;</a>
     <button class="popup__link-btn popup__lounge-return" id="btn-end-break-early">I&rsquo;m ready, back to focus</button>
   `;
   el("btn-end-break-early").addEventListener("click", async () => {

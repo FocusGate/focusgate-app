@@ -251,6 +251,15 @@ textarea:focus {
   text-align: center;
 }
 
+/* Warm cream fill, not the gold used everywhere else in the popup — matches the "no
+   gold/black intensity in The Lounge" rule .popup__lounge / .popup__status--lounge above
+   already follow. */
+.popup__lounge-enter {
+  margin-top: 16px;
+  background: linear-gradient(180deg, var(--fg-lounge-cream), var(--fg-lounge-taupe));
+  color: #1c1917;
+}
+
 .popup__lounge-return {
   margin-top: 14px;
   display: inline-block;

@@ -222,6 +222,25 @@ export async function startSession(
   return { ...data, blockedSites };
 }
 
+/** The signed-in user's currently in-progress session, if any — for a tab that never
+ *  itself started the session (e.g. the standalone /lounge page, opened straight from the
+ *  extension's "Enter the Lounge" button) and so has no `sessionId` in local component
+ *  state to work with. Not used by the dashboard's own start/resume flow, which tracks
+ *  sessionId locally from the moment it calls startSession(). */
+export async function getActiveSession(userId: string): Promise<{ id: string } | null> {
+  const { data, error } = await supabase
+    .from("sessions")
+    .select("id")
+    .eq("user_id", userId)
+    .eq("completed", false)
+    .is("end_time", null)
+    .order("start_time", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (error) throw error;
+  return data;
+}
+
 export async function endSession(sessionId: string) {
   const { data: session, error: fetchError } = await supabase
     .from("sessions")
