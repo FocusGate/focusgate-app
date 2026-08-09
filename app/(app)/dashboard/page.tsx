@@ -11,7 +11,9 @@ import {
   addBlockedSite,
   checkAndUnlockBadges,
   endSession,
+  getActiveSession,
   getBlockedSites,
+  getSessionPausedSeconds,
   getSessions,
   getUser,
   getUserPreferences,
@@ -65,11 +67,16 @@ export default function DashboardPage() {
 
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [sessionSeconds, setSessionSeconds] = useState(0);
+  const [sessionInitialSecondsLeft, setSessionInitialSecondsLeft] = useState<number | undefined>(undefined);
   const [sessionStartIso, setSessionStartIso] = useState<string>("");
   const [sessionMode, setSessionMode] = useState<StartConfig["mode"]>("custom");
   const [sessionModeConfig, setSessionModeConfig] = useState<StartConfig["modeConfig"]>(null);
   const [sessionGroupId, setSessionGroupId] = useState<string | null>(null);
   const [entering, setEntering] = useState(false);
+  // A ref, not state — this is a pure "did we already run the one-shot check" guard, never
+  // read during render, so it doesn't need to (and per the set-state-in-effect lint rule,
+  // shouldn't) trigger a re-render just to flip itself on.
+  const checkedForActiveSessionRef = useRef(false);
   const lastConfigRef = useRef<StartConfig | null>(null);
 
   useEffect(() => {
@@ -78,6 +85,35 @@ export default function DashboardPage() {
       .then(([sites, sess]) => {
         setBlockedSites(sites as BlockedSite[]);
         setSessions(sess as SessionRow[]);
+      })
+      .catch(() => {});
+  }, [user]);
+
+  // Picks a locked-in session back up on a *fresh* mount of this page — landing here via
+  // a full URL load, the navigation-lock guard's redirect, or just a reload mid-session —
+  // rather than only ever knowing about one this exact tab instance started itself via
+  // handleStart. Without this, any of those would silently drop back to the idle "Ready to
+  // get locked in?" screen despite the session still being live in Supabase. Deliberately a
+  // one-shot check (guarded by the ref above, not re-run on every `user` change) — once a
+  // session is showing, it owns its own state via handleStart/onFinished from here.
+  useEffect(() => {
+    if (!user || checkedForActiveSessionRef.current) return;
+    checkedForActiveSessionRef.current = true;
+    getActiveSession(user.id)
+      .then(async (active) => {
+        if (!active) return;
+        const totalSeconds = active.durationMinutes * 60;
+        const elapsedWallClock = Math.floor((Date.now() - new Date(active.startTime).getTime()) / 1000);
+        const pausedSeconds = await getSessionPausedSeconds(active.id).catch(() => 0);
+        const remaining = Math.max(0, totalSeconds - Math.max(0, elapsedWallClock - pausedSeconds));
+
+        setSessionId(active.id);
+        setSessionSeconds(totalSeconds);
+        setSessionInitialSecondsLeft(remaining);
+        setSessionStartIso(active.startTime);
+        setSessionMode(active.mode);
+        setSessionModeConfig(active.modeConfig);
+        setSessionGroupId(active.groupId);
       })
       .catch(() => {});
   }, [user]);
@@ -95,6 +131,7 @@ export default function DashboardPage() {
       const session = await startSession(user.id, urls, cfg.minutes, { mode: cfg.mode, groupId: cfg.groupId, modeConfig: cfg.modeConfig });
       setSessionId(session.id);
       setSessionSeconds(cfg.minutes * 60);
+      setSessionInitialSecondsLeft(cfg.minutes * 60);
       setSessionStartIso(session.start_time);
       setSessionMode(cfg.mode);
       setSessionModeConfig(cfg.modeConfig);
@@ -171,6 +208,7 @@ export default function DashboardPage() {
       {sessionId && (
         <LockedInOverlay
           totalSeconds={sessionSeconds}
+          initialSecondsLeft={sessionInitialSecondsLeft}
           blockedSites={blockedSites.map((s) => s.url)}
           streak={user.streak}
           userId={user.id}
@@ -180,9 +218,13 @@ export default function DashboardPage() {
           modeConfig={sessionModeConfig}
           groupId={sessionGroupId}
           onComplete={handleSessionComplete}
-          onFinished={() => setSessionId(null)}
+          onFinished={() => {
+            setSessionId(null);
+            setSessionInitialSecondsLeft(undefined);
+          }}
           onStartAnother={() => {
             setSessionId(null);
+            setSessionInitialSecondsLeft(undefined);
             if (lastConfigRef.current) void handleStart(lastConfigRef.current);
           }}
         />

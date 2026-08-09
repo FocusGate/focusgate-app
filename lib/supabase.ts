@@ -227,10 +227,19 @@ export async function startSession(
  *  extension's "Enter the Lounge" button) and so has no `sessionId` in local component
  *  state to work with. Not used by the dashboard's own start/resume flow, which tracks
  *  sessionId locally from the moment it calls startSession(). */
-export async function getActiveSession(userId: string): Promise<{ id: string } | null> {
+export type ActiveSession = {
+  id: string;
+  startTime: string;
+  durationMinutes: number;
+  mode: SessionMode;
+  modeConfig: ModeConfig | null;
+  groupId: string | null;
+};
+
+export async function getActiveSession(userId: string): Promise<ActiveSession | null> {
   const { data, error } = await supabase
     .from("sessions")
-    .select("id")
+    .select("id, start_time, duration_minutes, session_mode, mode_config, group_id")
     .eq("user_id", userId)
     .eq("completed", false)
     .is("end_time", null)
@@ -238,7 +247,45 @@ export async function getActiveSession(userId: string): Promise<{ id: string } |
     .limit(1)
     .maybeSingle();
   if (error) throw error;
-  return data;
+  if (!data) return null;
+  return {
+    id: data.id,
+    startTime: data.start_time,
+    durationMinutes: data.duration_minutes ?? 0,
+    mode: (data.session_mode as SessionMode) ?? "custom",
+    modeConfig: data.mode_config as ModeConfig | null,
+    groupId: data.group_id,
+  };
+}
+
+/** Total seconds this session's main clock has already spent paused — completed breaks
+ *  (summed from break_notes' actual_duration_seconds; emergency unblocks excluded, since
+ *  those end the session rather than pause it) plus whatever's left of a *currently*
+ *  active pause, if any. A page rehydrating an in-progress session (see dashboard's
+ *  mount-time active-session fetch) needs this to resume the countdown at the right
+ *  remaining time — wall-clock-since-start alone would count paused time as if the user
+ *  had been focusing through it. `pauseStartedAt` is inferred (pause_until minus its
+ *  requested_seconds), not stored directly — accurate for how pauses are actually created
+ *  (see startSessionPause), just not literally the source of truth. */
+export async function getSessionPausedSeconds(sessionId: string): Promise<number> {
+  const [{ data: notes, error: notesError }, pause] = await Promise.all([
+    supabase.from("break_notes").select("actual_duration_seconds").eq("session_id", sessionId).eq("is_emergency", false),
+    getSessionPause(sessionId),
+  ]);
+  if (notesError) throw notesError;
+
+  const completed = (notes ?? []).reduce((sum, n) => sum + (n.actual_duration_seconds ?? 0), 0);
+
+  let current = 0;
+  if (pause.pauseUntil && pause.requestedSeconds) {
+    const untilMs = new Date(pause.pauseUntil).getTime();
+    if (untilMs > Date.now()) {
+      const startedAtMs = untilMs - pause.requestedSeconds * 1000;
+      current = Math.max(0, Math.round((Date.now() - startedAtMs) / 1000));
+    }
+  }
+
+  return completed + current;
 }
 
 export async function endSession(sessionId: string) {

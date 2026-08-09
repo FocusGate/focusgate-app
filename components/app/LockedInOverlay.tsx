@@ -48,6 +48,7 @@ type BreakState = {
 
 export default function LockedInOverlay({
   totalSeconds,
+  initialSecondsLeft,
   blockedSites,
   streak,
   userId,
@@ -60,7 +61,16 @@ export default function LockedInOverlay({
   onFinished,
   onStartAnother,
 }: {
+  /** The session's original planned length — stays fixed for its whole life, including
+   *  across a rehydrated mount. Pomodoro/All Nighter auto-break checkpoints are computed
+   *  from this, so it must never be "how much is left," only "how much there always was." */
   totalSeconds: number;
+  /** Where the countdown should actually start counting down from. Equal to totalSeconds
+   *  for a session just started this tab; lower when this overlay is mounting fresh onto
+   *  an already-in-progress session (a route the user was redirected back to, a reload,
+   *  a second tab) — the dashboard page computes this from elapsed wall-clock time minus
+   *  time already spent paused. Defaults to totalSeconds when omitted. */
+  initialSecondsLeft?: number;
   blockedSites: string[];
   streak: number;
   userId: string;
@@ -73,7 +83,7 @@ export default function LockedInOverlay({
   onFinished: () => void;
   onStartAnother: () => void;
 }) {
-  const [seconds, setSeconds] = useState(totalSeconds);
+  const [seconds, setSeconds] = useState(initialSecondsLeft ?? totalSeconds);
   const [phase, setPhase] = useState<"running" | "complete">("running");
   const [unlockedBadges, setUnlockedBadges] = useState<NewlyUnlockedBadge[]>([]);
   const firedRef = useRef(false);

@@ -22,7 +22,17 @@ const NAV = [
 
 export type AppShellUser = { name: string; email: string; streak: number } | null | undefined;
 
-export default function AppShell({ children, user }: { children: React.ReactNode; user?: AppShellUser }) {
+export default function AppShell({
+  children,
+  user,
+  hasActiveSession = false,
+}: {
+  children: React.ReactNode;
+  user?: AppShellUser;
+  /** While locked in, the nav links themselves must disappear — not just be blocked on
+   *  navigation — so there's nothing suggesting you could leave in the first place. */
+  hasActiveSession?: boolean;
+}) {
   const pathname = usePathname();
   const router = useRouter();
   const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
@@ -50,44 +60,57 @@ export default function AppShell({ children, user }: { children: React.ReactNode
           height: "100vh",
         }}
       >
-        <Link href="/dashboard" style={{ display: "flex", alignItems: "center", gap: 10, padding: "0 6px" }}>
-          <FocusGateMark size={24} />
-          <span style={{ fontFamily: "'Instrument Serif', serif", fontSize: 21, color: "#b08d57" }}>FocusGate</span>
-        </Link>
+        {hasActiveSession ? (
+          <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "0 6px" }}>
+            <FocusGateMark size={24} />
+            <span style={{ fontFamily: "'Instrument Serif', serif", fontSize: 21, color: "#b08d57" }}>FocusGate</span>
+          </div>
+        ) : (
+          <Link href="/dashboard" style={{ display: "flex", alignItems: "center", gap: 10, padding: "0 6px" }}>
+            <FocusGateMark size={24} />
+            <span style={{ fontFamily: "'Instrument Serif', serif", fontSize: 21, color: "#b08d57" }}>FocusGate</span>
+          </Link>
+        )}
 
-        <nav style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-          {NAV.map((item) => {
-            const Icon = item.icon;
-            const active = pathname === item.href || pathname.startsWith(item.href + "/");
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                style={{
-                  display: "flex",
-                  alignItems: item.subtitle ? "flex-start" : "center",
-                  gap: 11,
-                  padding: "10px 14px",
-                  borderRadius: 10,
-                  fontSize: 14,
-                  fontWeight: 600,
-                  color: active ? "#F59E0B" : "#9a9da4",
-                  background: active ? "rgba(245,158,11,0.1)" : "transparent",
-                }}
-              >
-                <Icon size={17} strokeWidth={active ? 2.3 : 1.8} style={item.subtitle ? { marginTop: 2, flexShrink: 0 } : undefined} />
-                <span style={{ minWidth: 0 }}>
-                  <span style={{ display: "block" }}>{item.label}</span>
-                  {item.subtitle && (
-                    <span style={{ display: "block", fontSize: 10, fontWeight: 500, color: "#5b5e66", marginTop: 2, lineHeight: 1.3 }}>
-                      {item.subtitle}
-                    </span>
-                  )}
-                </span>
-              </Link>
-            );
-          })}
-        </nav>
+        {hasActiveSession ? (
+          <div style={{ fontSize: 12, color: "#5b5e66", padding: "0 14px", lineHeight: 1.5 }}>
+            🔒 Locked in — navigation is disabled until your session ends.
+          </div>
+        ) : (
+          <nav style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            {NAV.map((item) => {
+              const Icon = item.icon;
+              const active = pathname === item.href || pathname.startsWith(item.href + "/");
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  style={{
+                    display: "flex",
+                    alignItems: item.subtitle ? "flex-start" : "center",
+                    gap: 11,
+                    padding: "10px 14px",
+                    borderRadius: 10,
+                    fontSize: 14,
+                    fontWeight: 600,
+                    color: active ? "#F59E0B" : "#9a9da4",
+                    background: active ? "rgba(245,158,11,0.1)" : "transparent",
+                  }}
+                >
+                  <Icon size={17} strokeWidth={active ? 2.3 : 1.8} style={item.subtitle ? { marginTop: 2, flexShrink: 0 } : undefined} />
+                  <span style={{ minWidth: 0 }}>
+                    <span style={{ display: "block" }}>{item.label}</span>
+                    {item.subtitle && (
+                      <span style={{ display: "block", fontSize: 10, fontWeight: 500, color: "#5b5e66", marginTop: 2, lineHeight: 1.3 }}>
+                        {item.subtitle}
+                      </span>
+                    )}
+                  </span>
+                </Link>
+              );
+            })}
+          </nav>
+        )}
 
         <div style={{ marginTop: "auto", display: "flex", flexDirection: "column", gap: 10 }}>
           {user && (
@@ -135,7 +158,7 @@ export default function AppShell({ children, user }: { children: React.ReactNode
         </div>
       </aside>
 
-      <MobileNav />
+      {!hasActiveSession && <MobileNav />}
 
       <main
         className="fg-app-main"
