@@ -43,8 +43,11 @@ export default function LoungePage() {
   const router = useRouter();
   const [status, setStatus] = useState<Status>("loading");
   const [breakState, setBreakState] = useState<BreakState | null>(null);
+  // sessionId is read during render (below, to decide whether to show TheLounge and what
+  // to pass it) — a ref can't be, per React's rules on refs, so this has to be real state
+  // even though it's only ever set once per page load.
+  const [sessionId, setSessionId] = useState<string | null>(null);
   const breakStateRef = useRef<BreakState | null>(null);
-  const sessionIdRef = useRef<string | null>(null);
   const unsubscribeRef = useRef<(() => void) | null>(null);
 
   useEffect(() => {
@@ -88,7 +91,7 @@ export default function LoungePage() {
           setStatus("no-session");
           return;
         }
-        sessionIdRef.current = session.id;
+        setSessionId(session.id);
         unsubscribeRef.current = subscribeToSessionPause(session.id, applyPause);
         return getSessionPause(session.id).then((p) => {
           if (!cancelled) applyPause(p);
@@ -115,25 +118,25 @@ export default function LoungePage() {
   }, [breakState]);
 
   async function handleEarlyReturn() {
-    if (!breakState || !breakState.skippable || !sessionIdRef.current) return;
+    if (!breakState || !breakState.skippable || !sessionId) return;
     const actualUsed = breakState.totalSeconds - breakState.secondsLeft;
     if (breakState.breakNoteId) {
       updateBreakNoteActualDuration(breakState.breakNoteId, actualUsed).catch(() => {});
     }
-    await endSessionPause(sessionIdRef.current).catch(() => {});
+    await endSessionPause(sessionId).catch(() => {});
     setBreakState(null);
     setStatus("leaving");
     setTimeout(() => router.replace("/dashboard"), 1600);
   }
 
-  if (status === "paused" && breakState && user && sessionIdRef.current) {
+  if (status === "paused" && breakState && user && sessionId) {
     return (
       <TheLounge
         secondsLeft={breakState.secondsLeft}
         totalSeconds={breakState.totalSeconds}
         note={breakState.note}
         userId={user.id}
-        sessionId={sessionIdRef.current}
+        sessionId={sessionId}
         onEarlyReturn={handleEarlyReturn}
         earlyReturnDisabled={!breakState.skippable}
         reminderText={breakState.reminderText}

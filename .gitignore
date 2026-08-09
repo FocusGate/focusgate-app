@@ -43,3 +43,6 @@ next-env.d.ts
 # local dev server output + built extension bundle — regenerated on demand, not source
 dev-server.log
 focusgate-extension.zip
+
+.vercel
+.env*

@@ -6,10 +6,28 @@ import PageTransition from "@/components/PageTransition";
 import ScrollProgressBar from "@/components/ScrollProgressBar";
 import ScrollTriggerRefresh from "@/components/ScrollTriggerRefresh";
 
+const TITLE = "FocusGate — You said you'd study. Now prove it.";
+const DESCRIPTION = "FocusGate locks you in, blocks every distraction, and won't let you leave until you're done.";
+
 export const metadata: Metadata = {
-  title: "FocusGate — You said you'd study. Now prove it.",
-  description:
-    "FocusGate locks you in, blocks every distraction, and won't let you leave until you're done.",
+  metadataBase: new URL("https://focusgate.site"),
+  title: TITLE,
+  description: DESCRIPTION,
+  openGraph: {
+    title: TITLE,
+    description: DESCRIPTION,
+    url: "https://focusgate.site",
+    siteName: "FocusGate",
+    type: "website",
+    // No og:image yet — public/ only has Next.js's default starter icons, no real
+    // branded social-preview image exists in this repo. Add one (1200x630) and an
+    // `images: [...]` entry here before relying on link previews looking right.
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: TITLE,
+    description: DESCRIPTION,
+  },
 };
 
 export default function RootLayout({
