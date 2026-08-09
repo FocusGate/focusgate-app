@@ -28,6 +28,19 @@ export const metadata: Metadata = {
     title: TITLE,
     description: DESCRIPTION,
   },
+  // The gold-lock mark on black — same silhouette as FocusGateMark (components/landing/
+  // Navbar.tsx) redrawn as bold filled shapes instead of thin strokes, which read fine at
+  // 24px in a nav bar but vanish at 16px favicon size. favicon.ico bundles 16/32/48px PNG
+  // frames (all modern browsers support PNG-in-ICO); icon-192/512 cover PWA-style and
+  // Android home-screen use; apple-icon covers iOS "Add to Home Screen."
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-icon.png", sizes: "180x180", type: "image/png" }],
+  },
 };
 
 export default function RootLayout({
