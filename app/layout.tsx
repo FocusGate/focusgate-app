@@ -28,11 +28,11 @@ export const metadata: Metadata = {
     title: TITLE,
     description: DESCRIPTION,
   },
-  // The gold-lock mark on black — same silhouette as FocusGateMark (components/landing/
-  // Navbar.tsx) redrawn as bold filled shapes instead of thin strokes, which read fine at
-  // 24px in a nav bar but vanish at 16px favicon size. favicon.ico bundles 16/32/48px PNG
-  // frames (all modern browsers support PNG-in-ICO); icon-192/512 cover PWA-style and
-  // Android home-screen use; apple-icon covers iOS "Add to Home Screen."
+  // The gold "F" mark on black — same source art as the Chrome extension's own icon
+  // (extension/icons/icon-source.png), just resized per use rather than redrawn, so the
+  // web tab and the extension toolbar icon are pixel-for-pixel the same mark. favicon.ico
+  // bundles 16/32/48px PNG frames (all modern browsers support PNG-in-ICO); icon-192/512
+  // cover PWA-style and Android home-screen use; apple-icon covers iOS "Add to Home Screen."
   icons: {
     icon: [
       { url: "/favicon.ico", sizes: "any" },
