@@ -109,7 +109,7 @@ export default function PrivacyPolicyPage() {
           <h2 style={h2Style}>8. Contact us</h2>
           <p style={pStyle}>
             Questions about this policy or your data? Email{" "}
-            <a href="mailto:privacy@focusgate.app" style={{ color: "#b08d57" }}>privacy@focusgate.app</a>.
+            <a href="mailto:privacy@focusgate.site" style={{ color: "#b08d57" }}>privacy@focusgate.site</a>.
           </p>
         </section>
       </main>

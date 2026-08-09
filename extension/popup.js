@@ -10,13 +10,12 @@
 // in the document at any moment, built the instant its button is pressed and nothing
 // before that.
 
-// TODO: replace with the real production dashboard URL once deployed.
-const DASHBOARD_URL = "https://focusgate.app/dashboard";
+const DASHBOARD_URL = "https://focusgate.site/dashboard";
 // The Lounge (breathing circle, brain games, decorations) needs real screen space the
 // popup doesn't have — this opens the dedicated standalone page (app/(app)/lounge) in a
 // full tab instead, which finds this same paused session on its own and picks up the
 // live shared break state, same as the dashboard tab would if it were open.
-const LOUNGE_URL = "https://focusgate.app/lounge";
+const LOUNGE_URL = "https://focusgate.site/lounge";
 
 const MIN_REASON_LENGTH = 15; // mirrors EmergencyUnblockModal.tsx — must match background.js
 const MAX_FREE_EMERGENCY_UNBLOCKS_DISPLAY = 2; // mirrors lib/supabase.ts's MAX_FREE_EMERGENCY_UNBLOCKS, for copy only

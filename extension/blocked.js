@@ -1,9 +1,8 @@
 // blocked.js — reads live session status from the service worker and renders the
 // countdown. No bypass control lives here by design (per spec): this page only informs.
 
-// TODO: replace with the real production dashboard URL once deployed (mirrors popup.js's
-// own DASHBOARD_URL constant — keep both in sync).
-const DASHBOARD_URL = "https://focusgate.app/dashboard";
+// Mirrors popup.js's own DASHBOARD_URL constant — keep both in sync.
+const DASHBOARD_URL = "https://focusgate.site/dashboard";
 
 const viewActiveEl = document.getElementById("view-active");
 const viewCompleteEl = document.getElementById("view-complete");
