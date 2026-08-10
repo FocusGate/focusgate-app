@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/client";
+import posthog from "posthog-js";
 import {
   computeStreakFromSessions,
   computeThemeBreakdown,
@@ -151,6 +152,7 @@ export async function verifyEmailOtp(email: string, token: string, name?: string
 export async function signOut() {
   const { error } = await supabase.auth.signOut();
   if (error) throw error;
+  posthog.reset();
 }
 
 export async function getUser() {

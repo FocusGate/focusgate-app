@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import posthog from "posthog-js";
 import { motion } from "framer-motion";
 import { X } from "lucide-react";
 import MathSprintGate from "./gates/MathSprintGate";
@@ -138,6 +139,12 @@ export default function BreakFlowModal({
         skippable: true,
         noteText,
         reminderText: null,
+      });
+      posthog.capture("break_started", {
+        duration_seconds: requestedSeconds,
+        gate_challenge: choice,
+        gate_difficulty: forceDifficulty ?? prefs?.break_gate_difficulty ?? "normal",
+        included_break_note: Boolean(noteText.trim()),
       });
       onGranted(requestedSeconds, noteText, id);
     } catch {

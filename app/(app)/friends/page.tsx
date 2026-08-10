@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import posthog from "posthog-js";
 import Link from "next/link";
 import GroupCard from "@/components/app/friends/GroupCard";
 import ActivityFeedItem from "@/components/app/friends/ActivityFeedItem";
@@ -126,6 +127,7 @@ export default function FriendsPage() {
     try {
       await createFriendGroup(user.id, groupName.trim());
       setGroupName("");
+      posthog.capture("friend_group_created");
       const list = await loadGroups(user.id);
       await refreshPresenceAndFeed(list, user.id);
     } catch (err) {
@@ -147,6 +149,7 @@ export default function FriendsPage() {
     try {
       await joinFriendGroup(user.id, joinId.trim());
       setJoinId("");
+      posthog.capture("friend_group_joined");
       const list = await loadGroups(user.id);
       await refreshPresenceAndFeed(list, user.id);
     } catch (err) {
@@ -165,6 +168,9 @@ export default function FriendsPage() {
     }));
     try {
       await reactToSession(sessionId, user.id);
+      if (!prev.reactedByMe) {
+        posthog.capture("session_reaction_added");
+      }
     } catch {
       setReactions((r) => ({ ...r, [sessionId]: prev }));
     }

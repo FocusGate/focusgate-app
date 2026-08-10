@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import posthog from "posthog-js";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { getAuthErrorMessage, signUp } from "@/lib/supabase";
@@ -44,7 +45,15 @@ export default function SignupForm() {
     try {
       const goalTargetDate = goalTimeframeWeeks ? computeTargetISODate(goalTimeframeWeeks) : null;
       const data = await signUp(email, password, name, goals, goalTargetDate);
-      if (data.session) {
+      if (data.session && data.user) {
+        posthog.identify(data.user.id, {
+          email: data.user.email ?? email,
+          name,
+        });
+        posthog.capture("account_created", {
+          goal_count: goals.length,
+          has_goal_timeframe: Boolean(goalTimeframeWeeks),
+        });
         clearOnboardingState();
         // Awaited rather than fire-and-forget, simply so signup can't return/redirect
         // before this Server Action's own round trip is done — sendWelcomeEmail already

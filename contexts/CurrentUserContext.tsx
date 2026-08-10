@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import posthog from "posthog-js";
 import { getUser } from "@/lib/supabase";
 import { getAppConfig, computeEntitlements, type Entitlements } from "@/lib/entitlements";
 
@@ -66,7 +67,12 @@ export function CurrentUserProvider({ children }: { children: React.ReactNode })
           router.replace("/login");
           return;
         }
-        setUser(u as CurrentUser);
+        const currentUser = u as CurrentUser;
+        posthog.identify(currentUser.id, {
+          email: currentUser.email,
+          name: currentUser.name,
+        });
+        setUser(currentUser);
         setBetaMode(config.betaMode);
       })
       .catch(() => {

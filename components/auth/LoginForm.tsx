@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import posthog from "posthog-js";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { getAuthErrorMessage, signIn } from "@/lib/supabase";
@@ -20,7 +21,13 @@ export default function LoginForm() {
     setError(null);
     setLoading(true);
     try {
-      await signIn(email, password);
+      const data = await signIn(email, password);
+      if (data.user) {
+        posthog.identify(data.user.id, {
+          email: data.user.email ?? email,
+        });
+      }
+      posthog.capture("user_signed_in");
       router.push("/dashboard");
     } catch (err) {
       setError(getAuthErrorMessage(err, "Could not sign in. Check your details and try again."));
