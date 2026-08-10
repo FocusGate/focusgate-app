@@ -10,10 +10,10 @@ import { getAppConfig } from "@/lib/entitlements";
 
 const YEARLY_MONTHLY_EQUIVALENT = "$2.50/month";
 
-/** An anchor price strikes through on scroll-into-view (a red line animating across it),
- *  then a beat later reveals the real price — "here's what this would normally run you,
- *  here's what you actually pay." Anchor numbers are illustrative reference points (Pro:
- *  ~2x the real price; Lifetime: ~2.5x), not prices ever actually charged anywhere. */
+/** The real future price strikes through on scroll-into-view (a red line animating across
+ *  it), then a beat later reveals $0 in gold — "here's what this normally costs, here's
+ *  what you pay during beta." The struck number is the actual post-beta price, not a
+ *  placeholder anchor — it's what locks in for is_beta_user accounts forever. */
 function StruckPriceReveal({
   oldPrice,
   oldUnit,
@@ -214,9 +214,9 @@ export default function Pricing() {
               MOST POPULAR
             </span>
             {billing === "yearly" ? (
-              <StruckPriceReveal oldPrice="$59.99" oldUnit="/yr" newPrice="$29.99" newUnit="/yr" badge="SAVE 50%" />
+              <StruckPriceReveal oldPrice="$29.99" oldUnit="/yr" newPrice="$0" newUnit="/yr" />
             ) : (
-              <StruckPriceReveal oldPrice="$9.99" oldUnit="/mo" newPrice="$4.99" newUnit="/mo" />
+              <StruckPriceReveal oldPrice="$4.99" oldUnit="/mo" newPrice="$0" newUnit="/mo" />
             )}
             {billing === "yearly" ? (
               <span style={{ color: "#9a9da4", fontSize: 13, marginTop: 2 }}>Just {YEARLY_MONTHLY_EQUIVALENT}, billed annually</span>
@@ -245,7 +245,7 @@ export default function Pricing() {
           <span style={{ alignSelf: "flex-start", background: "#b08d57", color: "#fff", fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", padding: "5px 12px", borderRadius: 999 }}>
             BEST DEAL
           </span>
-          <StruckPriceReveal oldPrice="$199.99" oldUnit=" one-time" newPrice="$79.99" newUnit=" one-time" />
+          <StruckPriceReveal oldPrice="$79.99" oldUnit=" one-time" newPrice="$0" newUnit=" one-time" />
           <p style={{ color: "#b08d57", fontSize: 13, fontWeight: 700, marginTop: 12 }}>Pay once. Yours forever.</p>
           <div style={{ display: "flex", flexDirection: "column", gap: 11, margin: "22px 0 0", color: "#cbccd2", fontSize: 14 }}>
             <span>✓ Everything in Pro, forever</span>
