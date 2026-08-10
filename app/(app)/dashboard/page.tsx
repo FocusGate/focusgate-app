@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import posthog from "posthog-js";
 import { Flame, Lock, Ban } from "lucide-react";
 import LockedInOverlay from "@/components/app/LockedInOverlay";
 import LockInEntryAnimation from "@/components/app/LockInEntryAnimation";
@@ -141,6 +142,12 @@ export default function DashboardPage() {
       setSessionMode(cfg.mode);
       setSessionModeConfig(cfg.modeConfig);
       setSessionGroupId(cfg.groupId);
+      posthog.capture("focus_session_started", {
+        duration_minutes: cfg.minutes,
+        session_mode: cfg.mode,
+        has_group: Boolean(cfg.groupId),
+        blocked_site_count: urls.length,
+      });
 
       const prefs = await getUserPreferences(user.id);
       if (prefs.share_session_starts) {
@@ -180,6 +187,9 @@ export default function DashboardPage() {
       const site = await addBlockedSite(user.id, newSite.trim());
       setBlockedSites((s) => [...s, site as BlockedSite]);
       setNewSite("");
+      posthog.capture("blocked_site_added", {
+        blocked_site_count: blockedSites.length + 1,
+      });
     } catch (err) {
       setSiteError(err instanceof Error ? err.message : "Could not add that site.");
     } finally {
@@ -199,6 +209,11 @@ export default function DashboardPage() {
   async function handleSessionComplete() {
     if (!sessionId || !user) return [];
     await endSession(sessionId);
+    posthog.capture("focus_session_completed", {
+      duration_minutes: Math.round(sessionSeconds / 60),
+      session_mode: sessionMode,
+      has_group: Boolean(sessionGroupId),
+    });
     const unlocked = await checkAndUnlockBadges(user.id, entitlements.maxBadgeRarity);
     const refreshed = await getUser();
     if (refreshed) setUser(refreshed as CurrentUser);

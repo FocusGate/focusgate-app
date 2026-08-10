@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft } from "lucide-react";
 import { RotateCcw } from "lucide-react";
+import posthog from "posthog-js";
 import {
   EMPTY_ANSWERS,
   TOTAL_STEPS,
@@ -102,6 +103,11 @@ export default function OnboardingFlow() {
    *  prefill and seed the account, via loadOnboardingState()). */
   function finishOnboarding(value: string) {
     setAnswers((a) => ({ ...a, commitmentLevel: value }));
+    posthog.capture("onboarding_completed", {
+      goal_count: answers.goals.length,
+      timeframe_weeks: answers.goalTimeframeWeeks || null,
+      commitment_level: value,
+    });
     setTimeout(() => router.push("/signup"), 200);
   }
 

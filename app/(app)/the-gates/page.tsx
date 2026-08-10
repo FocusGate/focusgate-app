@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import posthog from "posthog-js";
 import { Unlock, Siren, PenLine, Zap, CheckCircle2, XCircle, DollarSign } from "lucide-react";
 import GateSection, { GateRow } from "@/components/app/gates/GateSection";
 import PillSelect from "@/components/app/gates/PillSelect";
@@ -157,6 +158,7 @@ export default function TheGatesPage() {
     setBuying(true);
     try {
       await recordEmergencyUnblock(user.id, null, "Purchased extra emergency unblock", true);
+      posthog.capture("emergency_unblock_purchased");
       const [es, eh] = await Promise.all([getEmergencyUnblockStats(user.id), getEmergencyUnblockHistory(user.id, 10)]);
       setEmergencyStats(es);
       setEmergencyHistory(eh);
