@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
 import GroupCard from "@/components/app/friends/GroupCard";
 import ActivityFeedItem from "@/components/app/friends/ActivityFeedItem";
 import { useCurrentUserContext } from "@/contexts/CurrentUserContext";
@@ -24,7 +25,7 @@ type ReactionMap = Record<string, { count: number; reactedByMe: boolean }>;
 const PRESENCE_POLL_MS = 18000;
 
 export default function FriendsPage() {
-  const { user } = useCurrentUserContext();
+  const { user, entitlements } = useCurrentUserContext();
   const [groups, setGroups] = useState<GroupSummary[]>([]);
   const [presenceByGroup, setPresenceByGroup] = useState<Record<string, PresenceEntry[]>>({});
   const [feed, setFeed] = useState<SessionFeedItem[]>([]);
@@ -116,6 +117,10 @@ export default function FriendsPage() {
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
     if (!user || !groupName.trim() || creating) return;
+    if (!entitlements.canUseFriendGroups) {
+      setCreateError("Your trial ended — upgrade to create friend groups.");
+      return;
+    }
     setCreateError(null);
     setCreating(true);
     try {
@@ -133,6 +138,10 @@ export default function FriendsPage() {
   async function handleJoin(e: React.FormEvent) {
     e.preventDefault();
     if (!user || !joinId.trim() || joining) return;
+    if (!entitlements.canUseFriendGroups) {
+      setJoinError("Your trial ended — upgrade to join friend groups.");
+      return;
+    }
     setJoinError(null);
     setJoining(true);
     try {
@@ -173,7 +182,7 @@ export default function FriendsPage() {
           <h2 style={{ fontSize: 15, fontWeight: 700, marginBottom: 14 }}>Create a group</h2>
           <form onSubmit={handleCreate} style={{ display: "flex", gap: 10 }}>
             <input value={groupName} onChange={(e) => setGroupName(e.target.value)} placeholder="Group name" style={inputStyle} />
-            <button type="submit" disabled={creating} style={{ ...btnStyle, opacity: creating ? 0.6 : 1 }}>
+            <button type="submit" disabled={creating || !entitlements.canUseFriendGroups} style={{ ...btnStyle, opacity: creating || !entitlements.canUseFriendGroups ? 0.6 : 1 }}>
               {creating ? "Creating…" : "Create"}
             </button>
           </form>
@@ -183,11 +192,16 @@ export default function FriendsPage() {
           <h2 style={{ fontSize: 15, fontWeight: 700, marginBottom: 14 }}>Join a group</h2>
           <form onSubmit={handleJoin} style={{ display: "flex", gap: 10 }}>
             <input value={joinId} onChange={(e) => setJoinId(e.target.value)} placeholder="Group code" style={inputStyle} />
-            <button type="submit" disabled={joining} style={{ ...btnStyle, opacity: joining ? 0.6 : 1 }}>
+            <button type="submit" disabled={joining || !entitlements.canUseFriendGroups} style={{ ...btnStyle, opacity: joining || !entitlements.canUseFriendGroups ? 0.6 : 1 }}>
               {joining ? "Joining…" : "Join"}
             </button>
           </form>
           {joinError && <p style={{ color: "#f87171", fontSize: 13, marginTop: 10 }}>{joinError}</p>}
+          {!entitlements.canUseFriendGroups && !joinError && (
+            <p style={{ color: "#7a7d84", fontSize: 12, marginTop: 10 }}>
+              Your trial ended — <Link href="/#pricing" style={{ color: "#F59E0B" }}>upgrade</Link> to create or join groups.
+            </p>
+          )}
         </div>
       </div>
 

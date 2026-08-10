@@ -23,6 +23,7 @@ import {
   type NewlyUnlockedBadge,
 } from "@/lib/supabase";
 import { sendBreakReminderEmail } from "@/lib/email";
+import type { Entitlements } from "@/lib/entitlements";
 import {
   type SessionMode,
   type ModeConfig,
@@ -62,6 +63,7 @@ export default function LockedInOverlay({
   groupId = null,
   breakRemindersEnabled = false,
   breakReminderIntervalMinutes = 60,
+  entitlements,
   onComplete,
   onFinished,
   onStartAnother,
@@ -92,6 +94,12 @@ export default function LockedInOverlay({
    *  lib/supabase.ts uses, for a caller that hasn't loaded prefs yet. */
   breakRemindersEnabled?: boolean;
   breakReminderIntervalMinutes?: number;
+  /** Dormant while BETA_MODE is on (every field just reads true/Infinity) — gates the
+   *  manual "Request a Break" flow (Break Gates) and the Dead Man's Switch trip below. Auto
+   *  breaks (Pomodoro/All Nighter's triggerAutoBreak) are deliberately NOT gated by this:
+   *  they're not a Break Gate at all (no game, pre-earned by the mode's own design), so a
+   *  restricted account keeps getting its scheduled rest either way. */
+  entitlements: Entitlements;
   onComplete: () => Promise<NewlyUnlockedBadge[]>;
   onFinished: () => void;
   onStartAnother: () => void;
@@ -119,8 +127,9 @@ export default function LockedInOverlay({
 
   // Deep Focus offers no Break Gates at all; Pomodoro's breaks are fully automatic, so a
   // manual request alongside them would just fight the cadence — both hide the button
-  // entirely rather than disabling it.
-  const manualBreaksAllowed = mode !== "deep_focus" && mode !== "pomodoro";
+  // entirely rather than disabling it. entitlements.canUseBreakGates folds in the same way
+  // for a restricted (post-trial, non-beta) account — dormant while BETA_MODE is on.
+  const manualBreaksAllowed = mode !== "deep_focus" && mode !== "pomodoro" && entitlements.canUseBreakGates;
 
   // A break started on the Chrome extension (or a page reload mid-break) needs to show up
   // here without this tab having triggered it locally — Supabase's sessions row is the
@@ -307,7 +316,9 @@ export default function LockedInOverlay({
   // trip — the group finds out, automatically, not optionally.
   function handleEmergencyGranted() {
     setShowEmergencyFlow(false);
-    if (mode === "group_study" && groupId) {
+    // Explicitly gated on its own flag, not folded into canUseFriendGroups — see
+    // Entitlements.canUseDeadMansSwitch's own doc comment. Dormant while BETA_MODE is on.
+    if (mode === "group_study" && groupId && entitlements.canUseDeadMansSwitch) {
       reportGroupViolation(groupId, userId, sessionId, null).catch(() => {});
     }
     void handleComplete();

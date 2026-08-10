@@ -31,7 +31,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 }
 
 function Shell({ children }: { children: React.ReactNode }) {
-  const { user, loading } = useCurrentUserContext();
+  const { user, loading, betaMode } = useCurrentUserContext();
   const pathname = usePathname();
   const router = useRouter();
   const [hasActiveSession, setHasActiveSession] = useState(false);
@@ -91,7 +91,7 @@ function Shell({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <AppShell user={user} hasActiveSession={hasActiveSession}>
+    <AppShell user={user} hasActiveSession={hasActiveSession} betaMode={betaMode}>
       {children}
     </AppShell>
   );

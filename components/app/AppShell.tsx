@@ -22,16 +22,39 @@ const NAV = [
 
 export type AppShellUser = { name: string; email: string; streak: number } | null | undefined;
 
+function BetaBadge() {
+  return (
+    <span
+      style={{
+        background: "rgba(245,158,11,0.12)",
+        color: "#F59E0B",
+        border: "1px solid rgba(245,158,11,0.4)",
+        fontSize: 10,
+        fontWeight: 800,
+        letterSpacing: "0.08em",
+        padding: "3px 8px",
+        borderRadius: 999,
+      }}
+    >
+      BETA
+    </span>
+  );
+}
+
 export default function AppShell({
   children,
   user,
   hasActiveSession = false,
+  betaMode = false,
 }: {
   children: React.ReactNode;
   user?: AppShellUser;
   /** While locked in, the nav links themselves must disappear — not just be blocked on
    *  navigation — so there's nothing suggesting you could leave in the first place. */
   hasActiveSession?: boolean;
+  /** public.app_config.beta_mode — shows a small BETA pill next to the wordmark for as long
+   *  as it's true. Disappears on its own once beta_mode flips at launch; nothing to remove. */
+  betaMode?: boolean;
 }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -64,11 +87,13 @@ export default function AppShell({
           <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "0 6px" }}>
             <FocusGateMark size={24} />
             <span style={{ fontFamily: "'Instrument Serif', serif", fontSize: 21, color: "#b08d57" }}>FocusGate</span>
+            {betaMode && <BetaBadge />}
           </div>
         ) : (
           <Link href="/dashboard" style={{ display: "flex", alignItems: "center", gap: 10, padding: "0 6px" }}>
             <FocusGateMark size={24} />
             <span style={{ fontFamily: "'Instrument Serif', serif", fontSize: 21, color: "#b08d57" }}>FocusGate</span>
+            {betaMode && <BetaBadge />}
           </Link>
         )}
 

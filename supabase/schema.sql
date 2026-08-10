@@ -589,3 +589,145 @@ alter table public.sessions add column if not exists pause_note_text text;
 -- group_violations above. Requires Realtime enabled on the project (Database →
 -- Replication); this line alone silently no-ops if that project-level toggle is off.
 alter publication supabase_realtime add table public.sessions;
+
+-- ---------- Pricing / trial / beta mode ----------
+-- Single-row global switch for the whole trial+paywall system (lib/entitlements.ts).
+-- While true, every user gets full access regardless of trial_ends_at — the entire
+-- restriction system below stays fully built and wired but dormant. Flip this one row to
+-- false at real launch to turn it on for every *new* signup; no redeploy, no rebuilding —
+-- that's the whole point of it living here instead of an env var. Existing is_beta_user
+-- accounts stay fully unlocked forever regardless of this flag (see computeEntitlements).
+-- No insert/update policy on purpose: changing it is a deliberate one-off done directly in
+-- the Supabase SQL editor at launch time, not something any app code should ever be able to
+-- flip — public read only (the landing page's own pricing section reads this too, signed
+-- out, to decide whether to show the beta banner).
+create table if not exists public.app_config (
+  id boolean primary key default true,
+  beta_mode boolean not null default true,
+  constraint app_config_singleton check (id)
+);
+insert into public.app_config (id, beta_mode) values (true, true) on conflict (id) do nothing;
+
+alter table public.app_config enable row level security;
+drop policy if exists "app_config public read" on public.app_config;
+create policy "app_config public read" on public.app_config for select using (true);
+
+-- is_beta_user: set at signup from whatever beta_mode was at that moment (lib/supabase.ts's
+-- signUp()) — once true, it's permanent, a thank-you for signing up early that survives
+-- beta_mode later flipping to false.
+-- trial_ends_at: set at signup regardless of beta_mode (now() + 5 days) — recorded from day
+-- one so the 5-day trial is already "running" underneath beta access; when beta_mode
+-- eventually flips off, accounts that signed up during beta simply start seeing whatever
+-- trial time they have left (or none), same as anyone else, unless is_beta_user exempts them.
+alter table public.users add column if not exists is_beta_user boolean not null default false;
+alter table public.users add column if not exists trial_ends_at timestamptz;
+
+-- ---------- Automated email system (Supabase Edge Functions + pg_cron) ----------
+-- Every table here is read/written only by Edge Functions running with the service-role
+-- key (supabase/functions/*) — never from the browser client, so RLS below is deliberately
+-- restrictive (deny-all to anon/authenticated; service-role bypasses RLS entirely, which is
+-- the intended access path). See supabase/functions/README.md for what actually calls these.
+
+-- Whether to send this user *non-critical* marketing/lifecycle email (welcome, trial
+-- ending, re-engagement, congratulations, launch announcement). Security-critical
+-- email — the OTP/password-reset flow — is entirely Supabase Auth's own SMTP delivery,
+-- not this system, and was never gated by this flag; there's nothing here to check for it.
+alter table public.user_preferences add column if not exists email_opt_in boolean not null default true;
+
+-- One row per email actually sent — the audit trail for "what went out." `type` is a free
+-- label (see EmailType in supabase/functions/_shared/emailTemplates.ts), not a foreign key,
+-- so adding a new email type later never needs a migration here.
+create table if not exists public.email_logs (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references public.users (id) on delete set null,
+  email text not null,
+  type text not null,
+  resend_id text,
+  status text not null default 'sent' check (status in ('sent', 'failed', 'skipped')),
+  created_at timestamptz not null default now()
+);
+create index if not exists email_logs_user_id_idx on public.email_logs (user_id);
+create index if not exists email_logs_type_idx on public.email_logs (type);
+
+alter table public.email_logs enable row level security;
+drop policy if exists "email_logs no client access" on public.email_logs;
+create policy "email_logs no client access" on public.email_logs for all using (false);
+
+-- Dedup guard for the daily congratulations check (7-day streak / first Rare+ badge) —
+-- without this, re-running the same daily check the next day (streak still >= 7, badge
+-- still unlocked) would re-send the same congratulations email indefinitely. One row per
+-- (user, milestone) ever sent, checked before sending, inserted right after.
+create table if not exists public.milestone_emails_sent (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references public.users (id) on delete cascade,
+  milestone_type text not null,
+  sent_at timestamptz not null default now(),
+  unique (user_id, milestone_type)
+);
+
+alter table public.milestone_emails_sent enable row level security;
+drop policy if exists "milestone_emails_sent no client access" on public.milestone_emails_sent;
+create policy "milestone_emails_sent no client access" on public.milestone_emails_sent for all using (false);
+
+-- Query helpers for supabase/functions/daily-email-checks — genuine NOT EXISTS / dedup
+-- logic like this is awkward to express through PostgREST's query builder from the Edge
+-- Function side, so it lives here instead; the function just calls these via .rpc() and
+-- sends whatever comes back. All four are called with the service-role key, which already
+-- bypasses RLS — `security definer` isn't adding privilege here, just explicit about intent.
+
+create or replace function public.get_users_trial_ending_tomorrow()
+returns table (id uuid, email text, name text)
+language sql security definer as $$
+  select u.id, u.email, u.name
+  from public.users u
+  where u.trial_ends_at is not null
+    and u.trial_ends_at >= now() + interval '23 hours'
+    and u.trial_ends_at <  now() + interval '25 hours'
+    and coalesce((select p.email_opt_in from public.user_preferences p where p.user_id = u.id), true);
+$$;
+
+-- "Inactive" = no session started in 5+ days, but has started at least one ever (a brand
+-- new signup with zero sessions yet isn't "re-engagement," it's just onboarding — that's
+-- what the welcome email is for). Also excludes anyone already sent a re-engagement email
+-- in the last 7 days, via email_logs directly rather than a separate dedup table — this is
+-- the one check without its own milestone table since "N days since last send" doesn't
+-- need one, a plain recency check against the log already answers it.
+create or replace function public.get_users_inactive_5_days()
+returns table (id uuid, email text, name text)
+language sql security definer as $$
+  select u.id, u.email, u.name
+  from public.users u
+  where exists (select 1 from public.sessions s where s.user_id = u.id)
+    and not exists (select 1 from public.sessions s where s.user_id = u.id and s.start_time > now() - interval '5 days')
+    and not exists (
+      select 1 from public.email_logs e
+      where e.user_id = u.id and e.type = 're_engagement' and e.status = 'sent' and e.created_at > now() - interval '7 days'
+    )
+    and coalesce((select p.email_opt_in from public.user_preferences p where p.user_id = u.id), true);
+$$;
+
+create or replace function public.get_users_streak_milestone(threshold integer default 7)
+returns table (id uuid, email text, name text, streak integer)
+language sql security definer as $$
+  select u.id, u.email, u.name, u.streak
+  from public.users u
+  where u.streak >= threshold
+    and not exists (
+      select 1 from public.milestone_emails_sent m where m.user_id = u.id and m.milestone_type = 'streak_' || threshold::text
+    )
+    and coalesce((select p.email_opt_in from public.user_preferences p where p.user_id = u.id), true);
+$$;
+
+create or replace function public.get_users_badge_milestone()
+returns table (id uuid, email text, name text, badge_id uuid, badge_name text, badge_description text, badge_rarity text)
+language sql security definer as $$
+  select u.id, u.email, u.name, b.id as badge_id, b.name as badge_name, b.description as badge_description, b.rarity as badge_rarity
+  from public.users u
+  join public.user_badges ub on ub.user_id = u.id
+  join public.badges b on b.id = ub.badge_id
+  where b.rarity in ('rare', 'epic', 'mythic', 'legendary')
+    and not exists (
+      select 1 from public.milestone_emails_sent m where m.user_id = u.id and m.milestone_type = 'badge_' || b.id::text
+    )
+    and coalesce((select p.email_opt_in from public.user_preferences p where p.user_id = u.id), true);
+$$;

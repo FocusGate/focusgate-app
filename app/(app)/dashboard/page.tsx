@@ -6,6 +6,7 @@ import LockedInOverlay from "@/components/app/LockedInOverlay";
 import LockInEntryAnimation from "@/components/app/LockInEntryAnimation";
 import SessionModeFlow, { type StartConfig } from "@/components/app/dashboard/SessionModeFlow";
 import StatCard, { formatHoursMinutes } from "@/components/app/dashboard/StatCard";
+import TrialStatusBanner from "@/components/app/dashboard/TrialStatusBanner";
 import { useCurrentUserContext, type CurrentUser } from "@/contexts/CurrentUserContext";
 import { sendBadgeUnlockEmail } from "@/lib/email";
 import {
@@ -57,7 +58,7 @@ function todayKey() {
 }
 
 export default function DashboardPage() {
-  const { user, setUser } = useCurrentUserContext();
+  const { user, setUser, entitlements, betaMode } = useCurrentUserContext();
   const [blockedSites, setBlockedSites] = useState<BlockedSite[]>([]);
   const [sessions, setSessions] = useState<SessionRow[]>([]);
   const [newSite, setNewSite] = useState("");
@@ -167,6 +168,13 @@ export default function DashboardPage() {
     e.preventDefault();
     if (!user || !newSite.trim() || addingSite) return;
     setSiteError(null);
+    // Dormant while entitlements.blockedSitesLimit is Infinity (beta, grandfathered, or
+    // still-active trial) — only ever actually blocks something once BETA_MODE is off and
+    // this specific account's trial has run out.
+    if (blockedSites.length >= entitlements.blockedSitesLimit) {
+      setSiteError("Your trial ended — upgrade to block more than 1 site.");
+      return;
+    }
     setAddingSite(true);
     try {
       const site = await addBlockedSite(user.id, newSite.trim());
@@ -191,7 +199,7 @@ export default function DashboardPage() {
   async function handleSessionComplete() {
     if (!sessionId || !user) return [];
     await endSession(sessionId);
-    const unlocked = await checkAndUnlockBadges(user.id);
+    const unlocked = await checkAndUnlockBadges(user.id, entitlements.maxBadgeRarity);
     const refreshed = await getUser();
     if (refreshed) setUser(refreshed as CurrentUser);
     setSessions((prev) => [
@@ -230,6 +238,7 @@ export default function DashboardPage() {
           groupId={sessionGroupId}
           breakRemindersEnabled={prefs?.session_break_reminders ?? false}
           breakReminderIntervalMinutes={prefs?.break_reminder_interval_minutes ?? 60}
+          entitlements={entitlements}
           onComplete={handleSessionComplete}
           onFinished={() => {
             setSessionId(null);
@@ -246,6 +255,8 @@ export default function DashboardPage() {
       <h1 style={{ fontSize: 28, fontWeight: 700 }}>{greeting(user.name)}</h1>
       <p style={{ color: "#9a9da4", marginTop: 6 }}>Ready to get locked in?</p>
       {goalLine && <p style={{ color: "#b08d57", fontSize: 13, fontWeight: 600, marginTop: 10 }}>{goalLine}</p>}
+
+      <TrialStatusBanner betaMode={betaMode} entitlements={entitlements} />
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 18, marginTop: 30 }}>
         <StatCard label="Current streak" target={user.streak} suffix={user.streak === 1 ? " day" : " days"} icon={<Flame size={14} color="#F59E0B" />} />

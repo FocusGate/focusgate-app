@@ -11,6 +11,7 @@ import {
 } from "@/lib/stats";
 import type { SessionMode, ModeConfig } from "@/lib/sessionModes";
 import { sendFriendGroupNotificationEmail } from "@/lib/email";
+import { getAppConfig, trialEndsAtFor } from "@/lib/entitlements";
 
 let cached: ReturnType<typeof createClient> | null = null;
 
@@ -59,10 +60,30 @@ export async function signUp(
   if (error) throw error;
 
   if (data.user && data.session) {
+    // is_beta_user is permanent from this moment — whatever beta_mode reads *right now*, at
+    // the instant of signup, is what this account keeps forever, even after beta_mode later
+    // flips to false. trial_ends_at is set unconditionally (not skipped just because beta
+    // access covers it today) so the 5-day trial is already ticking underneath beta access
+    // from day one, exactly as if beta_mode were already off.
+    const { betaMode } = await getAppConfig().catch(() => ({ betaMode: true }));
+    const baseProfile = { id: data.user.id, email, name, goals, goal_target_date: goalTargetDate };
     const { error: profileError } = await supabase
       .from("users")
-      .insert({ id: data.user.id, email, name, goals, goal_target_date: goalTargetDate });
-    if (profileError) throw profileError;
+      .insert({ ...baseProfile, is_beta_user: betaMode, trial_ends_at: trialEndsAtFor() });
+    if (profileError) {
+      // Falls back to the pre-migration column set instead of failing signup outright if
+      // is_beta_user/trial_ends_at don't exist in this database yet (supabase/schema.sql's
+      // "Pricing / trial / beta mode" migration not applied) — PostgREST reports an unknown
+      // insert column as PGRST204, specifically, not any other error shape. Confirmed live:
+      // without this fallback, signup breaks completely (not gracefully) the moment this
+      // code ships ahead of that migration actually being run.
+      if (profileError.code === "PGRST204") {
+        const { error: fallbackError } = await supabase.from("users").insert(baseProfile);
+        if (fallbackError) throw fallbackError;
+      } else {
+        throw profileError;
+      }
+    }
     await seedDefaultBlockedSites(data.user.id, goals);
   }
 
@@ -675,10 +696,17 @@ async function buildBadgeContext(userId: string): Promise<{ badges: BadgeRow[]; 
  */
 export type NewlyUnlockedBadge = { id: string; name: string; description: string; rarity: string; unlocked_at: string };
 
-export async function checkAndUnlockBadges(userId: string): Promise<NewlyUnlockedBadge[]> {
+/** `allowedRarities` — restricted (post-trial, non-beta) accounts stop earning anything
+ *  above Common; omit it (every other caller) for unrestricted behavior. Filtered before
+ *  the already-unlocked check below, not after — a badge a restricted account technically
+ *  qualifies for but can't earn shouldn't consume a "newly unlocked" slot or otherwise be
+ *  treated as earned; it'll unlock for real the moment they're no longer restricted and
+ *  this runs again. */
+export async function checkAndUnlockBadges(userId: string, allowedRarities?: string[]): Promise<NewlyUnlockedBadge[]> {
   const { badges, ctx, alreadyUnlockedIds, special } = await buildBadgeContext(userId);
 
   const earned = badges.filter((badge) => {
+    if (allowedRarities && !allowedRarities.includes(badge.rarity)) return false;
     switch (badge.name) {
       case "Early Riser":
         return special.hasEarlyRiser;
