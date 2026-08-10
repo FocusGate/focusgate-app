@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { getAuthErrorMessage, signUp } from "@/lib/supabase";
+import { sendWelcomeEmail } from "@/lib/email";
 import { FocusGateMark } from "@/components/landing/Navbar";
 import { clearOnboardingState, computeTargetISODate, loadOnboardingState } from "@/lib/onboarding";
 
@@ -45,6 +46,11 @@ export default function SignupForm() {
       const data = await signUp(email, password, name, goals, goalTargetDate);
       if (data.session) {
         clearOnboardingState();
+        // Awaited rather than fire-and-forget, simply so signup can't return/redirect
+        // before this Server Action's own round trip is done — sendWelcomeEmail already
+        // swallows its own Resend-level failures internally (see lib/email.ts's deliver()),
+        // so this never blocks on an email *failure*, only on the request itself completing.
+        await sendWelcomeEmail(email, name);
         router.push("/dashboard");
       } else {
         setAwaitingConfirmation(true);

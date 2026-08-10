@@ -10,6 +10,7 @@ import {
   type BadgeMetricCtx,
 } from "@/lib/stats";
 import type { SessionMode, ModeConfig } from "@/lib/sessionModes";
+import { sendFriendGroupNotificationEmail } from "@/lib/email";
 
 let cached: ReturnType<typeof createClient> | null = null;
 
@@ -823,9 +824,14 @@ export async function joinFriendGroup(userId: string, groupId: string) {
 }
 
 export async function notifyFriendGroup(userId: string, groupId: string, message: string) {
+  // users(email, name) rides the group_members -> users foreign key (RLS already allows
+  // reading a group-mate's profile, not just your own — see schema.sql's "users read own"
+  // policy comment) — one round trip gets both the id list for the notifications insert
+  // below and the email/name each member's notification email needs, rather than a second
+  // query for the same rows.
   const { data: members, error: membersError } = await supabase
     .from("group_members")
-    .select("user_id")
+    .select("user_id, users(email, name)")
     .eq("group_id", groupId)
     .neq("user_id", userId);
   if (membersError) throw membersError;
@@ -845,6 +851,15 @@ export async function notifyFriendGroup(userId: string, groupId: string, message
     )
     .select();
   if (error) throw error;
+
+  // Fire-and-forget, second channel alongside the in-app notification rows just inserted —
+  // a missing/null profile join (shouldn't happen given the FK, but Supabase types it as
+  // possibly null) just skips that member's email rather than failing the whole notify call.
+  for (const m of members) {
+    const profile = m.users as unknown as { email: string; name: string } | null;
+    if (profile?.email) void sendFriendGroupNotificationEmail(profile.email, profile.name, message);
+  }
+
   return data;
 }
 

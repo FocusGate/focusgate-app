@@ -22,6 +22,7 @@ import {
   type SessionPause,
   type NewlyUnlockedBadge,
 } from "@/lib/supabase";
+import { sendBreakReminderEmail } from "@/lib/email";
 import {
   type SessionMode,
   type ModeConfig,
@@ -52,11 +53,15 @@ export default function LockedInOverlay({
   blockedSites,
   streak,
   userId,
+  userEmail,
+  userName,
   sessionId,
   sessionStartIso,
   mode = "custom",
   modeConfig = null,
   groupId = null,
+  breakRemindersEnabled = false,
+  breakReminderIntervalMinutes = 60,
   onComplete,
   onFinished,
   onStartAnother,
@@ -74,11 +79,19 @@ export default function LockedInOverlay({
   blockedSites: string[];
   streak: number;
   userId: string;
+  userEmail: string;
+  userName: string;
   sessionId: string;
   sessionStartIso: string;
   mode?: SessionMode;
   modeConfig?: ModeConfig | null;
   groupId?: string | null;
+  /** Settings > "Break reminders" — an optional, opt-in email nudge (separate channel from
+   *  anything in-app) sent at most once per breakReminderIntervalMinutes of actual elapsed
+   *  focus time. Off by default; both default to the same values DEFAULT_PREFERENCES in
+   *  lib/supabase.ts uses, for a caller that hasn't loaded prefs yet. */
+  breakRemindersEnabled?: boolean;
+  breakReminderIntervalMinutes?: number;
   onComplete: () => Promise<NewlyUnlockedBadge[]>;
   onFinished: () => void;
   onStartAnother: () => void;
@@ -206,6 +219,23 @@ export default function LockedInOverlay({
     autoBreakThresholdRef.current -= autoBreakStepRef.current;
     // eslint-disable-next-line react-hooks/exhaustive-deps -- triggerAutoBreak now also closes over sessionId (writing the shared pause state), which is stable for the life of a session — not a real missing dependency
   }, [seconds, paused, mode]);
+
+  // Break-reminder email — same repeating-threshold shape as the auto-break effect above,
+  // just against a fixed interval instead of a mode-specific one, and firing an email
+  // instead of an actual break. Seeded once per mount so toggling the setting mid-session
+  // (a separate tab's Settings page) doesn't retroactively shift where the next one lands.
+  const nextReminderThresholdRef = useRef<number | null>(null);
+  useEffect(() => {
+    nextReminderThresholdRef.current = breakRemindersEnabled ? totalSeconds - breakReminderIntervalMinutes * 60 : null;
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- deliberately runs once per mount, same as the auto-break threshold seed above
+  }, []);
+
+  useEffect(() => {
+    if (paused || seconds <= 0 || !breakRemindersEnabled) return;
+    if (nextReminderThresholdRef.current === null || seconds !== nextReminderThresholdRef.current) return;
+    void sendBreakReminderEmail(userEmail, userName);
+    nextReminderThresholdRef.current -= breakReminderIntervalMinutes * 60;
+  }, [seconds, paused, breakRemindersEnabled, breakReminderIntervalMinutes, userEmail, userName]);
 
   // Break countdown — sites stay blocked, but the main session clock doesn't tick.
   useEffect(() => {

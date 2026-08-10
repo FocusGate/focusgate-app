@@ -7,6 +7,7 @@ import LockInEntryAnimation from "@/components/app/LockInEntryAnimation";
 import SessionModeFlow, { type StartConfig } from "@/components/app/dashboard/SessionModeFlow";
 import StatCard, { formatHoursMinutes } from "@/components/app/dashboard/StatCard";
 import { useCurrentUserContext, type CurrentUser } from "@/contexts/CurrentUserContext";
+import { sendBadgeUnlockEmail } from "@/lib/email";
 import {
   addBlockedSite,
   checkAndUnlockBadges,
@@ -20,6 +21,7 @@ import {
   notifyFriendGroup,
   removeBlockedSite,
   startSession,
+  type UserPreferences,
 } from "@/lib/supabase";
 import { createClient } from "@/lib/supabase/client";
 import { getTodayFocusMinutes } from "@/lib/stats";
@@ -78,13 +80,15 @@ export default function DashboardPage() {
   // shouldn't) trigger a re-render just to flip itself on.
   const checkedForActiveSessionRef = useRef(false);
   const lastConfigRef = useRef<StartConfig | null>(null);
+  const [prefs, setPrefs] = useState<UserPreferences | null>(null);
 
   useEffect(() => {
     if (!user) return;
     Promise.all([getBlockedSites(user.id), getSessions(user.id), getUserPreferences(user.id)])
-      .then(([sites, sess]) => {
+      .then(([sites, sess, userPrefs]) => {
         setBlockedSites(sites as BlockedSite[]);
         setSessions(sess as SessionRow[]);
+        setPrefs(userPrefs);
       })
       .catch(() => {});
   }, [user]);
@@ -194,6 +198,11 @@ export default function DashboardPage() {
       { id: sessionId, start_time: new Date().toISOString(), duration_minutes: Math.round(sessionSeconds / 60), completed: true },
       ...prev,
     ]);
+    // Fire-and-forget, one per badge — the Session Complete screen already animates these
+    // in from `unlocked` itself, so the email is a second channel, not the primary signal.
+    for (const badge of unlocked) {
+      void sendBadgeUnlockEmail(user.email, user.name, badge);
+    }
     return unlocked;
   }
 
@@ -212,11 +221,15 @@ export default function DashboardPage() {
           blockedSites={blockedSites.map((s) => s.url)}
           streak={user.streak}
           userId={user.id}
+          userEmail={user.email}
+          userName={user.name}
           sessionId={sessionId}
           sessionStartIso={sessionStartIso}
           mode={sessionMode}
           modeConfig={sessionModeConfig}
           groupId={sessionGroupId}
+          breakRemindersEnabled={prefs?.session_break_reminders ?? false}
+          breakReminderIntervalMinutes={prefs?.break_reminder_interval_minutes ?? 60}
           onComplete={handleSessionComplete}
           onFinished={() => {
             setSessionId(null);
