@@ -50,7 +50,8 @@ export default function LoginForm() {
         <h1 style={{ color: "#fff", fontSize: 26, fontWeight: 700, textAlign: "center", marginBottom: 6 }}>Welcome back</h1>
         <p style={{ color: "#9a9da4", fontSize: 14, textAlign: "center", marginBottom: 30 }}>Sign in to your Locked In sessions.</p>
 
-        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+        {/* ph-no-capture: see SignupForm.tsx's identical guard — same reasoning applies here. */}
+        <form onSubmit={handleSubmit} className="ph-no-capture" style={{ display: "flex", flexDirection: "column", gap: 14 }}>
           <input
             type="email"
             required

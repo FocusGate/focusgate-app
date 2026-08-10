@@ -5,6 +5,7 @@ import CustomCursor from "@/components/CustomCursor";
 import PageTransition from "@/components/PageTransition";
 import ScrollProgressBar from "@/components/ScrollProgressBar";
 import ScrollTriggerRefresh from "@/components/ScrollTriggerRefresh";
+import PostHogProvider from "@/components/analytics/PostHogProvider";
 
 const TITLE = "FocusGate — You said you'd study. Now prove it.";
 const DESCRIPTION = "FocusGate locks you in, blocks every distraction, and won't let you leave until you're done.";
@@ -63,12 +64,14 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <CustomCursor />
-        <ScrollProgressBar />
-        <ScrollTriggerRefresh />
-        <SmoothScroll>
-          <PageTransition>{children}</PageTransition>
-        </SmoothScroll>
+        <PostHogProvider>
+          <CustomCursor />
+          <ScrollProgressBar />
+          <ScrollTriggerRefresh />
+          <SmoothScroll>
+            <PageTransition>{children}</PageTransition>
+          </SmoothScroll>
+        </PostHogProvider>
       </body>
     </html>
   );

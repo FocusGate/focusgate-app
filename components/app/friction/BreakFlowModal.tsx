@@ -26,6 +26,7 @@ import {
   DEFAULT_BREAK_SECONDS,
   formatBreakDuration,
 } from "@/lib/stats";
+import { track } from "@/lib/posthog";
 
 type GateChoice = Exclude<BreakGateChallenge, "ask">;
 type Step = "loading" | "note" | "choose" | "gate" | "duration" | "failed" | "limit-reached";
@@ -110,6 +111,7 @@ export default function BreakFlowModal({
   // duration to pick. A pass moves to "duration": only once you've actually proven you
   // deserve a break do you get to say how long it is.
   function handleResult(passed: boolean) {
+    track(passed ? "break_gate_passed" : "break_gate_failed");
     if (passed) {
       setStep("duration");
     } else {

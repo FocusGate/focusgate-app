@@ -23,6 +23,7 @@ import {
   type NewlyUnlockedBadge,
 } from "@/lib/supabase";
 import { sendBreakReminderEmail } from "@/lib/email";
+import { track } from "@/lib/posthog";
 import type { Entitlements } from "@/lib/entitlements";
 import {
   type SessionMode,
@@ -316,10 +317,12 @@ export default function LockedInOverlay({
   // trip — the group finds out, automatically, not optionally.
   function handleEmergencyGranted() {
     setShowEmergencyFlow(false);
+    track("emergency_unblock_used");
     // Explicitly gated on its own flag, not folded into canUseFriendGroups — see
     // Entitlements.canUseDeadMansSwitch's own doc comment. Dormant while BETA_MODE is on.
     if (mode === "group_study" && groupId && entitlements.canUseDeadMansSwitch) {
       reportGroupViolation(groupId, userId, sessionId, null).catch(() => {});
+      track("dead_mans_switch_triggered");
     }
     void handleComplete();
   }
@@ -379,7 +382,10 @@ export default function LockedInOverlay({
         <div style={{ display: "flex", gap: 12 }}>
           {manualBreaksAllowed && (
             <button
-              onClick={() => setShowBreakFlow(true)}
+              onClick={() => {
+                track("break_requested");
+                setShowBreakFlow(true);
+              }}
               style={{
                 display: "flex",
                 alignItems: "center",

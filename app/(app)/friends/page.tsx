@@ -18,6 +18,7 @@ import {
   type SessionFeedItem,
 } from "@/lib/supabase";
 import { createClient } from "@/lib/supabase/client";
+import { track } from "@/lib/posthog";
 
 type Notification = { id: string; message: string; created_at: string };
 type ReactionMap = Record<string, { count: number; reactedByMe: boolean }>;
@@ -199,7 +200,7 @@ export default function FriendsPage() {
           {joinError && <p style={{ color: "#f87171", fontSize: 13, marginTop: 10 }}>{joinError}</p>}
           {!entitlements.canUseFriendGroups && !joinError && (
             <p style={{ color: "#7a7d84", fontSize: 12, marginTop: 10 }}>
-              Your trial ended — <Link href="/#pricing" style={{ color: "#F59E0B" }}>upgrade</Link> to create or join groups.
+              Your trial ended — <Link href="/#pricing" onClick={() => track("upgrade_button_clicked")} style={{ color: "#F59E0B" }}>upgrade</Link> to create or join groups.
             </p>
           )}
         </div>

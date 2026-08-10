@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import type { Entitlements } from "@/lib/entitlements";
+import { track } from "@/lib/posthog";
 
 /** One of four states, all driven by the same entitlements object every other gate in the
  *  app reads from — nothing here re-derives beta/trial logic on its own:
@@ -57,6 +58,7 @@ export default function TrialStatusBanner({ betaMode, entitlements }: { betaMode
         </span>
         <Link
           href="/#pricing"
+          onClick={() => track("upgrade_button_clicked")}
           style={{
             background: "linear-gradient(180deg, #FBBF24, #F59E0B)",
             color: "#0A0A0A",

@@ -9,6 +9,7 @@ import StatCard, { formatHoursMinutes } from "@/components/app/dashboard/StatCar
 import TrialStatusBanner from "@/components/app/dashboard/TrialStatusBanner";
 import { useCurrentUserContext, type CurrentUser } from "@/contexts/CurrentUserContext";
 import { sendBadgeUnlockEmail } from "@/lib/email";
+import { track } from "@/lib/posthog";
 import {
   addBlockedSite,
   checkAndUnlockBadges,
@@ -134,6 +135,7 @@ export default function DashboardPage() {
     try {
       const urls = blockedSites.map((s) => s.url);
       const session = await startSession(user.id, urls, cfg.minutes, { mode: cfg.mode, groupId: cfg.groupId, modeConfig: cfg.modeConfig });
+      track("session_started", { session_mode: cfg.mode });
       setSessionId(session.id);
       setSessionSeconds(cfg.minutes * 60);
       setSessionInitialSecondsLeft(cfg.minutes * 60);
@@ -199,6 +201,7 @@ export default function DashboardPage() {
   async function handleSessionComplete() {
     if (!sessionId || !user) return [];
     await endSession(sessionId);
+    track("session_completed", { duration_minutes: Math.round(sessionSeconds / 60) });
     const unlocked = await checkAndUnlockBadges(user.id, entitlements.maxBadgeRarity);
     const refreshed = await getUser();
     if (refreshed) setUser(refreshed as CurrentUser);
@@ -210,6 +213,7 @@ export default function DashboardPage() {
     // in from `unlocked` itself, so the email is a second channel, not the primary signal.
     for (const badge of unlocked) {
       void sendBadgeUnlockEmail(user.email, user.name, badge);
+      track("badge_unlocked", { badge_name: badge.name, badge_tier: badge.rarity });
     }
     return unlocked;
   }

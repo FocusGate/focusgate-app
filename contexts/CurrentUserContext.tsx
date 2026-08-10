@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getUser } from "@/lib/supabase";
 import { getAppConfig, computeEntitlements, type Entitlements } from "@/lib/entitlements";
+import { posthog } from "@/lib/posthog";
 
 export type CurrentUser = {
   id: string;
@@ -68,6 +69,11 @@ export function CurrentUserProvider({ children }: { children: React.ReactNode })
         }
         setUser(u as CurrentUser);
         setBetaMode(config.betaMode);
+        // Ties every event fired from here on (including session recordings) to the real
+        // account instead of an anonymous distinct_id — every mount of this provider (i.e.
+        // every page load under app/(app)), not just signup, so it also covers someone
+        // returning on a later day.
+        posthog.identify(u.id, { email: u.email, name: u.name, is_beta_user: u.is_beta_user });
       })
       .catch(() => {
         if (!cancelled) router.replace("/login");

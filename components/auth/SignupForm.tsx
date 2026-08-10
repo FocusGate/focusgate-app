@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { getAuthErrorMessage, signUp } from "@/lib/supabase";
 import { sendWelcomeEmail } from "@/lib/email";
+import { track } from "@/lib/posthog";
 import { FocusGateMark } from "@/components/landing/Navbar";
 import { clearOnboardingState, computeTargetISODate, loadOnboardingState } from "@/lib/onboarding";
 
@@ -51,6 +52,7 @@ export default function SignupForm() {
         // swallows its own Resend-level failures internally (see lib/email.ts's deliver()),
         // so this never blocks on an email *failure*, only on the request itself completing.
         await sendWelcomeEmail(email, name);
+        track("user_signup");
         router.push("/dashboard");
       } else {
         setAwaitingConfirmation(true);
@@ -134,7 +136,10 @@ export default function SignupForm() {
         <h1 style={{ color: "#fff", fontSize: 26, fontWeight: 700, textAlign: "center", marginBottom: 6 }}>Create your account</h1>
         <p style={{ color: "#9a9da4", fontSize: 14, textAlign: "center", marginBottom: 30 }}>Free during beta. No credit card needed.</p>
 
-        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+        {/* ph-no-capture: PostHog's own opt-out class — keeps autocapture from ever recording
+            a click/submit on this form with field values attached, on top of the global
+            input-masking session recording is configured with (see lib/posthog.ts). */}
+        <form onSubmit={handleSubmit} className="ph-no-capture" style={{ display: "flex", flexDirection: "column", gap: 14 }}>
           <input type="text" required placeholder="Full name" value={name} onChange={(e) => setName(e.target.value)} style={inputStyle} />
           <input
             type="email"
