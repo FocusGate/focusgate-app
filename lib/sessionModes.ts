@@ -23,11 +23,22 @@ export type ModeDefinition = {
 };
 
 export const SESSION_MODES: ModeDefinition[] = [
-  { id: "pomodoro", name: "Pomodoro Sprints", emoji: "🍅", tagline: "25 min focus, 5 min break, repeat.", typicalDuration: "~100 min (4 cycles)", accent: "#EF4444" },
+  {
+    id: "pomodoro",
+    name: "Pomodoro Sprints",
+    emoji: "🍅",
+    tagline: "25 min focus, 5 min break, repeat.",
+    typicalDuration: "~100 min (4 cycles)",
+    accent: "#EF4444",
+    badge: "Recommended",
+  },
   { id: "exam_cram", name: "Exam Cram", emoji: "📚", tagline: "Longer stretch. Higher stakes. No easy breaks.", typicalDuration: "2–4 hours", accent: "#D97706" },
   { id: "group_study", name: "Group Study", emoji: "👥", tagline: "Lock in together. Stay accountable.", typicalDuration: "Set by you", accent: "#3B82F6", requirement: "Requires a friend group" },
   { id: "all_nighter", name: "All Nighter", emoji: "🌙", tagline: "Long haul session. Built-in rest reminders.", typicalDuration: "4+ hours", accent: "#4F46E5" },
-  { id: "deep_focus", name: "Deep Focus", emoji: "🎯", tagline: "One task. Zero interruptions. Maximum lock.", typicalDuration: "90 min, fixed", accent: "#F59E0B" },
+  // "Zero interruptions" dropped from the tagline now that Break Gates apply here too (see
+  // LockedInOverlay's manualBreaksAllowed) — what actually still sets this mode apart is the
+  // fixed, non-adjustable duration and the heavier DeepFocusConfirmModal commitment gate.
+  { id: "deep_focus", name: "Deep Focus", emoji: "🎯", tagline: "One task. 90 minutes, no shortcuts.", typicalDuration: "90 min, fixed", accent: "#F59E0B" },
 ];
 
 export const CUSTOM_MODE: ModeDefinition = {
@@ -37,14 +48,14 @@ export const CUSTOM_MODE: ModeDefinition = {
   tagline: "Pick your own duration. Manual breaks via Break Gates.",
   typicalDuration: "Set by you",
   accent: "#9CA3AF",
-  badge: "Recommended",
 };
 
-// Custom leads — it's the option with no prior setup and nothing to decide besides a
-// duration, so it's the best default for a first-time or not-sure-what-to-pick visitor.
-// The web app's dashboard grid reads this order directly; the landing page's marketing
-// carousel (components/landing/ModesCarousel.tsx) keeps its own separate copy and isn't
-// affected by this ordering.
+// Custom still leads the grid — it's the option with no prior setup and nothing to decide
+// besides a duration — even though Pomodoro (not Custom) now carries the "Recommended"
+// badge; position and recommendation are separate signals here on purpose. The web app's
+// dashboard grid reads this order directly; the landing page's marketing carousel
+// (components/landing/ModesCarousel.tsx) keeps its own separate copy and isn't affected by
+// this ordering.
 export const ALL_MODE_CARDS: ModeDefinition[] = [CUSTOM_MODE, ...SESSION_MODES];
 
 export function getModeDefinition(mode: SessionMode): ModeDefinition {

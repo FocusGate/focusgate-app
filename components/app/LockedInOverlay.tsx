@@ -134,11 +134,13 @@ export default function LockedInOverlay({
     breakStateRef.current = breakState;
   }, [breakState]);
 
-  // Deep Focus offers no Break Gates at all; Pomodoro's breaks are fully automatic, so a
-  // manual request alongside them would just fight the cadence — both hide the button
-  // entirely rather than disabling it. entitlements.canUseBreakGates folds in the same way
-  // for a restricted (post-trial, non-beta) account — dormant while BETA_MODE is on.
-  const manualBreaksAllowed = mode !== "deep_focus" && mode !== "pomodoro" && entitlements.canUseBreakGates;
+  // Pomodoro's breaks are fully automatic (25 min focus, 5 min break, on its own cadence) —
+  // a manual request alongside them would just fight that cadence, so it's the one mode
+  // that hides the button entirely rather than disabling it. Every other mode, Deep Focus
+  // included, gets manual Break Gates like Custom. entitlements.canUseBreakGates folds in
+  // the same way for a restricted (post-trial, non-beta) account — dormant while BETA_MODE
+  // is on.
+  const manualBreaksAllowed = mode !== "pomodoro" && entitlements.canUseBreakGates;
 
   // A break started on the Chrome extension (or a page reload mid-break) needs to show up
   // here without this tab having triggered it locally — Supabase's sessions row is the

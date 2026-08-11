@@ -5,9 +5,9 @@ import { motion } from "framer-motion";
 import { DEEP_FOCUS_CONFIRM_PHRASE, DEEP_FOCUS_MINUTES } from "@/lib/sessionModes";
 
 /** Deep Focus's own confirm gate — stronger than the standard LockConfirmModal on purpose:
- *  this is the one mode with literally no break path (Break Gates aren't offered at all,
- *  only Emergency Unblock), so the commitment device has to be louder than "I AM LOCKED
- *  IN" to match. */
+ *  the fixed, non-adjustable 90-minute window and the all-or-nothing framing (one task,
+ *  no picking your own duration) call for a commitment device louder than "I AM LOCKED
+ *  IN," even though Break Gates work the same here as in Custom. */
 export default function DeepFocusConfirmModal({ onConfirm, onCancel }: { onConfirm: () => void; onCancel: () => void }) {
   const [typed, setTyped] = useState("");
   const ready = typed.trim().toUpperCase() === DEEP_FOCUS_CONFIRM_PHRASE;
@@ -48,11 +48,11 @@ export default function DeepFocusConfirmModal({ onConfirm, onCancel }: { onConfi
           This is Deep Focus.
         </h2>
         <p style={{ color: "#F59E0B", fontSize: 15, fontWeight: 700, marginTop: 10 }}>
-          No breaks. No exceptions. {DEEP_FOCUS_MINUTES} minutes.
+          One task. No shortcuts. {DEEP_FOCUS_MINUTES} minutes, fixed.
         </p>
         <p style={{ color: "#9a9da4", fontSize: 14, lineHeight: 1.6, marginTop: 12 }}>
-          Break Gates aren&apos;t offered in this mode at all — the only way out early is Emergency Unblock, and that
-          still ends the session outright.
+          Break Gates still work here, same as Custom. What you don&apos;t get is a choice of duration — only
+          Emergency Unblock gets you out before the 90 minutes are up, and that still ends the session outright.
         </p>
         <p style={{ color: "#7a7d84", fontSize: 12, marginTop: 18 }}>
           Type <span style={{ color: "#F59E0B", fontWeight: 700 }}>{DEEP_FOCUS_CONFIRM_PHRASE}</span> to confirm.

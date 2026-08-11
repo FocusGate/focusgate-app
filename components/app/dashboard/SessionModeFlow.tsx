@@ -197,9 +197,9 @@ export default function SessionModeFlow({ userId, onConfirmed }: { userId: strin
           )}
 
           {mode === "deep_focus" && (
-            <ConfigBlock title="Fixed at 90 minutes." hint="The research-backed deep work window — not adjustable. No Break Gates offered in this mode at all.">
+            <ConfigBlock title="Fixed at 90 minutes." hint="The research-backed deep work window — not adjustable. Break Gates are still available if you need one.">
               <p style={{ color: "#9a9da4", fontSize: 13, margin: 0 }}>
-                One task. Zero interruptions. Only Emergency Unblock gets you out early, and that ends the session outright.
+                One task, one fixed window. Request a Break the same way Custom does; Emergency Unblock is still there for a real emergency, and that ends the session outright.
               </p>
             </ConfigBlock>
           )}

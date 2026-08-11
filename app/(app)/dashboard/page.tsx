@@ -275,7 +275,7 @@ export default function DashboardPage() {
         <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 6, textAlign: "center" }}>Choose your session mode</h2>
         <p style={{ color: "#7a7d84", fontSize: 14, marginBottom: 22, textAlign: "center" }}>
           Tap a mode to set it up, then lock in. Every mode runs on the same enforcement underneath —
-          they just change the structure around it. Not sure which one? Custom is the flexible default.
+          they just change the structure around it. Not sure which one? Pomodoro Sprints is the recommended default.
         </p>
 
         <SessionModeFlow
