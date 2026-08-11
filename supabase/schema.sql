@@ -84,11 +84,17 @@ alter table public.waitlist drop constraint if exists waitlist_plan_check;
 alter table public.waitlist add constraint waitlist_plan_check check (plan in ('free', 'pro', 'lifetime'));
 
 -- ---------- seed badges (matches the landing page badge showcase) ----------
+-- Seeded directly as 'Early Riser' (its current name) rather than the original 'Early
+-- Bird' — a fresh install has no legacy row to rename, and seeding the old name here would
+-- undo the one-time rename below on every re-run (ON CONFLICT (name) checks against
+-- whatever name is listed *here*, so if this said 'Early Bird' it would never see a
+-- conflict once the rename below has already fired, and would keep reinserting it).
 
+-- 'Night Owl' isn't seeded here — it's deleted for good further down (see that comment),
+-- and seeding it here would just resurrect it on every re-run only to be deleted again.
 insert into public.badges (name, description, rarity, unlock_condition) values
   ('First Lock', 'Complete your first Locked In session', 'common', 'completed_sessions >= 1'),
-  ('Early Bird', 'Start a session before 7am', 'common', 'session started before 07:00 local time'),
-  ('Night Owl', 'Start a session after 10pm', 'common', 'session started after 22:00 local time'),
+  ('Early Riser', 'Start a session before 8am', 'common', 'session started before 08:00 local time'),
   ('On Fire', 'Complete a 7-day study streak', 'rare', 'streak >= 7'),
   ('Deep Worker', 'Complete a single 4-hour Locked In session', 'rare', 'longest_session_minutes >= 240'),
   ('Unstoppable', 'Complete a 30-day study streak', 'epic', 'streak >= 30'),
@@ -456,10 +462,14 @@ alter table public.badges add constraint badges_rarity_check check (rarity in ('
 delete from public.badges where name = 'Night Owl';
 
 -- Early Bird becomes Early Riser (8am instead of 7am) — renamed in place rather than
--- deleted+reinserted so anyone who already unlocked it keeps it under the new name.
+-- deleted+reinserted so anyone who already unlocked it keeps it under the new name. Only
+-- matters for an install old enough to still have a literal 'Early Bird' row (the seed
+-- insert above now creates 'Early Riser' directly) — guarded so re-running this after
+-- that row's already been renamed doesn't collide with the 'Early Riser' it became.
 update public.badges
 set name = 'Early Riser', description = 'Start a session before 8am', unlock_condition = 'session started before 08:00 local time'
-where name = 'Early Bird';
+where name = 'Early Bird'
+  and not exists (select 1 from public.badges b2 where b2.name = 'Early Riser');
 
 -- users.blocked_attempts — running counter for "Distraction Slayer", incremented by the
 -- extension every time a navigation gets redirected to blocked.html (see
