@@ -405,7 +405,18 @@ create policy "group_violations update own comeback note" on public.group_violat
 -- Realtime delivery for group violation notifications (INSERTs pushed live to group members).
 -- Requires Realtime enabled on the project (Database → Replication) — this line alone
 -- silently no-ops if that project-level toggle is off.
-alter publication supabase_realtime add table public.group_violations;
+-- Wrapped in a check rather than a bare ALTER PUBLICATION: unlike every other statement in
+-- this file, "ADD TABLE" has no IF NOT EXISTS in Postgres, so a bare version of this line
+-- breaks re-running the file once it's already been applied once (42710, duplicate_object).
+do $$
+begin
+  if not exists (
+    select 1 from pg_publication_tables
+    where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = 'group_violations'
+  ) then
+    alter publication supabase_realtime add table public.group_violations;
+  end if;
+end $$;
 
 -- New badge for passing a break gate — parsed by the existing checkAndUnlockBadges name match.
 insert into public.badges (name, description, rarity, unlock_condition)
@@ -598,7 +609,16 @@ alter table public.sessions add column if not exists pause_note_text text;
 -- extension (or ended there) within about a second, not on next poll — same pattern as
 -- group_violations above. Requires Realtime enabled on the project (Database →
 -- Replication); this line alone silently no-ops if that project-level toggle is off.
-alter publication supabase_realtime add table public.sessions;
+-- Same re-run guard as group_violations above — see its comment for why the bare form breaks.
+do $$
+begin
+  if not exists (
+    select 1 from pg_publication_tables
+    where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = 'sessions'
+  ) then
+    alter publication supabase_realtime add table public.sessions;
+  end if;
+end $$;
 
 -- ---------- Pricing / trial / beta mode ----------
 -- Single-row global switch for the whole trial+paywall system (lib/entitlements.ts).
