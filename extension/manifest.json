@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "FocusGate",
   "description": "Built to make quitting harder than finishing. Lock in, eliminate distractions, and force 100% study focus with zero cheat codes.",
-  "version": "1.8.0",
+  "version": "1.0.0",
 
   "permissions": ["declarativeNetRequest", "storage", "alarms", "activeTab", "tabs"],
   "host_permissions": ["<all_urls>"],
