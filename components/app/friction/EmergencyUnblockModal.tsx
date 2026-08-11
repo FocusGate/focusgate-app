@@ -8,7 +8,7 @@ import { getEmergencyUnblockStats, recordEmergencyUnblock, MAX_FREE_EMERGENCY_UN
 const COOLDOWN_SECONDS = 10;
 const MIN_REASON_LENGTH = 15;
 
-type Step = "confirm" | "reason" | "cooldown" | "paid";
+type Step = "confirm" | "reason" | "cooldown" | "limit-reached";
 
 export default function EmergencyUnblockModal({
   userId,
@@ -34,6 +34,20 @@ export default function EmergencyUnblockModal({
   const [remainingFree, setRemainingFree] = useState<number | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
+  async function grant() {
+    if (submitting) return;
+    setSubmitting(true);
+    try {
+      // wasPaid is always false now — the $1 paid unblock is removed (for now); the free
+      // monthly cap (MAX_FREE_EMERGENCY_UNBLOCKS) is a hard stop, not a paywall. The
+      // was_paid column/param stay in place on purpose so this is easy to bring back later.
+      await recordEmergencyUnblock(userId, sessionId, reason, false);
+      onGranted();
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
   useEffect(() => {
     getEmergencyUnblockStats(userId)
       .then((s) => setRemainingFree(Math.max(0, MAX_FREE_EMERGENCY_UNBLOCKS - s.usedThisMonth)))
@@ -49,24 +63,13 @@ export default function EmergencyUnblockModal({
   useEffect(() => {
     if (step !== "cooldown" || cooldown > 0) return;
     if (remainingFree !== null && remainingFree <= 0) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- transitioning to the paid flow once the free monthly allowance is exhausted and the cooldown finishes is the intended sync here
-      setStep("paid");
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- transitioning to the limit-reached screen once the free monthly allowance is exhausted and the cooldown finishes is the intended sync here
+      setStep("limit-reached");
     } else {
-      void grant(false);
+      void grant();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- grant closes over reason/userId/sessionId already captured via props/state
   }, [step, cooldown, remainingFree]);
-
-  async function grant(wasPaid: boolean) {
-    if (submitting) return;
-    setSubmitting(true);
-    try {
-      await recordEmergencyUnblock(userId, sessionId, reason, wasPaid);
-      onGranted();
-    } finally {
-      setSubmitting(false);
-    }
-  }
 
   function handleConfirmClick() {
     const next = confirmCount + 1;
@@ -167,21 +170,19 @@ export default function EmergencyUnblockModal({
           </div>
         )}
 
-        {step === "paid" && (
+        {step === "limit-reached" && (
           <>
-            <h3 style={{ color: "#fff", fontSize: 20, fontWeight: 800, margin: 0 }}>Out of free emergencies</h3>
+            <h3 style={{ color: "#fff", fontSize: 20, fontWeight: 800, margin: 0 }}>Out of emergencies this month</h3>
             <p style={{ color: "#9a9da4", fontSize: 14, marginTop: 8 }}>
-              You&apos;ve used all {MAX_FREE_EMERGENCY_UNBLOCKS} free unblocks this month. Extra unblocks cost $1 each.
-              {costMultiplier > 1 && " Exam Cram mode doubles that cost — 2 credits, not 1."}
+              You&apos;ve used all {MAX_FREE_EMERGENCY_UNBLOCKS} Emergency Unblocks this month — that&apos;s the whole point of
+              the cap. More become available next month.
             </p>
             <button
-              onClick={() => void grant(true)}
-              disabled={submitting}
-              style={{ marginTop: 18, width: "100%", background: "#fff", color: "#0a0a0a", border: "none", padding: 14, borderRadius: 999, fontSize: 15, fontWeight: 800, cursor: submitting ? "default" : "pointer" }}
+              onClick={onCancel}
+              style={{ marginTop: 18, width: "100%", background: "#EF4444", color: "#fff", border: "none", padding: 14, borderRadius: 999, fontSize: 15, fontWeight: 800, cursor: "pointer" }}
             >
-              {submitting ? "Processing…" : "Buy Emergency Unblock ($1)"}
+              Back to focus
             </button>
-            <p style={{ color: "#5b5e66", fontSize: 12, marginTop: 12, textAlign: "center" }}>Yes. It costs money on purpose. This friction is the point.</p>
           </>
         )}
       </motion.div>

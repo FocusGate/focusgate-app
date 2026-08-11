@@ -315,9 +315,7 @@ function renderEmergencyReason() {
     continueBtn.disabled = len < MIN_REASON_LENGTH;
   });
 
-  // Free-vs-paid is checked right here, after the reason is submitted — no separate
-  // cooldown step. Paid still needs its own explicit confirm screen: charging $1 without
-  // a visible, separately-clicked consent step isn't something to do silently.
+  // Checked right here, after the reason is submitted — no separate cooldown step.
   continueBtn.addEventListener("click", async () => {
     const info = await chrome.runtime.sendMessage({ type: "GET_BREAK_INFO" });
     if (!info.ok) {
@@ -326,29 +324,31 @@ function renderEmergencyReason() {
       return;
     }
     if (info.emergencyRemainingFree > 0) {
-      await submitEmergency(false);
+      await submitEmergency();
     } else {
-      renderEmergencyPaid();
+      renderEmergencyLimitReached();
     }
   });
 }
 
-function renderEmergencyPaid() {
+// The $1 paid unblock is removed (for now) — the monthly free cap is a hard stop, not a
+// paywall, once it's used up. Mirrors EmergencyUnblockModal.tsx's "limit-reached" step.
+function renderEmergencyLimitReached() {
   hideFlowError();
   rootEl.className = "view popup__flow";
   rootEl.innerHTML = `
-    <h3 class="popup__flow-title">Out of free emergencies</h3>
-    <p class="popup__flow-text">You've used all ${MAX_FREE_EMERGENCY_UNBLOCKS_DISPLAY} free unblocks this month. Extra unblocks cost $1 each.</p>
-    <button class="popup__flow-btn popup__flow-btn--light" id="emergency-paid-confirm">Buy Emergency Unblock ($1)</button>
-    <p class="popup__flow-note">Yes. It costs money on purpose. This friction is the point.</p>
-    <button class="popup__flow-btn popup__flow-btn--ghost" id="emergency-paid-cancel">Never mind</button>
+    <h3 class="popup__flow-title">Out of emergencies this month</h3>
+    <p class="popup__flow-text">You've used all ${MAX_FREE_EMERGENCY_UNBLOCKS_DISPLAY} Emergency Unblocks this month — that's the whole point of the cap. More become available next month.</p>
+    <button class="popup__flow-btn popup__flow-btn--danger" id="emergency-limit-close">Back to focus</button>
   `;
-  el("emergency-paid-confirm").addEventListener("click", () => submitEmergency(true));
-  el("emergency-paid-cancel").addEventListener("click", endFlow);
+  el("emergency-limit-close").addEventListener("click", endFlow);
 }
 
-async function submitEmergency(wasPaid) {
-  const result = await chrome.runtime.sendMessage({ type: "START_EMERGENCY_UNBLOCK", reason: emergencyReason, wasPaid });
+async function submitEmergency() {
+  // wasPaid is always false now — see renderEmergencyLimitReached's comment. Left as an
+  // explicit param on the message (rather than dropped) so background.js's handling and
+  // the was_paid column stay untouched and easy to bring back later.
+  const result = await chrome.runtime.sendMessage({ type: "START_EMERGENCY_UNBLOCK", reason: emergencyReason, wasPaid: false });
   if (!result.ok) {
     showFlowError(result.error);
     return;
