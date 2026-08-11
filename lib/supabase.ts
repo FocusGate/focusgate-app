@@ -219,6 +219,14 @@ export async function updateProfile(userId: string, patch: { name: string }) {
  * with the *actual* elapsed minutes once the session completes, which is what stats/history
  * already expect to read — no schema change, the column just does double duty depending
  * on `completed`.
+ *
+ * Refuses to start a second session while one's already active — three layers, not one:
+ * (1) this pre-check, the friendliest and fastest path for the overwhelmingly common case;
+ * (2) the `sessions_one_active_per_user` partial unique index (schema.sql) as the real
+ * backstop, since two tabs/devices can both pass step 1's read before either one's insert
+ * lands — Postgres, not a client-side check, is what actually can't be raced; (3) the
+ * 23505 catch below turns that DB-level rejection back into the same friendly message
+ * instead of a raw constraint-violation error reaching the UI.
  */
 export async function startSession(
   userId: string,
@@ -226,6 +234,11 @@ export async function startSession(
   durationMinutes: number,
   opts?: { mode?: SessionMode; groupId?: string | null; modeConfig?: ModeConfig | null }
 ) {
+  const existing = await getActiveSession(userId).catch(() => null);
+  if (existing) {
+    throw new Error("You already have a Locked In session running — finish or end it before starting another.");
+  }
+
   const { data, error } = await supabase
     .from("sessions")
     .insert({
@@ -239,7 +252,12 @@ export async function startSession(
     })
     .select()
     .single();
-  if (error) throw error;
+  if (error) {
+    if (error.code === "23505") {
+      throw new Error("You already have a Locked In session running — finish or end it before starting another.");
+    }
+    throw error;
+  }
 
   return { ...data, blockedSites };
 }
@@ -320,7 +338,14 @@ export async function endSession(sessionId: string) {
 
   const endTime = new Date();
   const startTime = new Date(session.start_time);
-  const durationMinutes = Math.max(0, Math.round((endTime.getTime() - startTime.getTime()) / 60000));
+  // Wall-clock time minus real break time (now correctly including a mode's own
+  // auto-triggered breaks, not just manually-requested ones — see is_auto on
+  // break_notes) — otherwise a 4-cycle Pomodoro session's 15 minutes of scheduled rest
+  // got counted as focus time, inflating total_focus_hours/streaks/badges for exactly
+  // the modes that pause automatically (Pomodoro, All Nighter).
+  const pausedSeconds = await getSessionPausedSeconds(sessionId).catch(() => 0);
+  const totalSeconds = (endTime.getTime() - startTime.getTime()) / 1000;
+  const durationMinutes = Math.max(0, Math.round((totalSeconds - pausedSeconds) / 60));
 
   const { data, error } = await supabase
     .from("sessions")
@@ -1190,7 +1215,8 @@ export async function saveBreakNote(
   sessionId: string | null,
   noteText: string,
   requestedSeconds: number | null,
-  isEmergency: boolean
+  isEmergency: boolean,
+  isAuto = false
 ): Promise<{ id: string }> {
   const { data, error } = await supabase
     .from("break_notes")
@@ -1201,6 +1227,7 @@ export async function saveBreakNote(
       break_duration_minutes: requestedSeconds != null ? Math.round(requestedSeconds / 60) : null,
       break_duration_seconds: requestedSeconds,
       is_emergency: isEmergency,
+      is_auto: isAuto,
     })
     .select("id")
     .single();
@@ -1343,14 +1370,18 @@ export function subscribeToSessionPause(sessionId: string, onChange: (pause: Ses
   };
 }
 
-/** How many (non-emergency) breaks have already been taken during this specific
- *  session — the count that maxBreaksForDuration()'s cap is checked against. */
+/** How many (non-emergency, non-automatic) breaks have already been taken during this
+ *  specific session — the count that maxBreaksForDuration()'s cap is checked against.
+ *  is_auto=false excludes a mode's own built-in breaks (Pomodoro's between-cycle rests,
+ *  All Nighter's checkpoints) — those are pre-earned by the mode's design, not drawn from
+ *  the same manually-requested-break budget this cap governs. */
 export async function getBreakNoteCountForSession(sessionId: string): Promise<number> {
   const { count, error } = await supabase
     .from("break_notes")
     .select("id", { count: "exact", head: true })
     .eq("session_id", sessionId)
-    .eq("is_emergency", false);
+    .eq("is_emergency", false)
+    .eq("is_auto", false);
   if (error) throw error;
   return count ?? 0;
 }

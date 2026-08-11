@@ -526,6 +526,16 @@ alter table public.break_notes add column if not exists break_duration_seconds i
 -- updateBreakNoteActualDuration / extension/lib/supabaseApi.js's equivalent).
 alter table public.break_notes add column if not exists actual_duration_seconds integer;
 
+-- True for a break the session's own mode triggered on a schedule (Pomodoro's 5-min
+-- breaks between focus blocks, All Nighter's checkpoint rests) rather than one the user
+-- actually requested through Break Gates. Logged into this same table (as of this column)
+-- so getSessionPausedSeconds()/endSession() can subtract real break time out of a
+-- session's recorded duration regardless of which kind it was — without this, a 4-cycle
+-- Pomodoro session's 15 minutes of break time were silently counted as focus time.
+-- Excluded from getBreakNoteCountForSession()'s cap check (see the query there) so a
+-- mode's own built-in structure never eats into the separate manual-break budget.
+alter table public.break_notes add column if not exists is_auto boolean not null default false;
+
 -- ---------- Session Modes ----------
 -- Locked In Mode's actual blocking/enforcement is identical across every mode — these
 -- columns only drive which *structure* wraps it (auto-cycling breaks, forced gate
@@ -731,3 +741,12 @@ language sql security definer as $$
     )
     and coalesce((select p.email_opt_in from public.user_preferences p where p.user_id = u.id), true);
 $$;
+
+-- ---------- one active session per user ----------
+-- Backstop for lib/supabase.ts's startSession() pre-check — a partial unique index rather
+-- than an app-level check is what actually can't be raced: two tabs (or a tab and the
+-- extension, or two devices) can both read "no active session" before either one's insert
+-- lands, but only one of two simultaneous inserts can ever satisfy this index. The second
+-- fails with a 23505 (unique_violation), which startSession() catches and turns into the
+-- same friendly "already have a session running" message as its own pre-check.
+create unique index if not exists sessions_one_active_per_user on public.sessions (user_id) where completed = false;

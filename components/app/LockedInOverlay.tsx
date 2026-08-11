@@ -14,6 +14,7 @@ import PomodoroProgress from "@/components/app/session/PomodoroProgress";
 import ModeCompleteExtra from "@/components/app/session/ModeCompleteExtra";
 import {
   updateBreakNoteActualDuration,
+  saveBreakNote,
   reportGroupViolation,
   getSessionPause,
   startSessionPause,
@@ -101,13 +102,20 @@ export default function LockedInOverlay({
    *  they're not a Break Gate at all (no game, pre-earned by the mode's own design), so a
    *  restricted account keeps getting its scheduled rest either way. */
   entitlements: Entitlements;
-  onComplete: () => Promise<NewlyUnlockedBadge[]>;
+  /** Returns the *actual* recorded duration alongside newly-unlocked badges — not
+   *  necessarily totalSeconds/60, since an Emergency Unblock (or, in principle, any other
+   *  early end) finishes the session well short of its planned length. */
+  onComplete: () => Promise<{ unlocked: NewlyUnlockedBadge[]; durationMinutes: number }>;
   onFinished: () => void;
   onStartAnother: () => void;
 }) {
   const [seconds, setSeconds] = useState(initialSecondsLeft ?? totalSeconds);
   const [phase, setPhase] = useState<"running" | "complete">("running");
   const [unlockedBadges, setUnlockedBadges] = useState<NewlyUnlockedBadge[]>([]);
+  // Seeded from the plan, corrected to the real value the instant onComplete() resolves —
+  // this default is only ever visible for handleComplete's own 1.6s confetti-flash delay,
+  // never in the actually-rendered Session Complete screen below.
+  const [finalDurationMinutes, setFinalDurationMinutes] = useState(() => Math.round(totalSeconds / 60));
   const firedRef = useRef(false);
 
   // ---------- Break system: The Lounge + emergency unblock ----------
@@ -261,11 +269,10 @@ export default function LockedInOverlay({
   }, [breakState]);
 
   function triggerAutoBreak(seconds: number, skippable: boolean, reminderText?: string) {
+    // Optimistic and immediate — the clock pauses right now, before either network call
+    // below has a chance to resolve. Neither is allowed to gate the pause itself; both are
+    // best-effort, same as the rest of this function always was.
     setBreakState({ secondsLeft: seconds, totalSeconds: seconds, note: "", breakNoteId: "", autoTriggered: true, skippable, reminderText });
-    // Best-effort, not blocking: a scheduled Pomodoro/All Nighter break happening locally
-    // even if this write fails is better than silently skipping the user's earned rest —
-    // unlike a manually *requested* break (BreakFlowModal), there's no user action to show
-    // an error against here, and the next successful sync corrects the drift.
     const untilIso = new Date(Date.now() + seconds * 1000).toISOString();
     startSessionPause(sessionId, {
       untilIso,
@@ -276,6 +283,23 @@ export default function LockedInOverlay({
       noteText: "",
       reminderText: reminderText ?? null,
     }).catch(() => {});
+
+    // Logged with is_auto: true so getSessionPausedSeconds()/endSession() count this break's
+    // real duration against the session's recorded length — same as a manually-requested
+    // break, just not drawn from that same budget (see getBreakNoteCountForSession's
+    // is_auto filter). Attached to breakState *after* creation (rather than blocking the
+    // pause on it) since this is exactly the same optimistic-then-attach pattern
+    // handleBreakGranted's caller (BreakFlowModal) already uses, just inline here since
+    // there's no modal step to await through for an auto-triggered break.
+    saveBreakNote(userId, sessionId, "", seconds, false, true)
+      .then(({ id }) => {
+        // The break may have already ended (skipped early, or the session itself ended)
+        // by the time this resolves — only attach the id to the *same* still-running,
+        // not-yet-attached auto break, so a slow response can never reattach a stale id
+        // to a different pause.
+        setBreakState((b) => (b && b.autoTriggered && b.breakNoteId === "" ? { ...b, breakNoteId: id } : b));
+      })
+      .catch(() => {});
   }
 
   function handleBreakGranted(requestedSeconds: number, note: string, breakNoteId: string) {
@@ -330,11 +354,12 @@ export default function LockedInOverlay({
   async function handleComplete() {
     if (firedRef.current) return;
     firedRef.current = true;
-    const unlocked = await onComplete();
+    const { unlocked, durationMinutes } = await onComplete();
     // Lets FlipClock's own brief internal completion flash (confetti + "Session
     // Complete 🏆") play out before swapping to the fuller Session Complete screen.
     setTimeout(() => {
       setUnlockedBadges(unlocked);
+      setFinalDurationMinutes(durationMinutes);
       setPhase("complete");
     }, 1600);
   }
@@ -342,7 +367,7 @@ export default function LockedInOverlay({
   if (phase === "complete") {
     return (
       <SessionCompleteScreen
-        durationMinutes={Math.round(totalSeconds / 60)}
+        durationMinutes={finalDurationMinutes}
         streak={streak}
         unlockedBadges={unlockedBadges}
         onStartAnother={onStartAnother}

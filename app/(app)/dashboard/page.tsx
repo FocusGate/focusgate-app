@@ -196,26 +196,29 @@ export default function DashboardPage() {
   }
 
   /** Ends the session, checks for newly-unlocked badges, and refreshes the streak/hours
-   *  shown across the shell — returns the unlocked badges so the Locked-In overlay's
-   *  Session Complete screen can animate them in. */
+   *  shown across the shell — returns the unlocked badges plus the *actual* recorded
+   *  duration (endSession()'s own return value, not the planned totalSeconds/sessionSeconds
+   *  this component started with) so the Locked-In overlay's Session Complete screen shows
+   *  what really happened, not what was scheduled. Those two only match for a session that
+   *  ran its full natural course — an Emergency Unblock ends it early, and without reading
+   *  this back, "Session complete — 50m locked in" would still show the planned 50 minutes
+   *  even when the real elapsed time was seconds. */
   async function handleSessionComplete() {
-    if (!sessionId || !user) return [];
-    await endSession(sessionId);
-    track("session_completed", { duration_minutes: Math.round(sessionSeconds / 60) });
+    if (!sessionId || !user) return { unlocked: [], durationMinutes: 0 };
+    const completed = await endSession(sessionId);
+    const durationMinutes = completed.duration_minutes ?? 0;
+    track("session_completed", { duration_minutes: durationMinutes });
     const unlocked = await checkAndUnlockBadges(user.id, entitlements.maxBadgeRarity);
     const refreshed = await getUser();
     if (refreshed) setUser(refreshed as CurrentUser);
-    setSessions((prev) => [
-      { id: sessionId, start_time: new Date().toISOString(), duration_minutes: Math.round(sessionSeconds / 60), completed: true },
-      ...prev,
-    ]);
+    setSessions((prev) => [{ id: sessionId, start_time: new Date().toISOString(), duration_minutes: durationMinutes, completed: true }, ...prev]);
     // Fire-and-forget, one per badge — the Session Complete screen already animates these
     // in from `unlocked` itself, so the email is a second channel, not the primary signal.
     for (const badge of unlocked) {
       void sendBadgeUnlockEmail(user.email, user.name, badge);
       track("badge_unlocked", { badge_name: badge.name, badge_tier: badge.rarity });
     }
-    return unlocked;
+    return { unlocked, durationMinutes };
   }
 
   if (!user) return null;

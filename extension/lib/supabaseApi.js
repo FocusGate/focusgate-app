@@ -283,11 +283,16 @@ export async function insertEmergencyUnblock(accessToken, userId, sessionId, rea
   await parseOrThrow(res);
 }
 
-/** How many (non-emergency) breaks have already been taken this session — mirrors
- *  lib/supabase.ts's getBreakNoteCountForSession(), used against maxBreaksForDuration(). */
+/** How many (non-emergency, non-automatic) breaks have already been taken this session —
+ *  mirrors lib/supabase.ts's getBreakNoteCountForSession(), used against
+ *  maxBreaksForDuration(). is_auto=false excludes a mode's own built-in breaks (Pomodoro's
+ *  between-cycle rests, All Nighter's checkpoints) from the manually-requested-break budget
+ *  this cap governs — those aren't started from this extension, but the same shared table
+ *  needs the same filter here so mirroring a Pomodoro/All Nighter session doesn't
+ *  under-count how many manual breaks are actually still available. */
 export async function fetchBreakNoteCountForSession(accessToken, sessionId) {
   const res = await fetch(
-    `${SUPABASE_URL}/rest/v1/break_notes?session_id=eq.${sessionId}&is_emergency=eq.false&select=id`,
+    `${SUPABASE_URL}/rest/v1/break_notes?session_id=eq.${sessionId}&is_emergency=eq.false&is_auto=eq.false&select=id`,
     { headers: restHeaders(accessToken) }
   );
   const rows = await parseOrThrow(res);
