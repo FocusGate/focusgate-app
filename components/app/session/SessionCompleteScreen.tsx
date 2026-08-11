@@ -31,6 +31,11 @@ export default function SessionCompleteScreen({
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
+      // data-lenis-prevent: same fix as TheLounge.tsx — the global smooth-scroll otherwise
+      // eats scroll input meant for this panel's own overflowY: auto, which matters here
+      // whenever a session unlocks enough badges (or modeExtra content) to run taller than
+      // the viewport.
+      data-lenis-prevent
       style={{
         position: "fixed",
         inset: 0,

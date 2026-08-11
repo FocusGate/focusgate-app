@@ -91,6 +91,14 @@ export default function TheLounge({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+      // data-lenis-prevent: the app's global smooth-scroll (components/SmoothScroll.tsx's
+      // <ReactLenis root>) intercepts wheel/touch input everywhere by default, including
+      // inside this panel's own overflowY: auto — without this attribute, Lenis eats the
+      // scroll before it ever reaches this element's native scrolling, so a taller-than-
+      // viewport board (the 8-pair Brain Games grid) is stuck with no way to reach what's
+      // below the fold. Lenis recognizes this attribute natively and lets the browser
+      // handle scrolling on this subtree itself instead.
+      data-lenis-prevent
       style={{
         position: "fixed",
         inset: 0,
