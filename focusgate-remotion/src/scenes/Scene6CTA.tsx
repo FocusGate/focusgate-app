@@ -1,22 +1,35 @@
 import { interpolate, useVideoConfig } from "remotion";
 import { Background } from "../components/Background";
 import { LockIcon } from "../components/LockIcon";
-import { COLORS, FONT_BODY } from "../constants";
+import { TypewriterText } from "../components/TypewriterText";
+import { COLORS, FONT_BODY, spd } from "../constants";
 
-/** 28-30s (this scene's own local frame 0-60): everything here is quick by necessity —
- *  only 2 seconds. The lock pulses continuously (a heartbeat, not a one-shot entrance) while
- *  the URL and "Free during beta." fade straight in under it. */
+const URL_START = 6;
+const SUBTITLE_START = 30;
+
+/** A real lub-dub heartbeat curve, not a plain sine wave — two close pulses (the "lub" a
+ *  touch stronger than the "dub") then a long rest, repeating. Returns roughly 0-1. */
+function heartbeat(frame: number) {
+  const cycle = 46;
+  const t = frame % cycle;
+  const bump = (center: number, width: number, amp: number) => amp * Math.exp(-(((t - center) / width) ** 2));
+  return bump(3, 2.4, 1) + bump(11, 2.6, 0.7);
+}
+
+/** 28-30s (padded): only ~2 seconds of real content, by necessity — the lock pulses with a
+ *  genuine heartbeat rhythm throughout while "focusgate.site" writes itself out letter by
+ *  letter, then "Free during beta." lands underneath. */
 export function Scene6CTA({ localFrame }: { localFrame: number }) {
   const { width, height } = useVideoConfig();
   const isVertical = height > width;
   const base = Math.min(width, height);
 
-  const iconOpacity = interpolate(localFrame, [0, 8], [0, 1], { extrapolateRight: "clamp" });
-  const pulse = 1 + Math.sin(localFrame / 6) * 0.08;
-  const glow = 0.7 + Math.sin(localFrame / 6) * 0.3;
+  const iconOpacity = interpolate(localFrame, [0, 6], [0, 1], { extrapolateRight: "clamp" });
+  const beat = heartbeat(spd(localFrame));
+  const pulse = 1 + beat * 0.1;
+  const glow = 0.55 + beat * 0.45;
 
-  const urlOpacity = interpolate(localFrame, [8, 20], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
-  const subOpacity = interpolate(localFrame, [18, 30], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const subOpacity = interpolate(spd(localFrame) - spd(SUBTITLE_START), [0, 14], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
 
   return (
     <Background>
@@ -26,15 +39,18 @@ export function Scene6CTA({ localFrame }: { localFrame: number }) {
         </div>
         <div
           style={{
-            opacity: urlOpacity,
             fontFamily: FONT_BODY,
             fontWeight: 800,
             fontSize: base * (isVertical ? 0.075 : 0.06),
-            color: COLORS.white,
             letterSpacing: "-0.01em",
+            minHeight: base * 0.09,
           }}
         >
-          focusgate<span style={{ color: COLORS.gold }}>.site</span>
+          {/* Two segments, not one — "focusgate" white, ".site" gold, matching the brand
+              mark's own two-tone treatment. The second segment's startFrame is timed to
+              begin right as "focusgate" (9 chars) finishes typing, accounting for spd(). */}
+          <TypewriterText text="focusgate" startFrame={URL_START} framesPerChar={1.1} cursor={false} style={{ color: COLORS.white }} />
+          <TypewriterText text=".site" startFrame={URL_START + 9} framesPerChar={1.1} style={{ color: COLORS.gold }} />
         </div>
         <div
           style={{

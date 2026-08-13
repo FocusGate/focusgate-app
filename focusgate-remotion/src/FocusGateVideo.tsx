@@ -1,5 +1,9 @@
-import { AbsoluteFill, Sequence, useCurrentFrame } from "remotion";
-import { SCENES } from "./constants";
+import { AbsoluteFill, useCurrentFrame } from "remotion";
+import { TransitionSeries, linearTiming } from "@remotion/transitions";
+import { SCENE_DURATIONS, TRANSITION_FRAMES } from "./constants";
+import { scaleFade } from "./transitions/scaleFade";
+import { Vignette } from "./components/Vignette";
+import { ProgressBar } from "./components/ProgressBar";
 import { Scene1Logo } from "./scenes/Scene1Logo";
 import { Scene2Doomscroll } from "./scenes/Scene2Doomscroll";
 import { Scene3LockedIn } from "./scenes/Scene3LockedIn";
@@ -10,48 +14,69 @@ import { Scene6CTA } from "./scenes/Scene6CTA";
 /**
  * The single composition both exported formats (1080x1920 vertical, 1920x1080 horizontal)
  * render — every scene reads useVideoConfig()'s width/height itself and adapts, so this
- * component doesn't need two versions. Scene boundaries come from constants.ts's SCENES map,
- * the one place the brief's exact timings (0-4, 4-10, 10-18, 18-24, 24-28, 28-30) live.
+ * component doesn't need two versions.
  *
- * Each scene component receives `localFrame` (frames since that scene's own start, not the
- * timeline's absolute frame) via a thin wrapper below <Sequence> — every scene's internal
- * animation math is written relative to its own 0, which is what makes each one easy to
- * re-time independently later without touching the others.
+ * Scenes now run through @remotion/transitions' <TransitionSeries> instead of bare
+ * <Sequence> — every cut is the same scale+fade "depth" transition (scaleFade.tsx),
+ * TRANSITION_FRAMES long. Each TransitionSeries.Sequence's durationInFrames comes from
+ * SCENE_DURATIONS (constants.ts), which is deliberately padded beyond each scene's "real"
+ * on-brief length — a transition overlaps and eats into both the outgoing and incoming
+ * scene's own duration, so without the padding the total video would run short of 30s.
+ *
+ * The vignette and progress bar are siblings of the TransitionSeries, not inside it — both
+ * need to read real, uninterrupted absolute-frame values (useCurrentFrame() at the very top
+ * level), which a scene *inside* the series never sees (Sequence/TransitionSeries.Sequence
+ * always offsets useCurrentFrame() to start at 0 for their own content).
  */
 export function FocusGateVideo() {
   return (
     <AbsoluteFill style={{ backgroundColor: "#0A0A0A" }}>
-      <Sequence from={SCENES.logo.from} durationInFrames={SCENES.logo.duration}>
-        <Scene1Logo />
-      </Sequence>
+      <TransitionSeries>
+        <TransitionSeries.Sequence durationInFrames={SCENE_DURATIONS.logo}>
+          <Scene1Logo />
+        </TransitionSeries.Sequence>
 
-      <Sequence from={SCENES.doomscroll.from} durationInFrames={SCENES.doomscroll.duration}>
-        <LocalFrameProvider>{(f) => <Scene2Doomscroll localFrame={f} />}</LocalFrameProvider>
-      </Sequence>
+        <TransitionSeries.Transition presentation={scaleFade()} timing={linearTiming({ durationInFrames: TRANSITION_FRAMES })} />
 
-      <Sequence from={SCENES.lockedIn.from} durationInFrames={SCENES.lockedIn.duration}>
-        <LocalFrameProvider>{(f) => <Scene3LockedIn localFrame={f} />}</LocalFrameProvider>
-      </Sequence>
+        <TransitionSeries.Sequence durationInFrames={SCENE_DURATIONS.doomscroll}>
+          <LocalFrame>{(f) => <Scene2Doomscroll localFrame={f} />}</LocalFrame>
+        </TransitionSeries.Sequence>
 
-      <Sequence from={SCENES.breakGate.from} durationInFrames={SCENES.breakGate.duration}>
-        <LocalFrameProvider>{(f) => <Scene4BreakGate localFrame={f} />}</LocalFrameProvider>
-      </Sequence>
+        <TransitionSeries.Transition presentation={scaleFade()} timing={linearTiming({ durationInFrames: TRANSITION_FRAMES })} />
 
-      <Sequence from={SCENES.badgeUnlock.from} durationInFrames={SCENES.badgeUnlock.duration}>
-        <LocalFrameProvider>{(f) => <Scene5BadgeUnlock localFrame={f} />}</LocalFrameProvider>
-      </Sequence>
+        <TransitionSeries.Sequence durationInFrames={SCENE_DURATIONS.lockedIn}>
+          <LocalFrame>{(f) => <Scene3LockedIn localFrame={f} />}</LocalFrame>
+        </TransitionSeries.Sequence>
 
-      <Sequence from={SCENES.cta.from} durationInFrames={SCENES.cta.duration}>
-        <LocalFrameProvider>{(f) => <Scene6CTA localFrame={f} />}</LocalFrameProvider>
-      </Sequence>
+        <TransitionSeries.Transition presentation={scaleFade()} timing={linearTiming({ durationInFrames: TRANSITION_FRAMES })} />
+
+        <TransitionSeries.Sequence durationInFrames={SCENE_DURATIONS.breakGate}>
+          <LocalFrame>{(f) => <Scene4BreakGate localFrame={f} />}</LocalFrame>
+        </TransitionSeries.Sequence>
+
+        <TransitionSeries.Transition presentation={scaleFade()} timing={linearTiming({ durationInFrames: TRANSITION_FRAMES })} />
+
+        <TransitionSeries.Sequence durationInFrames={SCENE_DURATIONS.badgeUnlock}>
+          <LocalFrame>{(f) => <Scene5BadgeUnlock localFrame={f} />}</LocalFrame>
+        </TransitionSeries.Sequence>
+
+        <TransitionSeries.Transition presentation={scaleFade()} timing={linearTiming({ durationInFrames: TRANSITION_FRAMES })} />
+
+        <TransitionSeries.Sequence durationInFrames={SCENE_DURATIONS.cta}>
+          <LocalFrame>{(f) => <Scene6CTA localFrame={f} />}</LocalFrame>
+        </TransitionSeries.Sequence>
+      </TransitionSeries>
+
+      <Vignette />
+      <ProgressBar />
     </AbsoluteFill>
   );
 }
 
-/** <Sequence> already offsets useCurrentFrame() to start at 0 for its children — this just
- *  makes that explicit/named at each call site above instead of every scene needing its own
- *  useCurrentFrame() call and a comment explaining it's already scene-relative. */
-function LocalFrameProvider({ children }: { children: (localFrame: number) => React.ReactNode }) {
+/** Same helper as before — <Sequence>/<TransitionSeries.Sequence> already offsets
+ *  useCurrentFrame() to start at 0 for their own children; this just names that explicitly
+ *  at each call site instead of every scene needing its own useCurrentFrame() call. */
+function LocalFrame({ children }: { children: (localFrame: number) => React.ReactNode }) {
   const frame = useCurrentFrame();
   return <>{children(frame)}</>;
 }

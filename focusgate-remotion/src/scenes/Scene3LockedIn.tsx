@@ -1,39 +1,78 @@
-import { interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
+import { interpolate, spring, useVideoConfig, Easing } from "remotion";
 import { Background } from "../components/Background";
 import { FlipDigit } from "../components/FlipDigit";
-import { BLOCKED_SITES, COLORS, FONT_BODY, FPS } from "../constants";
+import { BLOCKED_SITES, COLORS, FONT_BODY, FPS, spd } from "../constants";
+import { shakeOffset } from "../shake";
 
 const START_SECONDS = 47 * 60; // 00:47:00 — a plausible mid-session Locked In countdown
 
-/** 10-18s (this scene's own local frame 0-240): the "Locked In Mode" badge settles in, the
- *  flip clock starts ticking down for real, blocked sites stack in one at a time, then
- *  "Start a session you can't quit." lands. */
+// ---------- beat timings (scene-local frames, pre-spd()) ----------
+const BLACK_HOLD = 15; // 0.5s dead black before anything happens
+const LINE_START = BLACK_HOLD;
+const LINE_DURATION = 16; // gold line drawing itself across
+const TITLE_START = LINE_START + 14; // both halves start sliding in
+const TITLE_IMPACT = TITLE_START + 13; // where they collide — shake/flash fires here
+const TITLE_HOLD_UNTIL = TITLE_IMPACT + 16; // brief hold once it lands
+const TITLE_FADE_DURATION = 10;
+const CLOCK_START = TITLE_HOLD_UNTIL - 4; // clock/pill begin as the title fades, not after
+const DIGIT_STAGGER = 6; // hours -> minutes -> seconds stamp-in gap
+const SITE_START = CLOCK_START + 42;
+const SITE_STEP = 3; // 0.1s @ 30fps, per the brief
+const TAGLINE_START = SITE_START + BLOCKED_SITES.length * SITE_STEP + 24;
+
+/** 10-18s (padded): the hero moment, staged like a trailer beat rather than a UI appearing —
+ *  black hold, a line draws itself, the title slams together from both sides, then the
+ *  actual Locked In UI (pill, flip clock, blocked sites) stamps in underneath it. */
 export function Scene3LockedIn({ localFrame }: { localFrame: number }) {
   const { fps, width, height } = useVideoConfig();
   const isVertical = height > width;
   const base = Math.min(width, height);
 
-  const badgeOpacity = interpolate(localFrame, [0, 14], [0, 1], { extrapolateRight: "clamp" });
+  // ---- black hold + line draw ----
+  const blackOpacity = interpolate(localFrame, [BLACK_HOLD - 1, BLACK_HOLD + 6], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const lineProgress = interpolate(spd(localFrame) - spd(LINE_START), [0, LINE_DURATION], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+    easing: Easing.inOut(Easing.cubic),
+  });
+  const lineOpacity = interpolate(localFrame, [LINE_START, LINE_START + 2, TITLE_IMPACT, TITLE_IMPACT + 10], [0, 1, 1, 0], { extrapolateRight: "clamp" });
+
+  // ---- title: two halves colliding ----
+  const titleP = spring({ frame: Math.max(0, spd(localFrame) - spd(TITLE_START)), fps, config: { damping: 12, stiffness: 200, mass: 0.7 }, durationInFrames: 16 });
+  const leftX = interpolate(titleP, [0, 1], [-base * 0.6, 0]);
+  const rightX = interpolate(titleP, [0, 1], [base * 0.6, 0]);
+  const titleInOpacity = interpolate(localFrame, [TITLE_START, TITLE_START + 5], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const titleOutOpacity = interpolate(spd(localFrame), [spd(TITLE_HOLD_UNTIL), spd(TITLE_HOLD_UNTIL + TITLE_FADE_DURATION)], [1, 0], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+  const titleOpacity = titleInOpacity * titleOutOpacity;
+  const impactShake = shakeOffset(spd(localFrame), spd(TITLE_IMPACT), spd(8), 6);
+  const impactFlash = interpolate(localFrame, [TITLE_IMPACT, TITLE_IMPACT + 2, TITLE_IMPACT + 9], [0, 0.5, 0], { extrapolateRight: "clamp" });
+
+  // ---- pill badge (fades in as the title fades out) ----
+  const pillOpacity = interpolate(spd(localFrame) - spd(CLOCK_START), [0, 14], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
   const dotPulse = 0.6 + Math.abs(Math.sin(localFrame / 8)) * 0.4;
 
-  const clockScale = spring({ frame: Math.max(0, localFrame - 6), fps, config: { damping: 13 }, durationInFrames: 22 });
+  // ---- flip clock: each digit "stamps" in (drops + scales down hard, tiny bounce) ----
   const secondsLeft = Math.max(0, START_SECONDS - Math.floor(localFrame / FPS));
   const hh = Math.floor(secondsLeft / 3600);
   const mm = Math.floor((secondsLeft % 3600) / 60);
   const ss = secondsLeft % 60;
-
-  const SITE_START = 60;
-  const SITE_STEP = 22;
-
-  const textFrame = Math.max(0, localFrame - 190);
-  const textOpacity = interpolate(textFrame, [0, 18], [0, 1], { extrapolateRight: "clamp" });
-  const textY = interpolate(textFrame, [0, 18], [14, 0], { extrapolateRight: "clamp" });
-
-  // FlipDigit's `scale` prop is a multiplier over its own default size (92x116px etc.),
-  // not a pixel value — this is a flat tuned number per orientation, not base-derived, since
-  // both compositions happen to share the same 1080 "base" (min(width,height)) regardless
-  // of which dimension is 1080 vs 1920.
   const digitScale = isVertical ? 1.55 : 1.15;
+
+  function stampTransform(startFrame: number) {
+    const p = spring({ frame: Math.max(0, spd(localFrame) - spd(startFrame)), fps, config: { damping: 8, stiffness: 260, mass: 0.7 }, durationInFrames: 12 });
+    const scale = interpolate(p, [0, 1], [2.2, 1]);
+    const y = interpolate(p, [0, 1], [-40, 0]);
+    const opacity = interpolate(spd(localFrame) - spd(startFrame), [0, 4], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+    return { transform: `translateY(${y}px) scale(${scale})`, opacity };
+  }
+
+  // ---- blocked sites: fly in from the right, staggered, each with a small bounce ----
+  const TAGLINE_TEXT = ["Start a session you ", "can't quit", "."];
+  const taglineOpacity = interpolate(spd(localFrame) - spd(TAGLINE_START), [0, 16], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const taglineY = interpolate(spd(localFrame) - spd(TAGLINE_START), [0, 16], [14, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
 
   return (
     <Background glowY={28}>
@@ -46,11 +85,37 @@ export function Scene3LockedIn({ localFrame }: { localFrame: number }) {
           alignItems: "center",
           justifyContent: "center",
           gap: base * 0.045,
+          transform: `translateX(${impactShake}px)`,
         }}
       >
+        {/* the drawing line */}
         <div
           style={{
-            opacity: badgeOpacity,
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            width: base * 0.7 * lineProgress,
+            height: 2,
+            background: COLORS.gold,
+            opacity: lineOpacity,
+            transform: "translate(-50%, -50%)",
+            boxShadow: `0 0 ${base * 0.02}px ${COLORS.gold}`,
+          }}
+        />
+
+        {/* the two-halves title */}
+        {titleOpacity > 0.001 && (
+          <div style={{ position: "absolute", display: "flex", opacity: titleOpacity, fontFamily: FONT_BODY, fontWeight: 800, fontSize: base * (isVertical ? 0.072 : 0.058), color: COLORS.gold }}>
+            <span style={{ transform: `translateX(${leftX}px)` }}>LOCKED IN&nbsp;</span>
+            <span style={{ transform: `translateX(${rightX}px)` }}>MODE</span>
+          </div>
+        )}
+        {impactFlash > 0 && <div style={{ position: "absolute", inset: 0, background: COLORS.gold, opacity: impactFlash, mixBlendMode: "screen" }} />}
+
+        {/* the functional UI underneath, fading in as the title clears */}
+        <div
+          style={{
+            opacity: pillOpacity,
             display: "inline-flex",
             alignItems: "center",
             gap: base * 0.016,
@@ -66,25 +131,32 @@ export function Scene3LockedIn({ localFrame }: { localFrame: number }) {
           </span>
         </div>
 
-        <div style={{ transform: `scale(${clockScale})`, display: "flex", alignItems: "flex-start", gap: base * 0.012 }}>
-          <FlipDigit value={hh} label="Hours" scale={digitScale} />
-          <span style={{ fontFamily: FONT_BODY, fontSize: base * 0.05, fontWeight: 800, color: COLORS.goldMuted, lineHeight: `${base * 0.09}px` }}>:</span>
-          <FlipDigit value={mm} label="Minutes" scale={digitScale} />
-          <span style={{ fontFamily: FONT_BODY, fontSize: base * 0.05, fontWeight: 800, color: COLORS.goldMuted, lineHeight: `${base * 0.09}px` }}>:</span>
-          <FlipDigit value={ss} label="Seconds" scale={digitScale} />
+        <div style={{ display: "flex", alignItems: "flex-start", gap: base * 0.012 }}>
+          <div style={stampTransform(CLOCK_START + 8)}>
+            <FlipDigit value={hh} label="Hours" scale={digitScale} />
+          </div>
+          <span style={{ fontFamily: FONT_BODY, fontSize: base * 0.05, fontWeight: 800, color: COLORS.goldMuted, lineHeight: `${base * 0.09}px`, opacity: pillOpacity }}>:</span>
+          <div style={stampTransform(CLOCK_START + 8 + DIGIT_STAGGER)}>
+            <FlipDigit value={mm} label="Minutes" scale={digitScale} />
+          </div>
+          <span style={{ fontFamily: FONT_BODY, fontSize: base * 0.05, fontWeight: 800, color: COLORS.goldMuted, lineHeight: `${base * 0.09}px`, opacity: pillOpacity }}>:</span>
+          <div style={stampTransform(CLOCK_START + 8 + DIGIT_STAGGER * 2)}>
+            <FlipDigit value={ss} label="Seconds" scale={digitScale} />
+          </div>
         </div>
 
         <div style={{ display: "flex", gap: base * 0.014, flexWrap: "wrap", justifyContent: "center", maxWidth: base * 0.85 }}>
           {BLOCKED_SITES.map((site, i) => {
             const appearAt = SITE_START + i * SITE_STEP;
-            const p = spring({ frame: Math.max(0, localFrame - appearAt), fps, config: { damping: 12 }, durationInFrames: 14 });
-            const op = interpolate(localFrame, [appearAt, appearAt + 6], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+            const p = spring({ frame: Math.max(0, spd(localFrame) - spd(appearAt)), fps, config: { damping: 10, stiffness: 220 }, durationInFrames: 12 });
+            const x = interpolate(p, [0, 1], [base * 0.5, 0]);
+            const op = interpolate(spd(localFrame) - spd(appearAt), [0, 5], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
             return (
               <div
                 key={site}
                 style={{
                   opacity: op,
-                  transform: `scale(${0.8 + p * 0.2})`,
+                  transform: `translateX(${x}px)`,
                   display: "inline-flex",
                   alignItems: "center",
                   gap: base * 0.008,
@@ -110,8 +182,8 @@ export function Scene3LockedIn({ localFrame }: { localFrame: number }) {
 
         <div
           style={{
-            opacity: textOpacity,
-            transform: `translateY(${textY}px)`,
+            opacity: taglineOpacity,
+            transform: `translateY(${taglineY}px)`,
             fontFamily: FONT_BODY,
             fontWeight: 800,
             fontSize: base * (isVertical ? 0.048 : 0.038),
@@ -121,9 +193,13 @@ export function Scene3LockedIn({ localFrame }: { localFrame: number }) {
             marginTop: base * 0.01,
           }}
         >
-          Start a session you <span style={{ color: COLORS.gold }}>can&apos;t quit</span>.
+          {TAGLINE_TEXT[0]}
+          <span style={{ color: COLORS.gold }}>{TAGLINE_TEXT[1]}</span>
+          {TAGLINE_TEXT[2]}
         </div>
       </div>
+
+      {blackOpacity > 0.001 && <div style={{ position: "absolute", inset: 0, background: COLORS.black, opacity: blackOpacity }} />}
     </Background>
   );
 }
