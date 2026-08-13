@@ -9,7 +9,27 @@ import { shakeOffset } from "../shake";
 // clearly as "a feed" at a glance in a fast-cut promo, not sit at realistic low contrast.
 const POST_TONES = ["#6B4F2A", "#4A3F6B", "#2A6B57", "#6B2A45", "#2A456B", "#5A522A"];
 
-function FeedPost({ tone, cardWidth }: { tone: string; cardWidth: number }) {
+// Deterministic per-post like/comment counts (no Math.random() — same reasoning as the
+// particle fields elsewhere) so each card in the stack shows a different, plausible number
+// rather than the same placeholder repeated.
+function fakeLikes(index: number) {
+  const n = ((index * 1471 + 2300) % 18000) + 900;
+  return n >= 1000 ? `${(n / 1000).toFixed(1)}K` : String(n);
+}
+function fakeComments(index: number) {
+  return String(((index * 53 + 40) % 800) + 20);
+}
+
+function CommentLine({ width }: { width: number }) {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: width * 0.025 }}>
+      <div style={{ width: width * 0.06, height: width * 0.06, borderRadius: "50%", background: "#5a5d66", flexShrink: 0 }} />
+      <div style={{ width: width * (0.35 + ((width * 7) % 20) / 100), height: width * 0.018, borderRadius: 3, background: "#3f424b" }} />
+    </div>
+  );
+}
+
+function FeedPost({ tone, cardWidth, index }: { tone: string; cardWidth: number; index: number }) {
   return (
     <div
       style={{
@@ -28,10 +48,26 @@ function FeedPost({ tone, cardWidth }: { tone: string; cardWidth: number }) {
         </div>
       </div>
       <div style={{ width: "100%", height: cardWidth * 0.85, background: `linear-gradient(160deg, ${tone}, #241f1a)` }} />
-      <div style={{ display: "flex", gap: cardWidth * 0.05, padding: cardWidth * 0.045 }}>
-        {[0, 1, 2].map((i) => (
-          <div key={i} style={{ width: cardWidth * 0.06, height: cardWidth * 0.06, borderRadius: "50%", border: "1.5px solid #7a7d86" }} />
-        ))}
+
+      {/* Engagement row — real-looking counts, not bare icon outlines, so the feed reads as
+          "active" the way an actual doomscroll does. */}
+      <div style={{ display: "flex", alignItems: "center", gap: cardWidth * 0.045, padding: `${cardWidth * 0.04}px ${cardWidth * 0.045}px 0` }}>
+        <div style={{ display: "flex", alignItems: "center", gap: cardWidth * 0.014 }}>
+          <span style={{ fontSize: cardWidth * 0.05, lineHeight: 1 }}>❤️</span>
+          <span style={{ fontFamily: FONT_BODY, fontWeight: 700, fontSize: cardWidth * 0.032, color: COLORS.white }}>{fakeLikes(index)}</span>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: cardWidth * 0.014 }}>
+          <span style={{ fontSize: cardWidth * 0.05, lineHeight: 1 }}>💬</span>
+          <span style={{ fontFamily: FONT_BODY, fontWeight: 700, fontSize: cardWidth * 0.032, color: COLORS.white }}>{fakeComments(index)}</span>
+        </div>
+        <div style={{ width: cardWidth * 0.06, height: cardWidth * 0.06, borderRadius: "50%", border: "1.5px solid #7a7d86", marginLeft: "auto" }} />
+      </div>
+
+      {/* A couple of comment previews, not just a count — this is the part that actually
+          reads as "comments" rather than a like/share icon row. */}
+      <div style={{ display: "flex", flexDirection: "column", gap: cardWidth * 0.03, padding: cardWidth * 0.045 }}>
+        <CommentLine width={cardWidth} />
+        <CommentLine width={cardWidth} />
       </div>
     </div>
   );
@@ -58,7 +94,11 @@ export function Scene2Doomscroll({ localFrame }: { localFrame: number }) {
   const base = Math.min(width, height);
 
   const cardWidth = base * (isVertical ? 0.62 : 0.24);
-  const cardHeight = cardWidth * 1.32;
+  // Taller now that each card has an engagement row + two comment previews, not just an
+  // icon row — only used for the scroll-loop step math below, so an approximate estimate
+  // (not pixel-exact) is fine; it just needs to be in the right ballpark for the loop to
+  // feel continuous rather than jumping.
+  const cardHeight = cardWidth * 1.68;
   const gap = base * 0.03;
   const stepHeight = cardHeight + gap;
 
@@ -120,7 +160,7 @@ export function Scene2Doomscroll({ localFrame }: { localFrame: number }) {
             }}
           >
             {posts.map((tone, i) => (
-              <FeedPost key={i} tone={tone} cardWidth={cardWidth} />
+              <FeedPost key={i} tone={tone} cardWidth={cardWidth} index={i} />
             ))}
           </div>
 

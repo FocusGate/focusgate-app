@@ -1,6 +1,6 @@
 import { interpolate, useVideoConfig } from "remotion";
 import { Background } from "../components/Background";
-import { LockIcon } from "../components/LockIcon";
+import { Logo } from "../components/Logo";
 import { TypewriterText } from "../components/TypewriterText";
 import { COLORS, FONT_BODY, spd } from "../constants";
 
@@ -35,7 +35,7 @@ export function Scene6CTA({ localFrame }: { localFrame: number }) {
     <Background>
       <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: base * 0.035 }}>
         <div style={{ opacity: iconOpacity, transform: `scale(${pulse})` }}>
-          <LockIcon size={base * (isVertical ? 0.14 : 0.1)} color={COLORS.gold} glow={glow} />
+          <Logo size={base * (isVertical ? 0.14 : 0.1)} glow={glow} />
         </div>
         <div
           style={{

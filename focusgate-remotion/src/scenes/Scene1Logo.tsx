@@ -1,6 +1,6 @@
 import { interpolate, spring, useCurrentFrame, useVideoConfig, Easing } from "remotion";
 import { Background } from "../components/Background";
-import { LockIcon } from "../components/LockIcon";
+import { Logo } from "../components/Logo";
 import { COLORS, FONT_DISPLAY, spd } from "../constants";
 
 const WORDMARK = "FocusGate";
@@ -60,7 +60,7 @@ export function Scene1Logo() {
             }}
           />
           <div style={{ transform: `translateY(${dropY}px)`, opacity: iconOpacity }}>
-            <LockIcon size={iconSize} color={COLORS.gold} glow={ambientGlow} />
+            <Logo size={iconSize} glow={ambientGlow} />
           </div>
         </div>
 

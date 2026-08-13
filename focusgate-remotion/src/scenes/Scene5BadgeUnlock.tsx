@@ -81,22 +81,27 @@ export function Scene5BadgeUnlock({ localFrame }: { localFrame: number }) {
             );
           })}
 
+          {/* The actual FocusGate Legend badge glyph (components/app/badgeIcons.tsx's exact
+              path + gradient — a gold/white/sky-blue gem, not a circle-and-star this video
+              made up). Shown bare with a glow, matching how the real app's own unlock
+              celebration presents it (app/(app)/badges/page.tsx), not wrapped in a coin —
+              plus a slow continuous rotation, mirroring the real dashboard card's
+              fg-gem-rotate animation on an unlocked Legendary badge. */}
           <div
             style={{
-              position: "relative",
-              width: badgeSize,
-              height: badgeSize,
-              borderRadius: "50%",
-              transform: `scale(${badgeScale})`,
-              background: `radial-gradient(circle at 35% 30%, ${COLORS.goldLight}, ${COLORS.gold} 55%, ${COLORS.goldMuted} 100%)`,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              boxShadow: `0 0 ${badgeSize * 0.5 * badgeGlow}px ${COLORS.gold}aa, 0 0 ${badgeSize * 1.1 * badgeGlow}px ${COLORS.gold}55`,
+              transform: `scale(${badgeScale}) rotate(${(spd(localFrame) / 30) * (360 / 14)}deg)`,
+              filter: `drop-shadow(0 0 ${badgeSize * 0.14 * badgeGlow}px ${COLORS.gold}cc) drop-shadow(0 0 ${badgeSize * 0.3 * badgeGlow}px ${COLORS.gold}66)`,
             }}
           >
-            <svg width={badgeSize * 0.46} height={badgeSize * 0.46} viewBox="0 0 24 24" fill="none">
-              <path d="M12 2l2.6 5.6 6.1.6-4.6 4.1 1.3 6-5.4-3.1-5.4 3.1 1.3-6-4.6-4.1 6.1-.6z" fill={COLORS.black} />
+            <svg width={badgeSize} height={badgeSize} viewBox="0 0 48 48" fill="none">
+              <defs>
+                <linearGradient id="badge-gem" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stopColor={COLORS.gold} />
+                  <stop offset="0.5" stopColor={COLORS.white} />
+                  <stop offset="1" stopColor="#0EA5E9" />
+                </linearGradient>
+              </defs>
+              <path d="M14 12h20l6 8-16 20L8 20z" fill="url(#badge-gem)" opacity="0.92" />
             </svg>
           </div>
         </div>
@@ -120,8 +125,9 @@ export function Scene5BadgeUnlock({ localFrame }: { localFrame: number }) {
           >
             <TypewriterText text="FOCUSGATE LEGEND" startFrame={BADGE_NAME_START} framesPerChar={1.1} />
           </div>
-          <div style={{ opacity: subtitleOpacity, fontFamily: FONT_BODY, fontWeight: 600, fontSize: base * 0.022, color: COLORS.grey, marginTop: base * 0.014 }}>
-            Held by 1% of users.
+          {/* Verbatim from LegendaryBadgeCard.tsx's unlocked state, not a paraphrase. */}
+          <div style={{ opacity: subtitleOpacity, fontFamily: FONT_BODY, fontWeight: 600, fontStyle: "italic", fontSize: base * 0.022, color: COLORS.grey, marginTop: base * 0.014 }}>
+            Only 1% of users ever unlock this.
           </div>
         </div>
       </div>
