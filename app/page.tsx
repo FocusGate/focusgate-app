@@ -6,7 +6,7 @@ import Problem from "@/components/landing/Problem";
 import LockedInShowcase from "@/components/landing/LockedInShowcase";
 import ModesCarousel from "@/components/landing/ModesCarousel";
 import Notifications from "@/components/landing/Notifications";
-import Badges from "@/components/landing/Badges";
+import Feathers from "@/components/landing/Feathers";
 import TheGates from "@/components/landing/TheGates";
 import Stats from "@/components/landing/Stats";
 import Comparison from "@/components/landing/Comparison";
@@ -26,7 +26,7 @@ export default function Home() {
       <LockedInShowcase />
       <ModesCarousel />
       <Notifications />
-      <Badges />
+      <Feathers />
       <TheGates />
       <Stats />
       <Comparison />

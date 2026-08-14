@@ -6,7 +6,7 @@ const CARDS = [
   {
     initial: "J",
     initialBg: "#1a1a1a",
-    text: "James just started a 2hr Locked In session 🔒",
+    text: "James just started a 2hr RavenLock session 🔒",
     footer: <span style={{ border: "1px solid rgba(255,255,255,0.14)", borderRadius: 999, padding: "4px 12px", fontSize: 13 }}>🔥</span>,
     time: "2 min ago",
     rotate: -3,
@@ -69,7 +69,7 @@ export default function Notifications() {
           Your friends know when you quit.
         </h2>
         <p style={{ color: "#9a9da4", fontSize: 18, lineHeight: 1.7, maxWidth: "60ch", margin: "26px auto 0", textWrap: "pretty" }}>
-          Start a Locked In session and FocusGate notifies your study group instantly. They see when you start. They
+          Start a RavenLock session and Raven notifies your study group instantly. They see when you start. They
           see when you finish. They&apos;ll know if you cheat.
         </p>
       </div>

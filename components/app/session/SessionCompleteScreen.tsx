@@ -2,22 +2,22 @@
 
 import { motion } from "framer-motion";
 import { computeFocusScore, formatHoursMinutes } from "@/lib/stats";
-import { getBadgeIcon } from "@/components/app/badgeIcons";
+import { getFeatherIcon, isValidTier, type BadgeTier } from "@/components/app/featherIcons";
 import FocusScoreCard from "@/components/app/stats/FocusScoreCard";
-import type { NewlyUnlockedBadge } from "@/lib/supabase";
+import type { NewlyUnlockedFeather } from "@/lib/supabase";
 import ShareCard from "./ShareCard";
 
 export default function SessionCompleteScreen({
   durationMinutes,
   streak,
-  unlockedBadges,
+  unlockedFeathers,
   onStartAnother,
   onReturnToDashboard,
   modeExtra,
 }: {
   durationMinutes: number;
   streak: number;
-  unlockedBadges: NewlyUnlockedBadge[];
+  unlockedFeathers: NewlyUnlockedFeather[];
   onStartAnother: () => void;
   onReturnToDashboard: () => void;
   /** Mode-specific end-of-session content — Exam Cram's Cram Report, Group Study's group
@@ -33,7 +33,7 @@ export default function SessionCompleteScreen({
       animate={{ opacity: 1 }}
       // data-lenis-prevent: same fix as TheLounge.tsx — the global smooth-scroll otherwise
       // eats scroll input meant for this panel's own overflowY: auto, which matters here
-      // whenever a session unlocks enough badges (or modeExtra content) to run taller than
+      // whenever a session unlocks enough feathers (or modeExtra content) to run taller than
       // the viewport.
       data-lenis-prevent
       style={{
@@ -86,25 +86,29 @@ export default function SessionCompleteScreen({
         <FocusScoreCard score={focusScore} />
       </motion.div>
 
-      {unlockedBadges.length > 0 && (
+      {unlockedFeathers.length > 0 && (
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
           style={{ marginTop: 26, display: "flex", gap: 14, flexWrap: "wrap", justifyContent: "center", maxWidth: 420 }}
         >
-          {unlockedBadges.map((b, i) => {
-            const icon = getBadgeIcon(b.name);
+          {unlockedFeathers.map((f, i) => {
+            const tier: BadgeTier = isValidTier(f.rarity) ? f.rarity : "common";
+            const icon = getFeatherIcon(tier);
             return (
+              // Feather drifts down into place (like it's settling after falling) rather
+              // than just popping/rotating in, matching the fuller celebration on the
+              // Feathers page itself.
               <motion.div
-                key={b.id}
-                initial={{ scale: 0, rotate: -10, opacity: 0 }}
-                animate={{ scale: 1, rotate: 0, opacity: 1 }}
-                transition={{ type: "spring", stiffness: 260, damping: 16, delay: 0.7 + i * 0.15 }}
+                key={f.id}
+                initial={{ y: -36, opacity: 0, rotate: -8 }}
+                animate={{ y: 0, opacity: 1, rotate: 0 }}
+                transition={{ type: "spring", stiffness: 120, damping: 14, delay: 0.7 + i * 0.15 }}
                 style={{ background: "#0A0A0A", border: `1px solid ${icon.color}66`, borderRadius: 14, padding: 14, width: 120 }}
               >
                 <div style={{ filter: `drop-shadow(0 0 10px ${icon.color}aa)` }}>{icon.svg}</div>
-                <div style={{ color: "#fff", fontSize: 12, fontWeight: 700, marginTop: 8 }}>{b.name}</div>
+                <div style={{ color: "#fff", fontSize: 12, fontWeight: 700, marginTop: 8 }}>{f.name}</div>
               </motion.div>
             );
           })}

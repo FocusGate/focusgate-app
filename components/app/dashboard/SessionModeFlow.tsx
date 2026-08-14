@@ -39,7 +39,7 @@ function pomodoroMinutes(cycles: number) {
 }
 
 /** The first screen shown before every session — a grid of modes replaces the old plain
- *  duration selector. Locked In Mode's actual enforcement is identical underneath every
+ *  duration selector. RavenLock's actual enforcement is identical underneath every
  *  one of these; this component only figures out *which* mode, its config, and produces
  *  a fully-resolved StartConfig once the (mode-appropriate) confirm gate is passed. */
 export default function SessionModeFlow({ userId, onConfirmed }: { userId: string; onConfirmed: (cfg: StartConfig) => void }) {

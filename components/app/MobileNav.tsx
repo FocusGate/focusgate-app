@@ -6,7 +6,7 @@ import { Home, Trophy, BarChart3, Users, Settings, ShieldAlert } from "lucide-re
 
 const NAV = [
   { href: "/dashboard", label: "Home", icon: Home },
-  { href: "/badges", label: "Badges", icon: Trophy },
+  { href: "/feathers", label: "Feathers", icon: Trophy },
   { href: "/the-gates", label: "Gates", icon: ShieldAlert },
   { href: "/stats", label: "Stats", icon: BarChart3 },
   { href: "/friends", label: "Friends", icon: Users },

@@ -57,7 +57,7 @@ export default function DeleteAccountDialog({
           >
             <h2 style={{ color: "#fff", fontSize: 20, fontWeight: 800, margin: 0 }}>Delete your account?</h2>
             <p style={{ color: "#9a9da4", fontSize: 14, lineHeight: 1.6, marginTop: 12 }}>
-              This permanently deletes your FocusGate profile, sessions, badges, and blocked sites. Any group you created will be deleted for every member in it.
+              This permanently deletes your Raven profile, sessions, feathers, and blocked sites. Any group you created will be deleted for every member in it.
             </p>
             <p style={{ color: "#9a9da4", fontSize: 14, lineHeight: 1.6, marginTop: 10 }}>
               This does <strong>not</strong> delete your underlying login credentials — you&apos;ll be signed out, but the account itself remains. Contact support if you need that removed too.

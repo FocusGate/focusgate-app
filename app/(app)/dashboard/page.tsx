@@ -8,11 +8,11 @@ import SessionModeFlow, { type StartConfig } from "@/components/app/dashboard/Se
 import StatCard, { formatHoursMinutes } from "@/components/app/dashboard/StatCard";
 import TrialStatusBanner from "@/components/app/dashboard/TrialStatusBanner";
 import { useCurrentUserContext, type CurrentUser } from "@/contexts/CurrentUserContext";
-import { sendBadgeUnlockEmail } from "@/lib/email";
+import { sendFeatherUnlockEmail } from "@/lib/email";
 import { track } from "@/lib/posthog";
 import {
   addBlockedSite,
-  checkAndUnlockBadges,
+  checkAndUnlockFeathers,
   endSession,
   getActiveSession,
   getBlockedSites,
@@ -154,7 +154,7 @@ export default function DashboardPage() {
           const { data: memberships } = await supabase.from("group_members").select("group_id").eq("user_id", user.id);
           await Promise.all(
             (memberships ?? []).map((m) =>
-              notifyFriendGroup(user.id, m.group_id, `${user.name} just started a ${cfg.minutes}-minute Locked In session 🔒`)
+              notifyFriendGroup(user.id, m.group_id, `${user.name} just started a ${cfg.minutes}-minute RavenLock session 🔒`)
             )
           );
         }
@@ -195,8 +195,8 @@ export default function DashboardPage() {
     setBlockedSites((s) => s.filter((site) => site.url !== url));
   }
 
-  /** Ends the session, checks for newly-unlocked badges, and refreshes the streak/hours
-   *  shown across the shell — returns the unlocked badges plus the *actual* recorded
+  /** Ends the session, checks for newly-unlocked feathers, and refreshes the streak/hours
+   *  shown across the shell — returns the unlocked feathers plus the *actual* recorded
    *  duration (endSession()'s own return value, not the planned totalSeconds/sessionSeconds
    *  this component started with) so the Locked-In overlay's Session Complete screen shows
    *  what really happened, not what was scheduled. Those two only match for a session that
@@ -208,15 +208,15 @@ export default function DashboardPage() {
     const completed = await endSession(sessionId);
     const durationMinutes = completed.duration_minutes ?? 0;
     track("session_completed", { duration_minutes: durationMinutes });
-    const unlocked = await checkAndUnlockBadges(user.id, entitlements.maxBadgeRarity);
+    const unlocked = await checkAndUnlockFeathers(user.id, entitlements.maxFeatherRarity);
     const refreshed = await getUser();
     if (refreshed) setUser(refreshed as CurrentUser);
     setSessions((prev) => [{ id: sessionId, start_time: new Date().toISOString(), duration_minutes: durationMinutes, completed: true }, ...prev]);
-    // Fire-and-forget, one per badge — the Session Complete screen already animates these
+    // Fire-and-forget, one per feather — the Session Complete screen already animates these
     // in from `unlocked` itself, so the email is a second channel, not the primary signal.
-    for (const badge of unlocked) {
-      void sendBadgeUnlockEmail(user.email, user.name, badge);
-      track("badge_unlocked", { badge_name: badge.name, badge_tier: badge.rarity });
+    for (const feather of unlocked) {
+      void sendFeatherUnlockEmail(user.email, user.name, feather);
+      track("feather_unlocked", { feather_name: feather.name, feather_tier: feather.rarity });
     }
     return { unlocked, durationMinutes };
   }

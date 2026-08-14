@@ -1,5 +1,5 @@
 /* styles.css — shared theme for popup.html and blocked.html.
-   Colors match the FocusGate web app's brand: near-black background, muted gray text,
+   Colors match the Raven web app's brand: near-black background, muted gray text,
    and #b08d57 "brand gold" for accents. */
 
 :root {
@@ -131,6 +131,14 @@ textarea:focus {
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+/* The RAVEN wordmark itself — bold and slightly wide-tracked per the brand spec, distinct
+   from .popup__brand's own tighter -0.01em (which still governs the badge pill beside it). */
+.popup__brand-name--wordmark {
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--fg-gold-bright);
 }
 
 .popup__badge {
@@ -808,6 +816,7 @@ textarea:focus {
   color: var(--fg-gold-bright);
   font-weight: 800;
   font-size: 15px;
+  letter-spacing: 0.08em;
 }
 
 .challenge__root {

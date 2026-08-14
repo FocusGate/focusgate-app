@@ -1,10 +1,10 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { FocusGateMark } from "@/components/landing/Navbar";
+import { RavenMark } from "@/components/landing/Navbar";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy — FocusGate",
-  description: "How FocusGate collects, uses, and protects your data across the web app and Chrome extension.",
+  title: "Privacy Policy — Raven",
+  description: "How Raven collects, uses, and protects your data across the web app and Chrome extension.",
 };
 
 const sectionStyle: React.CSSProperties = { marginTop: 40 };
@@ -19,8 +19,8 @@ export default function PrivacyPolicyPage() {
     <div style={{ minHeight: "100vh", background: "#060606", color: "#fff", fontFamily: "'Geist', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" }}>
       <header style={{ padding: "22px 24px", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
         <Link href="/" style={{ display: "inline-flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
-          <FocusGateMark size={22} />
-          <span style={{ fontFamily: "'Instrument Serif', serif", fontSize: 21, color: "#b08d57" }}>FocusGate</span>
+          <RavenMark size={22} />
+          <span style={{ fontFamily: "'Geist', sans-serif", fontSize: 18, fontWeight: 800, letterSpacing: "0.08em", color: "#F59E0B" }}>RAVEN</span>
         </Link>
       </header>
 
@@ -29,8 +29,8 @@ export default function PrivacyPolicyPage() {
         <p style={{ color: "#5b5e66", fontSize: 13, marginTop: 8 }}>Last updated: August 3, 2026</p>
 
         <p style={{ ...pStyle, marginTop: 28 }}>
-          This policy covers the FocusGate web app and the FocusGate Chrome extension, which work together as one
-          product. Starting a Locked In session in either place, and the account you sign into, are shared between
+          This policy covers the Raven web app and the Raven Chrome extension, which work together as one
+          product. Starting a RavenLock session in either place, and the account you sign into, are shared between
           them.
         </p>
 
@@ -38,14 +38,14 @@ export default function PrivacyPolicyPage() {
           <h2 style={h2Style}>1. Information we collect</h2>
           <h3 style={h3Style}>Account information</h3>
           <p style={pStyle}>
-            When you create a FocusGate account, we collect your name, email address, and password. Authentication
+            When you create a Raven account, we collect your name, email address, and password. Authentication
             is handled by Supabase; we never see or store your password in plain text.
           </p>
           <h3 style={h3Style}>Usage data</h3>
           <ul style={ulStyle}>
-            <li>Focus session history — start/end times and duration of your Locked In sessions</li>
+            <li>Focus session history — start/end times and duration of your RavenLock sessions</li>
             <li>The list of sites you&apos;ve chosen to block</li>
-            <li>Streaks, badges, and focus statistics derived from your session history</li>
+            <li>Streaks, feathers, and focus statistics derived from your session history</li>
             <li>Friend group membership and activity you choose to share with a group</li>
           </ul>
           <p style={pStyle}>We do not collect your general browsing history — only whether a page you visited matched your own blocked-site list, which is evaluated locally in your browser.</p>
@@ -60,14 +60,14 @@ export default function PrivacyPolicyPage() {
             <li><code style={codeStyle}>storage</code> — saves your current session state (active/idle, time remaining, blocked domains) locally in your browser.</li>
             <li><code style={codeStyle}>alarms</code> — runs the recurring check that verifies your session&apos;s remaining time against a trusted network clock and polls for sessions started on the web dashboard.</li>
             <li><code style={codeStyle}>activeTab</code> — used incidentally by the extension UI; not used to read page content.</li>
-            <li><code style={codeStyle}>incognito: spanning</code> — lets your block rules also apply in Incognito windows if you separately enable &quot;Allow in Incognito&quot; for FocusGate yourself in Chrome&apos;s extension settings. We never require or check for this.</li>
+            <li><code style={codeStyle}>incognito: spanning</code> — lets your block rules also apply in Incognito windows if you separately enable &quot;Allow in Incognito&quot; for Raven yourself in Chrome&apos;s extension settings. We never require or check for this.</li>
           </ul>
         </section>
 
         <section style={sectionStyle}>
           <h2 style={h2Style}>3. Third-party services</h2>
           <p style={pStyle}>
-            We use a small number of service providers to run FocusGate. They process data on our behalf and are
+            We use a small number of service providers to run Raven. They process data on our behalf and are
             contractually/technically restricted to that purpose — we do not sell data to them or anyone else.
           </p>
           <ul style={ulStyle}>
@@ -90,14 +90,14 @@ export default function PrivacyPolicyPage() {
           <h2 style={h2Style}>5. Data retention &amp; deletion</h2>
           <p style={pStyle}>
             You can permanently delete your account and all associated data (profile, sessions, blocked sites,
-            badges, group memberships) at any time from <strong style={{ color: "#d8d8dc" }}>Settings → Delete account</strong> in
+            feathers, group memberships) at any time from <strong style={{ color: "#d8d8dc" }}>Settings → Delete account</strong> in
             the web app.
           </p>
         </section>
 
         <section style={sectionStyle}>
           <h2 style={h2Style}>6. Children&apos;s privacy</h2>
-          <p style={pStyle}>FocusGate is intended for users 13 and older. We do not knowingly collect data from children under 13.</p>
+          <p style={pStyle}>Raven is intended for users 13 and older. We do not knowingly collect data from children under 13.</p>
         </section>
 
         <section style={sectionStyle}>

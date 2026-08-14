@@ -10,7 +10,7 @@ import { getEntryPath } from "@/lib/returningUser";
 // (https://chrome.google.com/webstore/detail/<name>/<extension-id>) once it is. Exported
 // so every "Add to Chrome" CTA on the site (Navbar, Hero, ...) points at the same one
 // placeholder to update later, instead of several copies drifting out of sync.
-export const CHROME_WEBSTORE_URL = "https://chrome.google.com/webstore/detail/focusgate/REPLACE_WITH_EXTENSION_ID";
+export const CHROME_WEBSTORE_URL = "https://chrome.google.com/webstore/detail/raven/REPLACE_WITH_EXTENSION_ID";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -35,22 +35,22 @@ export default function Navbar() {
       >
         <div style={{ padding: "12px 22px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 24 }}>
           <a href="#" style={{ display: "flex", alignItems: "center", gap: 11, textDecoration: "none" }}>
-            <FocusGateMark />
+            <RavenMark />
             <span
               style={{
-                fontFamily: "'Instrument Serif', serif",
-                fontSize: 25,
-                fontWeight: 400,
-                letterSpacing: "0.01em",
-                color: "#b08d57",
+                fontFamily: "'Geist', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif",
+                fontSize: 21,
+                fontWeight: 800,
+                letterSpacing: "0.08em",
+                color: "#F59E0B",
               }}
             >
-              FocusGate
+              RAVEN
             </span>
           </a>
 
           <div className="fg-nav-links" style={{ display: "flex", alignItems: "center", gap: 38 }}>
-            {["features", "badges", "pricing"].map((id) => (
+            {["features", "feathers", "pricing"].map((id) => (
               <NavLink key={id} href={`#${id}`}>
                 {id}
               </NavLink>
@@ -92,7 +92,7 @@ export default function Navbar() {
             <line x1="18" y1="6" x2="6" y2="18" stroke="#b08d57" strokeWidth="1.8" strokeLinecap="round" />
           </svg>
         </button>
-        {["features", "badges", "pricing"].map((id) => (
+        {["features", "feathers", "pricing"].map((id) => (
           <a key={id} href={`#${id}`} onClick={() => setMenuOpen(false)} style={{ textTransform: "capitalize" }}>
             {id}
           </a>
@@ -155,13 +155,14 @@ function NavLink({ href, children }: { href: string; children: React.ReactNode }
   );
 }
 
-export function FocusGateMark({ size = 26 }: { size?: number }) {
+/** Minimal angled raven silhouette — a bird in flight built from straight edges rather than
+ *  an organic curved outline, so it stays crisp and unambiguous at nav-bar size (reads as
+ *  a bird mark, not a smudge, all the way down to a 16px favicon). Replaces the old lock
+ *  glyph (FocusGateMark) now that the brand itself is Raven, not a padlock. */
+export function RavenMark({ size = 26 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <path d="M5 21V11a7 7 0 0 1 14 0v10" stroke="#b08d57" strokeWidth="1.7" fill="none" strokeLinecap="round" />
-      <line x1="3.6" y1="21" x2="20.4" y2="21" stroke="#b08d57" strokeWidth="1.7" strokeLinecap="round" />
-      <circle cx="12" cy="12.4" r="1.5" fill="#b08d57" />
-      <path d="M12 13.6V16.6" stroke="#b08d57" strokeWidth="1.7" strokeLinecap="round" />
+      <path d="M2 12L6 8L14 5L22 9L13 11L20 18L12 14L7 15Z" fill="#F59E0B" />
     </svg>
   );
 }

@@ -1,6 +1,6 @@
 "use server";
 
-// email.ts — every outbound Resend email FocusGate sends, in one place. Marked "use server"
+// email.ts — every outbound Resend email Raven sends, in one place. Marked "use server"
 // at the file level (a Next.js Server Actions file): every export here compiles to a
 // server-only RPC endpoint, so client components can call sendWelcomeEmail() etc. directly,
 // as a normal async function call, without RESEND_API_KEY or the `resend` SDK ever reaching
@@ -12,7 +12,7 @@
 // deliver() below, which never throws (Resend itself doesn't throw on an API-level
 // rejection like an unverified sender; it resolves { data: null, error } instead, so both
 // paths are handled explicitly) — rather than letting an email failure block the *real*
-// action that triggered it: a badge unlocking, a session starting, a break running long
+// action that triggered it: a feather unlocking, a session starting, a break running long
 // shouldn't ever hinge on an email provider being up. Both outcomes are only ever logged
 // server-side (visible in Vercel's function logs), there is no user-facing retry/error
 // surface for this by design.
@@ -25,7 +25,10 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 // sender/domain in Resend's own dashboard (SPF/DKIM/DMARC DNS records on focusgate.site)
 // for these to actually deliver; that verification lives in Resend's dashboard, not in this
 // repo, and isn't something this code can confirm on its own.
-const FROM = "FocusGate <support@focusgate.site>";
+// NOTE (Raven rebrand): the domain itself is intentionally NOT changed here — focusgate.site
+// is still the live, DNS-verified sending domain. Swapping it is a separate manual step
+// (new domain, new SPF/DKIM/DMARC records, re-verification in Resend) once that's ready.
+const FROM = "Raven <support@focusgate.site>";
 
 const GOLD = "#b08d57";
 const GOLD_BRIGHT = "#F59E0B";
@@ -47,14 +50,14 @@ function emailShell(preheader: string, bodyHtml: string): string {
     <tr><td align="center">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px; background:#ffffff; border-radius:16px; overflow:hidden; border:1px solid #e8e6e1;">
         <tr><td style="padding:28px 32px 0;">
-          <span style="font-size:20px; font-weight:800; color:${INK}; letter-spacing:-0.01em;">🔒 Focus<span style="color:${GOLD};">Gate</span></span>
+          <span style="font-size:19px; font-weight:800; letter-spacing:0.08em; color:${GOLD};">RAVEN</span>
         </td></tr>
         <tr><td style="padding:24px 32px 32px; color:${INK}; font-size:15px; line-height:1.6;">
           ${bodyHtml}
         </td></tr>
       </table>
       <p style="max-width:480px; margin:20px 0 0; color:${MUTED}; font-size:12px; text-align:center;">
-        FocusGate · <a href="https://focusgate.site/settings" style="color:${MUTED};">Manage email preferences</a>
+        Raven · <a href="https://focusgate.site/settings" style="color:${MUTED};">Manage email preferences</a>
       </p>
     </td></tr>
   </table>
@@ -91,33 +94,33 @@ async function deliver(kind: string, to: string, subject: string, html: string):
 export async function sendWelcomeEmail(to: string, name: string): Promise<void> {
   const firstName = name.split(" ")[0] || name;
   const html = emailShell(
-    `${firstName}, your first Locked In session is one click away.`,
+    `${firstName}, your first RavenLock session is one click away.`,
     `
     <p style="margin:0 0 16px;">Hey ${firstName},</p>
-    <p style="margin:0 0 16px;">Welcome to FocusGate. You said you'd study — now let's make it stick.</p>
+    <p style="margin:0 0 16px;">Welcome to Raven. You said you'd study — now let's make it stick.</p>
     <p style="margin:0 0 16px;">Pick your sites to block, choose a session length, and lock in. Once it starts, there's no backing out until it's done — that's the whole point.</p>
     ${button("Start your first session", "https://focusgate.site/dashboard")}
     `
   );
-  await deliver("sendWelcomeEmail", to, "Welcome to FocusGate 🔒", html);
+  await deliver("sendWelcomeEmail", to, "Welcome to Raven 🐦‍⬛", html);
 }
 
-/** Fired per newly-unlocked badge from checkAndUnlockBadges' result (dashboard's
+/** Fired per newly-unlocked feather from checkAndUnlockFeathers' result (dashboard's
  *  handleSessionComplete) — a session can unlock more than one at once, so this is called
- *  once per badge rather than batched, keeping each email about exactly one achievement. */
-export async function sendBadgeUnlockEmail(to: string, name: string, badge: { name: string; description: string; rarity: string }): Promise<void> {
+ *  once per feather rather than batched, keeping each email about exactly one achievement. */
+export async function sendFeatherUnlockEmail(to: string, name: string, feather: { name: string; description: string; rarity: string }): Promise<void> {
   const firstName = name.split(" ")[0] || name;
   const html = emailShell(
-    `You just unlocked ${badge.name}.`,
+    `You just earned ${feather.name}.`,
     `
     <p style="margin:0 0 16px;">Nice work, ${firstName}.</p>
-    <p style="margin:0 0 8px; font-size:12px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:${GOLD};">${badge.rarity} badge unlocked</p>
-    <p style="margin:0 0 4px; font-size:19px; font-weight:800;">🏆 ${badge.name}</p>
-    <p style="margin:0 0 16px; color:${MUTED};">${badge.description}</p>
-    ${button("See all your badges", "https://focusgate.site/badges")}
+    <p style="margin:0 0 8px; font-size:12px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:${GOLD};">${feather.rarity} feather earned</p>
+    <p style="margin:0 0 4px; font-size:19px; font-weight:800;">🪶 ${feather.name}</p>
+    <p style="margin:0 0 16px; color:${MUTED};">${feather.description}</p>
+    ${button("See all your feathers", "https://focusgate.site/feathers")}
     `
   );
-  await deliver("sendBadgeUnlockEmail", to, `🏆 You unlocked ${badge.name}`, html);
+  await deliver("sendFeatherUnlockEmail", to, `🪶 You earned ${feather.name}`, html);
 }
 
 /** Fired alongside (not instead of) the in-app notification row notifyFriendGroup() already
@@ -132,7 +135,7 @@ export async function sendFriendGroupNotificationEmail(to: string, name: string,
     ${button("Open Friends", "https://focusgate.site/friends")}
     `
   );
-  await deliver("sendFriendGroupNotificationEmail", to, "FocusGate — activity in your group", html);
+  await deliver("sendFriendGroupNotificationEmail", to, "Raven — activity in your group", html);
 }
 
 /** Fired by LockedInOverlay's own reminder timer, at most once per
@@ -150,5 +153,5 @@ export async function sendBreakReminderEmail(to: string, name: string): Promise<
     ${button("Take a break", "https://focusgate.site/dashboard")}
     `
   );
-  await deliver("sendBreakReminderEmail", to, "FocusGate — still locked in?", html);
+  await deliver("sendBreakReminderEmail", to, "Raven — still locked in?", html);
 }

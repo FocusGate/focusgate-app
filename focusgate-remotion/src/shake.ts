@@ -1,5 +1,5 @@
 // shake.ts — a decaying horizontal shake offset, for impact moments (Scene 2's X slam,
-// Scene 3's "LOCKED IN MODE" halves colliding). Not a component — just a number scenes
+// Scene 3's "RAVENLOCK" halves colliding). Not a component — just a number scenes
 // apply to their own transform, since what should shake differs per scene (the whole phone
 // mockup in Scene 2, just the text in Scene 3).
 

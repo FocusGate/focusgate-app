@@ -1,12 +1,12 @@
 "use client";
 
 import { RevealGroup, RevealItem } from "@/components/motion/Reveal";
-import { FocusGateMark } from "./Navbar";
+import { RavenMark } from "./Navbar";
 
 const FG_ITEMS = [
-  "Locked In Mode — cannot be turned off",
+  "RavenLock — cannot be turned off",
   "Friend accountability groups",
-  "Badge achievement system",
+  "Feather achievement system",
   "AI focus insights",
   "Custom block schedules",
   "Real-time session timer",
@@ -45,8 +45,8 @@ export default function Comparison() {
           }}
         >
           <div style={{ display: "inline-flex", alignItems: "center", gap: 8, marginBottom: 34 }}>
-            <FocusGateMark size={22} />
-            <span style={{ fontSize: 26, fontWeight: 800, color: "#fff", letterSpacing: "-0.01em" }}>FocusGate</span>
+            <RavenMark size={22} />
+            <span style={{ fontSize: 26, fontWeight: 800, color: "#F59E0B", letterSpacing: "0.02em" }}>RAVEN</span>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
             {FG_ITEMS.map((t) => (

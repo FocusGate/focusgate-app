@@ -8,7 +8,7 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { cn } from "@/lib/utils";
 import { sendEmailOtp, verifyEmailOtp } from "@/lib/supabase";
-import { FocusGateMark } from "@/components/landing/Navbar";
+import { RavenMark } from "@/components/landing/Navbar";
 
 type Uniforms = {
   [key: string]: {
@@ -29,7 +29,7 @@ export interface SignInPageProps {
   mode?: "login" | "signup";
 }
 
-/** FocusGate gold, matching --fg-gold-bright / --fg-gold in globals.css. */
+/** Raven gold, matching --fg-gold-bright / --fg-gold in globals.css. */
 const GOLD_DOTS = [
   [245, 158, 11],
   [176, 141, 87],
@@ -302,7 +302,7 @@ const AnimatedNavLink = ({ href, children }: { href: string; children: React.Rea
   </Link>
 );
 
-function FocusGateAuthNav({ mode }: { mode: "login" | "signup" }) {
+function RavenAuthNav({ mode }: { mode: "login" | "signup" }) {
   const [isOpen, setIsOpen] = useState(false);
   // Open shape is derived directly from `isOpen` (instant). Only the *closing* shape needs
   // a timer, so it can outlast the closing animation before rounding back to a pill — that's
@@ -354,8 +354,8 @@ function FocusGateAuthNav({ mode }: { mode: "login" | "signup" }) {
     >
       <div className="flex items-center justify-between w-full gap-x-6 sm:gap-x-8">
         <Link href="/" className="flex items-center gap-2.5">
-          <FocusGateMark size={22} />
-          <span style={{ fontFamily: "'Instrument Serif', serif", fontSize: 20, color: "#b08d57" }}>FocusGate</span>
+          <RavenMark size={22} />
+          <span style={{ fontFamily: "'Geist', sans-serif", fontSize: 17, fontWeight: 800, letterSpacing: "0.08em", color: "#F59E0B" }}>RAVEN</span>
         </Link>
 
         <nav className="hidden sm:flex items-center space-x-6">
@@ -527,7 +527,7 @@ export const SignInPage = ({ className, mode = "login" }: SignInPageProps) => {
       </div>
 
       <div className="relative z-10 flex flex-col flex-1">
-        <FocusGateAuthNav mode={mode} />
+        <RavenAuthNav mode={mode} />
 
         <div className="flex flex-1 flex-col lg:flex-row">
           <div className="flex-1 flex flex-col justify-center items-center">

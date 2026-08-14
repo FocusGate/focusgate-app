@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { changePassword, getAuthErrorMessage } from "@/lib/supabase";
-import { FocusGateMark } from "@/components/landing/Navbar";
+import { RavenMark } from "@/components/landing/Navbar";
 
 /** Lands here from the emailed recovery link, which gives the browser client a temporary
  *  recovery session — `changePassword()` (a plain `auth.updateUser()`) works against that
@@ -52,8 +52,8 @@ export default function ResetPasswordForm() {
     >
       <div style={{ width: "100%", maxWidth: 380 }}>
         <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, justifyContent: "center", marginBottom: 40 }}>
-          <FocusGateMark />
-          <span style={{ fontFamily: "'Instrument Serif', serif", fontSize: 25, color: "#b08d57" }}>FocusGate</span>
+          <RavenMark />
+          <span style={{ fontFamily: "'Geist', sans-serif", fontSize: 21, fontWeight: 800, letterSpacing: "0.08em", color: "#F59E0B" }}>RAVEN</span>
         </Link>
 
         <h1 style={{ color: "#fff", fontSize: 26, fontWeight: 700, textAlign: "center", marginBottom: 6 }}>Set a new password</h1>

@@ -70,11 +70,11 @@ export default function Stats() {
     <>
       <section className="fg-sec" style={{ background: "#060606", padding: "90px 32px 120px", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
         <div className="fg-stats3" style={{ maxWidth: 1180, margin: "0 auto", display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 0 }}>
-          <Stat target={87} suffix="%" label="More focused" desc="Students using FocusGate report significantly fewer distractions during study sessions." />
+          <Stat target={87} suffix="%" label="More focused" desc="Students using Raven report significantly fewer distractions during study sessions." />
           <div style={{ borderLeft: "1px solid rgba(255,255,255,0.09)", borderRight: "1px solid rgba(255,255,255,0.09)" }}>
-            <Stat target={2.4} decimals={1} suffix="hrs" label="Saved every day" desc="The average FocusGate user reclaims over 2 hours of lost study time daily." />
+            <Stat target={2.4} decimals={1} suffix="hrs" label="Saved every day" desc="The average Raven user reclaims over 2 hours of lost study time daily." />
           </div>
-          <Stat target={91} suffix="%" label="Complete their sessions" desc="Locked In Mode users finish what they started. Every time." />
+          <Stat target={91} suffix="%" label="Complete their sessions" desc="RavenLock users finish what they started. Every time." />
         </div>
 
         <div style={{ display: "flex", justifyContent: "center", marginTop: 60 }}>
@@ -82,7 +82,7 @@ export default function Stats() {
             <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#F59E0B", boxShadow: "0 0 10px #F59E0B", animation: "fg-heartbeat 1.4s ease-in-out infinite" }} />
             <span style={{ color: "#9a9da4", fontSize: 15, fontWeight: 500 }}>
               <span style={{ color: "#fff", fontWeight: 700, fontVariantNumeric: "tabular-nums" }}>{liveCount.toLocaleString("en-US")}</span> minutes
-              saved with FocusGate
+              saved with Raven
             </span>
           </div>
         </div>

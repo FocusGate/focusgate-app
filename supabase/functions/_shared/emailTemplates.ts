@@ -9,7 +9,7 @@ export const GOLD_BRIGHT = "#F59E0B";
 const INK = "#141413";
 const MUTED = "#6b6b6b";
 
-export type EmailType = "welcome" | "trial_ending" | "re_engagement" | "milestone_streak" | "milestone_badge" | "launch_announcement";
+export type EmailType = "welcome" | "trial_ending" | "re_engagement" | "milestone_streak" | "milestone_feather" | "launch_announcement";
 
 function emailShell(preheader: string, bodyHtml: string): string {
   return `<!DOCTYPE html>
@@ -21,14 +21,14 @@ function emailShell(preheader: string, bodyHtml: string): string {
     <tr><td align="center">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px; background:#ffffff; border-radius:16px; overflow:hidden; border:1px solid #e8e6e1;">
         <tr><td style="padding:28px 32px 0;">
-          <span style="font-size:20px; font-weight:800; color:${INK}; letter-spacing:-0.01em;">🔒 Focus<span style="color:${GOLD};">Gate</span></span>
+          <span style="font-size:19px; font-weight:800; letter-spacing:0.08em; color:${GOLD};">RAVEN</span>
         </td></tr>
         <tr><td style="padding:24px 32px 32px; color:${INK}; font-size:15px; line-height:1.6;">
           ${bodyHtml}
         </td></tr>
       </table>
       <p style="max-width:480px; margin:20px 0 0; color:${MUTED}; font-size:12px; text-align:center;">
-        FocusGate · <a href="https://focusgate.site/settings" style="color:${MUTED};">Manage email preferences</a>
+        Raven · <a href="https://focusgate.site/settings" style="color:${MUTED};">Manage email preferences</a>
       </p>
     </td></tr>
   </table>
@@ -47,12 +47,12 @@ function firstName(name: string): string {
 export function welcomeEmail(name: string): { subject: string; html: string } {
   const fn = firstName(name);
   return {
-    subject: "Welcome to FocusGate 🔒",
+    subject: "Welcome to Raven 🐦‍⬛",
     html: emailShell(
-      `${fn}, your first Locked In session is one click away.`,
+      `${fn}, your first RavenLock session is one click away.`,
       `
       <p style="margin:0 0 16px;">Hey ${fn},</p>
-      <p style="margin:0 0 16px;">Welcome to FocusGate. You said you'd study — now let's make it stick.</p>
+      <p style="margin:0 0 16px;">Welcome to Raven. You said you'd study — now let's make it stick.</p>
       <p style="margin:0 0 16px;">Pick your sites to block, choose a session length, and lock in. Once it starts, there's no backing out until it's done — that's the whole point.</p>
       ${button("Start your first session", "https://focusgate.site/dashboard")}
       `
@@ -63,13 +63,13 @@ export function welcomeEmail(name: string): { subject: string; html: string } {
 export function trialEndingEmail(name: string): { subject: string; html: string } {
   const fn = firstName(name);
   return {
-    subject: "Your FocusGate trial ends tomorrow",
+    subject: "Your Raven trial ends tomorrow",
     html: emailShell(
       "1 day left — upgrade to keep everything you've built.",
       `
       <p style="margin:0 0 16px;">Hey ${fn},</p>
-      <p style="margin:0 0 16px;">Your 5-day free trial ends tomorrow. After that, Locked In Mode still works, but you'll lose Break Gates, friend groups, Dead Man's Switch, and badges above Common tier — plus your blocked sites cap at 1.</p>
-      <p style="margin:0 0 16px; color:${MUTED};">Your streak, stats, and badges stay exactly as they are — upgrading just unlocks them again.</p>
+      <p style="margin:0 0 16px;">Your 5-day free trial ends tomorrow. After that, RavenLock still works, but you'll lose Break Gates, friend groups, Dead Man's Switch, and feathers above Common tier — plus your blocked sites cap at 1.</p>
+      <p style="margin:0 0 16px; color:${MUTED};">Your streak, stats, and feathers stay exactly as they are — upgrading just unlocks them again.</p>
       ${button("Keep everything — upgrade now", "https://focusgate.site/#pricing")}
       `
     ),
@@ -84,7 +84,7 @@ export function reEngagementEmail(name: string): { subject: string; html: string
       "It's been a few days — your next session is one click away.",
       `
       <p style="margin:0 0 16px;">Hey ${fn},</p>
-      <p style="margin:0 0 16px;">It's been a few days since your last Locked In session. No pressure — just a nudge that your dashboard, your blocked sites, and your streak are all still right where you left them.</p>
+      <p style="margin:0 0 16px;">It's been a few days since your last RavenLock session. No pressure — just a nudge that your dashboard, your blocked sites, and your streak are all still right where you left them.</p>
       ${button("Get back to it", "https://focusgate.site/dashboard")}
       `
     ),
@@ -107,18 +107,18 @@ export function milestoneStreakEmail(name: string, streak: number): { subject: s
   };
 }
 
-export function milestoneBadgeEmail(name: string, badge: { name: string; description: string; rarity: string }): { subject: string; html: string } {
+export function milestoneFeatherEmail(name: string, feather: { name: string; description: string; rarity: string }): { subject: string; html: string } {
   const fn = firstName(name);
   return {
-    subject: `🏆 You unlocked ${badge.name}`,
+    subject: `🪶 You earned ${feather.name}`,
     html: emailShell(
-      `You just unlocked ${badge.name}.`,
+      `You just earned ${feather.name}.`,
       `
       <p style="margin:0 0 16px;">Nice work, ${fn}.</p>
-      <p style="margin:0 0 8px; font-size:12px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:${GOLD};">${badge.rarity} badge unlocked</p>
-      <p style="margin:0 0 4px; font-size:19px; font-weight:800;">🏆 ${badge.name}</p>
-      <p style="margin:0 0 16px; color:${MUTED};">${badge.description}</p>
-      ${button("See all your badges", "https://focusgate.site/badges")}
+      <p style="margin:0 0 8px; font-size:12px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:${GOLD};">${feather.rarity} feather earned</p>
+      <p style="margin:0 0 4px; font-size:19px; font-weight:800;">🪶 ${feather.name}</p>
+      <p style="margin:0 0 16px; color:${MUTED};">${feather.description}</p>
+      ${button("See all your feathers", "https://focusgate.site/feathers")}
       `
     ),
   };
@@ -127,12 +127,12 @@ export function milestoneBadgeEmail(name: string, badge: { name: string; descrip
 export function launchAnnouncementEmail(name: string): { subject: string; html: string } {
   const fn = firstName(name);
   return {
-    subject: "FocusGate is officially live — and your price is locked in",
+    subject: "Raven is officially live — and your price is locked in",
     html: emailShell(
       `${fn}, your early price is locked in forever.`,
       `
       <p style="margin:0 0 16px;">Hey ${fn},</p>
-      <p style="margin:0 0 16px;">FocusGate is officially out of beta. Because you joined early, your account keeps full access — Locked In Mode, unlimited blocked sites, every badge tier, unlimited friend groups, Dead Man's Switch, Break Gates, all of it — for free, permanently. No trial, no downgrade, no catch.</p>
+      <p style="margin:0 0 16px;">Raven is officially out of beta. Because you joined early, your account keeps full access — RavenLock, unlimited blocked sites, every feather tier, unlimited friend groups, Dead Man's Switch, Break Gates, all of it — for free, permanently. No trial, no downgrade, no catch.</p>
       <p style="margin:0 0 16px; color:${MUTED};">That's our thank-you for being here before anyone else was.</p>
       ${button("Open your dashboard", "https://focusgate.site/dashboard")}
       `

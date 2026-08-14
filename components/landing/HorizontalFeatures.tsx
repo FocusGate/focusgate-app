@@ -6,7 +6,7 @@ import TiltCard from "@/components/TiltCard";
 
 const CARDS = [
   {
-    title: "Locked In Mode",
+    title: "RavenLock",
     desc: "Once you start a session, there's no exit button. No pausing, no early quitting — just the timer and the work.",
     icon: (
       <svg width="40" height="40" viewBox="0 0 24 24" fill="none">

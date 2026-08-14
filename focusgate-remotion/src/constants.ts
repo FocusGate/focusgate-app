@@ -21,8 +21,9 @@ export const COLORS = {
   green: "#22c55e", // correct-answer flash (Scene 4) — matches the app's own "success" green
 } as const;
 
-export const FONT_DISPLAY = "Instrument Serif"; // the wordmark's serif face
-export const FONT_BODY = "Geist"; // everything else — matches app/layout.tsx's own stack
+// Raven rebrand: the wordmark switched from Instrument Serif to bold Geist (matching the
+// web navbar's RAVEN treatment) — FONT_DISPLAY is gone, FONT_BODY now covers every scene.
+export const FONT_BODY = "Geist"; // matches app/layout.tsx's own stack
 
 // ---------- speed ----------
 // "Increase overall animation speed by 15%" — one dial, applied at each animation's own

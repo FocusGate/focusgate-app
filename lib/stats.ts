@@ -69,7 +69,7 @@ export function computeStreakFromSessions(sessions: Pick<SessionRow, "start_time
 
 /**
  * Invented, deterministic 0-100 score — not scientific. Every session that reaches this
- * screen already ran to completion (Locked In Mode has no early-exit), so the score
+ * screen already ran to completion (RavenLock has no early-exit), so the score
  * rewards duration and streak consistency on top of that guaranteed baseline, rather
  * than "did you finish," which every session here already satisfies.
  */

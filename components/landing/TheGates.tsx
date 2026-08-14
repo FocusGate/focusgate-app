@@ -130,7 +130,7 @@ export default function TheGates() {
           Quitting should be harder than finishing.
         </h2>
         <p style={{ color: "#9a9da4", fontSize: 18, lineHeight: 1.7, maxWidth: "58ch", marginTop: 22 }}>
-          Every other focus app has an off switch, so you use it. FocusGate puts four gates between you and the exit —
+          Every other focus app has an off switch, so you use it. Raven puts four gates between you and the exit —
           each one small enough to pass if you really need to, and annoying enough that you usually won&apos;t bother.
         </p>
       </RevealItem>

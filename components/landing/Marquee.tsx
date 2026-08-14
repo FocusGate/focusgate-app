@@ -3,7 +3,7 @@
 import { useRef } from "react";
 
 const TEXT =
-  "LOCKED IN  ·  STAY FOCUSED  ·  NO EXIT  ·  BUILD THE HABIT  ·  ";
+  "RAVENLOCK  ·  STAY FOCUSED  ·  NO EXIT  ·  BUILD THE HABIT  ·  ";
 
 function Row({ reverse }: { reverse?: boolean }) {
   const rowRef = useRef<HTMLDivElement>(null);

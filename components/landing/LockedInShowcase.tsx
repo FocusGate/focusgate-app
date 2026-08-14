@@ -32,7 +32,7 @@ export default function LockedInShowcase() {
       >
         <RevealItem>
           <div style={{ color: "#8a8d94", fontSize: 13, fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 24 }}>
-            Locked In Mode
+            RavenLock
           </div>
           <h2
             className="fg-h2"
@@ -48,8 +48,8 @@ export default function LockedInShowcase() {
             The focus app that won&apos;t let you cheat.
           </h2>
           <p style={{ color: "#9a9da4", fontSize: 18, lineHeight: 1.7, maxWidth: "52ch", marginTop: 28, textWrap: "pretty" }}>
-            Every other app lets you turn it off. That&apos;s why they don&apos;t work. Once you activate Locked In
-            Mode, you cannot end the session. No exit. No exceptions.
+            Every other app lets you turn it off. That&apos;s why they don&apos;t work. Once you activate RavenLock,
+            you cannot end the session. No exit. No exceptions.
           </p>
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginTop: 36 }}>
             {PILLS.map((p) => (

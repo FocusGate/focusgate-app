@@ -6,7 +6,7 @@ import { Monitor, Smartphone } from "lucide-react";
 import { RevealGroup, RevealItem } from "@/components/motion/Reveal";
 import { joinRoadmapWaitlist, type RoadmapPlatform } from "@/lib/supabase";
 
-// #b08d57 is FocusGate's signature brand gold — the same color as the wordmark in the
+// #b08d57 is Raven's signature brand gold — the same color as the wordmark in the
 // Navbar, the Pricing "BEST DEAL" card, and the BetaBanner headline — used here for the
 // ribbons/badges/form so this section still reads as "ours," just quieter than the
 // vibrant "available now" feel of Pricing right above it. #F59E0B is a separate, brighter
@@ -29,26 +29,26 @@ const CARDS: RoadmapCardData[] = [
     id: "desktop",
     icon: <Monitor size={24} />,
     accent: BRIGHT_GOLD,
-    title: "FocusGate Desktop",
+    title: "Raven Desktop",
     description:
-      "True system-level lockdown. Blocks apps, not just sites. Survives restarts. Can't be closed through Task Manager. The strongest version of Locked In Mode we can build.",
+      "True system-level lockdown. Blocks apps, not just sites. Survives restarts. Can't be closed through Task Manager. The strongest version of RavenLock we can build.",
     small: "For Windows and Mac",
   },
   {
     id: "ios",
     icon: <Smartphone size={24} />,
     accent: "#60A5FA",
-    title: "FocusGate for iPhone",
+    title: "Raven for iPhone",
     description:
-      "Block distracting apps on your phone using Apple's Screen Time framework. Same Locked In Mode, same badges, same friend groups — now in your pocket.",
+      "Block distracting apps on your phone using Apple's Screen Time framework. Same RavenLock, same feathers, same friend groups — now in your pocket.",
     small: "App Store — launching after beta",
   },
   {
     id: "android",
     icon: <Smartphone size={24} />,
     accent: "#4ADE80",
-    title: "FocusGate for Android",
-    description: "Full app blocking on Android using accessibility permissions. The most powerful mobile version of FocusGate.",
+    title: "Raven for Android",
+    description: "Full app blocking on Android using accessibility permissions. The most powerful mobile version of Raven.",
     small: "Google Play — launching after beta",
   },
 ];
@@ -200,7 +200,7 @@ export default function Roadmap() {
         <h2 style={{ fontFamily: "'Instrument Serif', serif", fontWeight: 400, fontSize: 58, lineHeight: 1.1, color: "#fff" }}>
           This is just the beginning.
         </h2>
-        <p style={{ color: "#9a9da4", fontSize: 17, marginTop: 16 }}>FocusGate is expanding beyond the browser.</p>
+        <p style={{ color: "#9a9da4", fontSize: 17, marginTop: 16 }}>Raven is expanding beyond the browser.</p>
       </RevealItem>
 
       <RevealGroup

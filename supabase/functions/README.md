@@ -1,4 +1,4 @@
-# FocusGate automated email system
+# Raven automated email system
 
 Three Edge Functions, one Database Webhook, one pg_cron schedule. **None of this is deployed
 yet** — this environment has no Supabase CLI, no project link, and no service-role key, so
@@ -13,7 +13,7 @@ this in order; nothing later works until the step before it is done.
 - `_shared/resend.ts` — the one place that actually calls Resend's API and logs to
   `email_logs`. Every function below routes through it.
 - `send-welcome-email/` — fires on signup, via a Database Webhook (event-based, no cron).
-- `daily-email-checks/` — trial-ending, re-engagement, and streak/badge congratulations,
+- `daily-email-checks/` — trial-ending, re-engagement, and streak/feather congratulations,
   via pg_cron once a day.
 - `send-launch-announcement/` — the one-time, manually-triggered launch email.
 

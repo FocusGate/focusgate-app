@@ -1,9 +1,9 @@
 import { interpolate, spring, useCurrentFrame, useVideoConfig, Easing } from "remotion";
 import { Background } from "../components/Background";
 import { Logo } from "../components/Logo";
-import { COLORS, FONT_DISPLAY, spd } from "../constants";
+import { COLORS, FONT_BODY, spd } from "../constants";
 
-const WORDMARK = "FocusGate";
+const WORDMARK = "RAVEN";
 const LETTER_STAGGER = 1.5; // 0.05s @ 30fps, per the brief
 const ICON_LAND_FRAME = 30; // roughly where the bounce has visually settled
 
@@ -77,11 +77,11 @@ export function Scene1Logo() {
                   display: "inline-block",
                   transform: `translateY(${y}px)`,
                   opacity,
-                  fontFamily: FONT_DISPLAY,
+                  fontFamily: FONT_BODY,
                   fontSize: wordmarkSize,
-                  fontWeight: 400,
-                  letterSpacing: "0.01em",
-                  color: COLORS.goldMuted,
+                  fontWeight: 800,
+                  letterSpacing: "0.08em",
+                  color: COLORS.gold,
                   textShadow: `0 0 ${base * 0.03}px ${COLORS.gold}44`,
                   whiteSpace: "pre",
                 }}

@@ -100,6 +100,22 @@ a:hover { color: #fff; }
 .fg-badge { transition: transform 0.3s var(--fg-ease), box-shadow 0.3s var(--fg-ease); }
 .fg-badge:hover { transform: translateY(-8px) scale(1.1); z-index: 3; }
 
+/* ---------- Feathers: two-row continuous marquee (TwoRowFeatherShowcase) ---------- */
+/* Each row renders its item list twice back-to-back and animates exactly -50% of the
+   track's own width, so the seam between the first and second copy is never visible. Row 1
+   (Common/Rare) runs left-to-right, row 2 (Epic/Mythic) right-to-left — opposite directions
+   read as more alive than two rows scrolling in sync. */
+.rv-feather-row { overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); }
+.rv-feather-track { display: flex; gap: 18px; width: max-content; animation-timing-function: linear; animation-iteration-count: infinite; }
+.rv-feather-track-ltr { animation-name: rv-marquee-ltr; }
+.rv-feather-track-rtl { animation-name: fg-marquee; }
+.rv-feather-row:hover .rv-feather-track { animation-play-state: paused; }
+@keyframes rv-marquee-ltr { from { transform: translateX(-50%); } to { transform: translateX(0); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .rv-feather-track { animation-play-state: paused; }
+}
+
 /* Safety net at every viewport size, not just mobile: a stat card's number+suffix (e.g.
    "47 seconds") wraps at the space, but the longer word alone can still be wider than its
    own column — browsers don't break inside a word by default, so it spills past the card's
@@ -141,7 +157,7 @@ a:hover { color: #fff; }
   .fg-statcard { padding: 14px 10px !important; }
   .fg-statcard-num { font-size: 15px !important; }
 
-  /* Flip clock (Locked In Mode): three fixed 92px digit units plus colons ran well past
+  /* Flip clock (RavenLock): three fixed 92px digit units plus colons ran well past
      a 375px screen on their own, before even counting the card's own padding. */
   .fg-timer-card { padding: 20px 18px !important; gap: 12px !important; }
   .fg-flip-unit { width: 58px !important; height: 68px !important; border-radius: 10px !important; }

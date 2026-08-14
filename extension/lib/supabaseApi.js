@@ -31,7 +31,7 @@ async function parseOrThrow(res) {
   return body;
 }
 
-/** Signs in with the user's existing FocusGate account (same credentials as the web app). */
+/** Signs in with the user's existing Raven account (same credentials as the web app). */
 export async function signInWithPassword(email, password) {
   const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
     method: "POST",
@@ -94,7 +94,7 @@ export async function fetchUserPreferences(accessToken, userId) {
 
 /**
  * The most recent still-running session for this user, if any — this is how the
- * extension notices "a Locked In session was just started on the dashboard" without
+ * extension notices "a RavenLock session was just started on the dashboard" without
  * ever creating one itself. Sessions can now only be *started* from the dashboard.
  */
 export async function fetchActiveSession(accessToken, userId) {
@@ -232,7 +232,7 @@ export async function notifyGroupsOfInterruption(accessToken, userId, userName) 
     headers: restHeaders(accessToken),
   });
   const memberships = await parseOrThrow(membershipRes);
-  const message = `${userName} broke a Locked In session by uninstalling FocusGate 💔`;
+  const message = `${userName} broke a RavenLock session by uninstalling Raven 💔`;
 
   await Promise.all(
     memberships.map(async ({ group_id }) => {
@@ -335,7 +335,7 @@ export async function updateBreakNoteActualDuration(accessToken, breakNoteId, ac
 }
 
 /** Records a challenge.html attempt — mirrors lib/supabase.ts's logBreakGateAttempt().
- *  Deliberately skips that function's "Focused Under Pressure" badge-unlock side effect:
+ *  Deliberately skips that function's "Focused Under Pressure" feather-unlock side effect:
  *  it's a nice-to-have the web app already covers next time the user opens the dashboard,
  *  not something worth the extra round-trip here. */
 export async function insertBreakGateAttempt(accessToken, userId, sessionId, game, passed) {

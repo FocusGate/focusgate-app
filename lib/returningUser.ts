@@ -19,7 +19,7 @@ export function getKnownEmail(): string | null {
   return window.localStorage.getItem(KNOWN_EMAIL_KEY);
 }
 
-/** Where a "start using FocusGate" CTA should send a visitor: straight to sign-in if
+/** Where a "start using Raven" CTA should send a visitor: straight to sign-in if
  *  we recognize them, otherwise into the onboarding flow. */
 export function getEntryPath(): "/login" | "/onboarding" {
   return getKnownEmail() ? "/login" : "/onboarding";

@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { getAuthErrorMessage, signUp } from "@/lib/supabase";
 import { sendWelcomeEmail } from "@/lib/email";
 import { track } from "@/lib/posthog";
-import { FocusGateMark } from "@/components/landing/Navbar";
+import { RavenMark } from "@/components/landing/Navbar";
 import { clearOnboardingState, computeTargetISODate, loadOnboardingState } from "@/lib/onboarding";
 
 /** Email + password signup. OTP is disabled for now (the Supabase project doesn't have
@@ -79,8 +79,8 @@ export default function SignupForm() {
       >
         <div style={{ width: "100%", maxWidth: 380, textAlign: "center" }}>
           <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, justifyContent: "center", marginBottom: 40 }}>
-            <FocusGateMark />
-            <span style={{ fontFamily: "'Instrument Serif', serif", fontSize: 25, color: "#b08d57" }}>FocusGate</span>
+            <RavenMark />
+            <span style={{ fontFamily: "'Geist', sans-serif", fontSize: 21, fontWeight: 800, letterSpacing: "0.08em", color: "#F59E0B" }}>RAVEN</span>
           </Link>
 
           <div
@@ -129,8 +129,8 @@ export default function SignupForm() {
     >
       <div style={{ width: "100%", maxWidth: 380 }}>
         <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, justifyContent: "center", marginBottom: 40 }}>
-          <FocusGateMark />
-          <span style={{ fontFamily: "'Instrument Serif', serif", fontSize: 25, color: "#b08d57" }}>FocusGate</span>
+          <RavenMark />
+          <span style={{ fontFamily: "'Geist', sans-serif", fontSize: 21, fontWeight: 800, letterSpacing: "0.08em", color: "#F59E0B" }}>RAVEN</span>
         </Link>
 
         <h1 style={{ color: "#fff", fontSize: 26, fontWeight: 700, textAlign: "center", marginBottom: 6 }}>Create your account</h1>

@@ -6,14 +6,14 @@ import { usePathname, useRouter } from "next/navigation";
 import { Home, Trophy, BarChart3, Users, Settings, LogOut, ShieldAlert } from "lucide-react";
 import { signOut } from "@/lib/supabase";
 import { saveKnownEmail } from "@/lib/returningUser";
-import { FocusGateMark } from "@/components/landing/Navbar";
+import { RavenMark } from "@/components/landing/Navbar";
 import Avatar from "@/components/app/Avatar";
 import MobileNav from "@/components/app/MobileNav";
 import SignOutConfirmDialog from "@/components/app/SignOutConfirmDialog";
 
 const NAV = [
   { href: "/dashboard", label: "Dashboard", icon: Home },
-  { href: "/badges", label: "Badges", icon: Trophy },
+  { href: "/feathers", label: "Feathers", icon: Trophy },
   { href: "/the-gates", label: "The Gates", icon: ShieldAlert, subtitle: "The system that keeps you locked in." },
   { href: "/stats", label: "Stats", icon: BarChart3 },
   { href: "/friends", label: "Friends", icon: Users },
@@ -85,14 +85,14 @@ export default function AppShell({
       >
         {hasActiveSession ? (
           <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "0 6px" }}>
-            <FocusGateMark size={24} />
-            <span style={{ fontFamily: "'Instrument Serif', serif", fontSize: 21, color: "#b08d57" }}>FocusGate</span>
+            <RavenMark size={24} />
+            <span style={{ fontFamily: "'Geist', sans-serif", fontSize: 18, fontWeight: 800, letterSpacing: "0.08em", color: "#F59E0B" }}>RAVEN</span>
             {betaMode && <BetaBadge />}
           </div>
         ) : (
           <Link href="/dashboard" style={{ display: "flex", alignItems: "center", gap: 10, padding: "0 6px" }}>
-            <FocusGateMark size={24} />
-            <span style={{ fontFamily: "'Instrument Serif', serif", fontSize: 21, color: "#b08d57" }}>FocusGate</span>
+            <RavenMark size={24} />
+            <span style={{ fontFamily: "'Geist', sans-serif", fontSize: 18, fontWeight: 800, letterSpacing: "0.08em", color: "#F59E0B" }}>RAVEN</span>
             {betaMode && <BetaBadge />}
           </Link>
         )}

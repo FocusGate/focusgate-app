@@ -1,9 +1,9 @@
 "use client";
 
-import { getBadgeIcon, TIER_META, type BadgeTier } from "@/components/app/badgeIcons";
-import BadgeProgressBarView from "./BadgeProgressBar";
+import { getFeatherIcon, TIER_META, type BadgeTier } from "@/components/app/featherIcons";
+import FeatherProgressBarView from "./FeatherProgressBar";
 
-export type BadgeCardData = {
+export type FeatherCardData = {
   id: string;
   name: string;
   description: string;
@@ -11,30 +11,30 @@ export type BadgeCardData = {
   unlock_condition: string;
 };
 
-/** Mythic gets extra floating particles (still, just fewer/dimmer than Legendary's) — the
- *  spec calls for mythic/legendary to "feel visually rarer" via more particle effects. */
+/** Mythic gets extra floating particles (still, just fewer/dimmer than the Golden Quill's) —
+ *  the spec calls for mythic to "feel visually rarer" via more particle effects. */
 const MYTHIC_PARTICLES = [
   { left: "18%", top: "16%", delay: 0 },
   { left: "80%", top: "24%", delay: 1.4 },
   { left: "68%", top: "76%", delay: 2.3 },
 ];
 
-export default function BadgeCard({
-  badge,
+export default function FeatherCard({
+  feather,
   unlocked,
   unlockedAt,
   progress,
   onClick,
 }: {
-  badge: BadgeCardData;
+  feather: FeatherCardData;
   unlocked: boolean;
   unlockedAt?: string;
   progress?: { current: number; target: number };
   onClick: () => void;
 }) {
-  const tier = (badge.rarity as BadgeTier) in TIER_META ? (badge.rarity as BadgeTier) : "common";
+  const tier = (feather.rarity as BadgeTier) in TIER_META ? (feather.rarity as BadgeTier) : "common";
   const meta = TIER_META[tier];
-  const icon = getBadgeIcon(badge.name);
+  const icon = getFeatherIcon(tier);
   const isMythic = tier === "mythic";
 
   return (
@@ -91,17 +91,17 @@ export default function BadgeCard({
         {icon.svg}
       </div>
       <div style={{ fontWeight: 700, fontSize: isMythic ? 16 : 15, marginTop: 10, color: unlocked ? "#fff" : "#475569" }}>
-        {unlocked ? badge.name : "???"}
+        {unlocked ? feather.name : "???"}
       </div>
       <div style={{ color: unlocked ? "#7a7d84" : "#334155", fontSize: 12, marginTop: 6, lineHeight: 1.4 }}>
-        {unlocked ? badge.description : progress ? `${progress.current} / ${progress.target}` : badge.unlock_condition}
+        {unlocked ? feather.description : progress ? `${progress.current} / ${progress.target}` : feather.unlock_condition}
       </div>
       {unlocked && unlockedAt && (
         <div style={{ color: "#5b5e66", fontSize: 11, marginTop: 10 }}>Unlocked {new Date(unlockedAt).toLocaleDateString("en-US", { timeZone: "UTC" })}</div>
       )}
       {!unlocked && progress && (
         <div style={{ marginTop: 12, width: "100%" }}>
-          <BadgeProgressBarView current={progress.current} target={progress.target} color={meta.glow} />
+          <FeatherProgressBarView current={progress.current} target={progress.target} color={meta.glow} />
         </div>
       )}
     </button>

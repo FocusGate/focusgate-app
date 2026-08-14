@@ -58,7 +58,7 @@ export default function ModesCarousel() {
           Built for every kind of study session.
         </h2>
         <p style={{ color: "#9a9da4", fontSize: 18, lineHeight: 1.7, maxWidth: "60ch", margin: "26px auto 0", textWrap: "pretty" }}>
-          Pick the mode that matches what you&apos;re actually up against — Locked In Mode adapts underneath it.
+          Pick the mode that matches what you&apos;re actually up against — RavenLock adapts underneath it.
         </p>
       </RevealItem>
 

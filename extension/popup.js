@@ -1,5 +1,5 @@
 // popup.js — the Locked-In control panel. Sessions still only ever start from the
-// dashboard, but once one is running this is where you actually use FocusGate day to
+// dashboard, but once one is running this is where you actually use Raven day to
 // day: see time left, and reach the same two friction-gated escape hatches the dashboard
 // has — "Request a Break" (note, then a gate game, then a duration you pick once you've
 // earned it — a temporary pause) and "Emergency Unblock" (ends the session outright) —
@@ -135,7 +135,7 @@ function renderIdle() {
     <div class="popup__status">
       <div class="popup__status-label">Status</div>
       <div class="popup__status-value">Idle</div>
-      <div class="popup__status-hint">No Locked In session running.</div>
+      <div class="popup__status-hint">No RavenLock session running.</div>
     </div>
     <a class="popup__flow-btn popup__flow-btn--gold popup__flow-btn--link popup__start-session-btn" id="start-session-link" href="${DASHBOARD_URL}" target="_blank" rel="noopener noreferrer">
       Start a Session
@@ -154,7 +154,7 @@ function renderActive() {
   rootEl.className = "view";
   rootEl.innerHTML = `
     <div class="popup__status popup__status--gold">
-      <div class="popup__status-label">Locked In</div>
+      <div class="popup__status-label">RavenLock</div>
       <div class="popup__clock popup__clock--active" id="active-countdown">--:--</div>
       <div class="popup__status-hint">No shortcuts — ending early still takes a real confirmation.</div>
     </div>
@@ -167,7 +167,7 @@ function renderActive() {
   el("btn-emergency").addEventListener("click", startEmergencyFlow);
 }
 
-// Warm, dim-lit palette — deliberately not the gold/black Locked In look, matching The
+// Warm, dim-lit palette — deliberately not the gold/black RavenLock look, matching The
 // Lounge on the dashboard side. This popup is too small for the full illustrated scene,
 // but the color shift + softer copy carries the same "permitted rest" mood. Also shows the
 // break's own note (or, for an automatic Pomodoro/All Nighter break, its reminder text) —
@@ -480,7 +480,7 @@ function render(session, remainingMs, auth) {
     if (countdownEl) countdownEl.textContent = formatRemaining(remainingMs);
     return;
   }
-  setHeaderBadge("LOCKED IN", "active");
+  setHeaderBadge("RAVENLOCK", "active");
   if (currentState !== "active") {
     currentState = "active";
     renderActive();

@@ -55,7 +55,7 @@ export type Entitlements = {
    *  not implied by the friend-groups gate, matching a future world where Dead Man's Switch
    *  could be its own separate paid tier from friend groups generally. */
   canUseDeadMansSwitch: boolean;
-  maxBadgeRarity: string[];
+  maxFeatherRarity: string[];
   /** Only set when fullAccess is true via an active trial specifically (not beta, not
    *  grandfathered) — for a "N days left in your trial" note. Null otherwise. */
   trialDaysLeft: number | null;
@@ -69,7 +69,7 @@ const FULL_ACCESS_BASE = {
   canUseBreakGates: true,
   canUseFriendGroups: true,
   canUseDeadMansSwitch: true,
-  maxBadgeRarity: ALL_RARITIES,
+  maxFeatherRarity: ALL_RARITIES,
 };
 
 const RESTRICTED: Entitlements = {
@@ -78,7 +78,7 @@ const RESTRICTED: Entitlements = {
   canUseBreakGates: false,
   canUseFriendGroups: false,
   canUseDeadMansSwitch: false,
-  maxBadgeRarity: ["common"],
+  maxFeatherRarity: ["common"],
   trialDaysLeft: null,
 };
 

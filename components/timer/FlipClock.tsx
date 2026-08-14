@@ -106,7 +106,7 @@ export default function FlipClock({
       <div className="fg-timer-badge">
         <span className="fg-timer-dot" style={{ animation: "fg-heartbeat 1.4s ease-in-out infinite" }} />
         <span style={{ color: "#F59E0B", fontSize: 11, fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase" }}>
-          Locked In Mode
+          RavenLock
         </span>
       </div>
 
@@ -255,7 +255,7 @@ export default function FlipClock({
               </span>
               <div className="fg-timer-badge">
                 <span className="fg-timer-dot" />
-                <span style={{ color: "#F59E0B", fontSize: 11, fontWeight: 700, letterSpacing: "0.18em" }}>LOCKED IN</span>
+                <span style={{ color: "#F59E0B", fontSize: 11, fontWeight: 700, letterSpacing: "0.18em" }}>RAVENLOCK</span>
               </div>
             </div>
           )}

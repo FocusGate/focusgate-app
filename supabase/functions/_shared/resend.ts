@@ -6,7 +6,9 @@
 import type { SupabaseClient } from "jsr:@supabase/supabase-js@2";
 import type { EmailType } from "./emailTemplates.ts";
 
-const FROM = "FocusGate <support@focusgate.site>";
+// Domain intentionally unchanged — see lib/email.ts's matching note. focusgate.site is
+// still the live, DNS-verified sending domain; swapping it is a separate manual step.
+const FROM = "Raven <support@focusgate.site>";
 
 /**
  * Sends one email via Resend and logs the outcome to public.email_logs — every call site

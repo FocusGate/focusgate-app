@@ -1,10 +1,10 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { getBadgeIcon, TIER_META, isValidTier } from "@/components/app/badgeIcons";
-import BadgeProgressBar from "./BadgeProgressBar";
+import { getFeatherIcon, TIER_META, isValidTier } from "@/components/app/featherIcons";
+import FeatherProgressBar from "./FeatherProgressBar";
 
-export type BadgeModalData = {
+export type FeatherModalData = {
   id: string;
   name: string;
   description: string;
@@ -15,11 +15,12 @@ export type BadgeModalData = {
   progress?: { current: number; target: number };
 };
 
-export default function BadgeModal({ badge, onClose }: { badge: BadgeModalData | null; onClose: () => void }) {
-  const meta = badge && isValidTier(badge.rarity) ? TIER_META[badge.rarity] : TIER_META.common;
+export default function FeatherModal({ feather, onClose }: { feather: FeatherModalData | null; onClose: () => void }) {
+  const tier = feather && isValidTier(feather.rarity) ? feather.rarity : "common";
+  const meta = TIER_META[tier];
   return (
     <AnimatePresence>
-      {badge && (
+      {feather && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -53,22 +54,22 @@ export default function BadgeModal({ badge, onClose }: { badge: BadgeModalData |
               textAlign: "center",
             }}
           >
-            <div style={{ filter: badge.unlocked ? `drop-shadow(0 0 20px ${getBadgeIcon(badge.name).color}aa)` : "grayscale(1) opacity(0.4)" }}>
-              {getBadgeIcon(badge.name).svg}
+            <div style={{ filter: feather.unlocked ? `drop-shadow(0 0 20px ${getFeatherIcon(tier).color}aa)` : "grayscale(1) opacity(0.4)" }}>
+              {getFeatherIcon(tier).svg}
             </div>
-            <div style={{ color: "#fff", fontSize: 22, fontWeight: 800, marginTop: 14 }}>{badge.unlocked ? badge.name : "???"}</div>
+            <div style={{ color: "#fff", fontSize: 22, fontWeight: 800, marginTop: 14 }}>{feather.unlocked ? feather.name : "???"}</div>
             <div style={{ color: meta.glow, fontSize: 11, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", marginTop: 6 }}>
-              {badge.rarity}
+              {feather.rarity}
             </div>
-            <p style={{ color: "#9a9da4", fontSize: 14, lineHeight: 1.6, marginTop: 14 }}>{badge.unlocked ? badge.description : badge.unlock_condition}</p>
+            <p style={{ color: "#9a9da4", fontSize: 14, lineHeight: 1.6, marginTop: 14 }}>{feather.unlocked ? feather.description : feather.unlock_condition}</p>
 
-            {badge.unlocked && badge.unlockedAt && (
-              <div style={{ color: "#5b5e66", fontSize: 12, marginTop: 10 }}>Unlocked {new Date(badge.unlockedAt).toLocaleDateString("en-US", { timeZone: "UTC" })}</div>
+            {feather.unlocked && feather.unlockedAt && (
+              <div style={{ color: "#5b5e66", fontSize: 12, marginTop: 10 }}>Unlocked {new Date(feather.unlockedAt).toLocaleDateString("en-US", { timeZone: "UTC" })}</div>
             )}
 
-            {!badge.unlocked && badge.progress && (
+            {!feather.unlocked && feather.progress && (
               <div style={{ marginTop: 18 }}>
-                <BadgeProgressBar current={badge.progress.current} target={badge.progress.target} color={meta.glow} />
+                <FeatherProgressBar current={feather.progress.current} target={feather.progress.target} color={meta.glow} />
               </div>
             )}
 

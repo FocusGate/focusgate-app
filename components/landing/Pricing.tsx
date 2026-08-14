@@ -183,7 +183,7 @@ export default function Pricing() {
             <span style={{ color: "#999", fontSize: 15 }}> /5 days</span>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 11, margin: "22px 0 0", color: "#cbccd2", fontSize: 14 }}>
-            <span>✓ Locked In Mode</span>
+            <span>✓ RavenLock</span>
             <span>✓ Unlimited blocked sites</span>
             <span>✓ All badge tiers</span>
             <span>✓ Unlimited friend groups</span>

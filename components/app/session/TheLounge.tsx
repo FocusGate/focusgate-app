@@ -7,7 +7,7 @@ import MemoryMatchGate from "@/components/app/friction/gates/MemoryMatchGate";
 import GeographyQuizGate from "@/components/app/friction/gates/GeographyQuizGate";
 import { formatBreakDuration } from "@/lib/stats";
 
-// Completely different emotional register from Locked In Mode's gold/black intensity —
+// Completely different emotional register from RavenLock's gold/black intensity —
 // warm, soft, dim-lit reading-room tones. Kept as named constants (not scattered hexes)
 // since this whole component leans on exactly these four.
 const WARM = {

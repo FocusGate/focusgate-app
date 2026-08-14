@@ -1,4 +1,4 @@
-// auth.js — stores the signed-in FocusGate account's tokens in chrome.storage.local and
+// auth.js — stores the signed-in Raven account's tokens in chrome.storage.local and
 // keeps the access token fresh. This is a *separate* sign-in from the web dashboard (the
 // extension can't read the site's browser storage across origins) — same account,
 // entered once here, so the extension can talk to Supabase on the user's behalf.

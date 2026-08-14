@@ -1,4 +1,4 @@
-// background.js — FocusGate's service worker.
+// background.js — Raven's service worker.
 //
 // Sessions can now ONLY be started from the web dashboard — this service worker never
 // creates one. Its job is to notice when the signed-in user's dashboard starts/ends a

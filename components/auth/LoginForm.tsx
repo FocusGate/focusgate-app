@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { getAuthErrorMessage, signIn } from "@/lib/supabase";
-import { FocusGateMark } from "@/components/landing/Navbar";
+import { RavenMark } from "@/components/landing/Navbar";
 
 /** Email + password sign-in. OTP is disabled for now (the Supabase project doesn't have
  *  passwordless signups enabled yet) — this is the only sign-in path until it's added back. */
@@ -43,12 +43,12 @@ export default function LoginForm() {
     >
       <div style={{ width: "100%", maxWidth: 380 }}>
         <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, justifyContent: "center", marginBottom: 40 }}>
-          <FocusGateMark />
-          <span style={{ fontFamily: "'Instrument Serif', serif", fontSize: 25, color: "#b08d57" }}>FocusGate</span>
+          <RavenMark />
+          <span style={{ fontFamily: "'Geist', sans-serif", fontSize: 21, fontWeight: 800, letterSpacing: "0.08em", color: "#F59E0B" }}>RAVEN</span>
         </Link>
 
         <h1 style={{ color: "#fff", fontSize: 26, fontWeight: 700, textAlign: "center", marginBottom: 6 }}>Welcome back</h1>
-        <p style={{ color: "#9a9da4", fontSize: 14, textAlign: "center", marginBottom: 30 }}>Sign in to your Locked In sessions.</p>
+        <p style={{ color: "#9a9da4", fontSize: 14, textAlign: "center", marginBottom: 30 }}>Sign in to your RavenLock sessions.</p>
 
         {/* ph-no-capture: see SignupForm.tsx's identical guard — same reasoning applies here. */}
         <form onSubmit={handleSubmit} className="ph-no-capture" style={{ display: "flex", flexDirection: "column", gap: 14 }}>
@@ -78,7 +78,7 @@ export default function LoginForm() {
         </form>
 
         <p style={{ color: "#7a7d84", fontSize: 14, textAlign: "center", marginTop: 24 }}>
-          New to FocusGate?{" "}
+          New to Raven?{" "}
           <Link href="/signup" style={{ color: "#b08d57", fontWeight: 600 }}>
             Create an account
           </Link>

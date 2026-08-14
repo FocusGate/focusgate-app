@@ -3,10 +3,10 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 
-const CONFIRM_PHRASE = "I AM LOCKED IN";
+const CONFIRM_PHRASE = "I AM IN RAVENLOCK";
 
 /** Gate in front of every real session start — not a toggleable "hardcore mode," since
- *  Locked In Mode has never had an early-exit path anyway (no plain Stop button
+ *  RavenLock has never had an early-exit path anyway (no plain Stop button
  *  anywhere, in the dashboard or the extension). This just makes sure starting one is a
  *  deliberate act, not a misclick: typing the exact phrase is a small enough commitment
  *  to filter out "oops" clicks without adding real friction to someone who means it. */
@@ -116,7 +116,7 @@ export default function LockConfirmModal({
               cursor: ready ? "pointer" : "default",
             }}
           >
-            Lock In
+            Start RavenLock
           </button>
         </div>
       </motion.div>

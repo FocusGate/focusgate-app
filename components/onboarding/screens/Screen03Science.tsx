@@ -8,7 +8,7 @@ export default function Screen03Science({ onNext }: { onNext: () => void }) {
       <div style={{ display: "flex", flexDirection: "column", gap: 12, textAlign: "left", marginBottom: 32 }}>
         <FactRow text="Every app you can disable in one tap, you eventually will — usually within the first week." />
         <FactRow text="Willpower is a limited resource that drains over the day, which is exactly when you need focus most." />
-        <FactRow text="FocusGate removes the decision entirely. There's no button to turn it off mid-session." />
+        <FactRow text="Raven removes the decision entirely. There's no button to turn it off mid-session." />
       </div>
       <ContinueButton onClick={onNext} />
     </ScreenShell>

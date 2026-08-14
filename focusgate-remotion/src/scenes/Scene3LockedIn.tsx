@@ -4,7 +4,7 @@ import { FlipDigit } from "../components/FlipDigit";
 import { BLOCKED_SITES, COLORS, FONT_BODY, FPS, spd } from "../constants";
 import { shakeOffset } from "../shake";
 
-const START_SECONDS = 47 * 60; // 00:47:00 — a plausible mid-session Locked In countdown
+const START_SECONDS = 47 * 60; // 00:47:00 — a plausible mid-session RavenLock countdown
 
 // ---------- beat timings (scene-local frames, pre-spd()) ----------
 const BLACK_HOLD = 15; // 0.5s dead black before anything happens
@@ -22,7 +22,7 @@ const TAGLINE_START = SITE_START + BLOCKED_SITES.length * SITE_STEP + 24;
 
 /** 10-18s (padded): the hero moment, staged like a trailer beat rather than a UI appearing —
  *  black hold, a line draws itself, the title slams together from both sides, then the
- *  actual Locked In UI (pill, flip clock, blocked sites) stamps in underneath it. */
+ *  actual RavenLock UI (pill, flip clock, blocked sites) stamps in underneath it. */
 export function Scene3LockedIn({ localFrame }: { localFrame: number }) {
   const { fps, width, height } = useVideoConfig();
   const isVertical = height > width;
@@ -106,8 +106,8 @@ export function Scene3LockedIn({ localFrame }: { localFrame: number }) {
         {/* the two-halves title */}
         {titleOpacity > 0.001 && (
           <div style={{ position: "absolute", display: "flex", opacity: titleOpacity, fontFamily: FONT_BODY, fontWeight: 800, fontSize: base * (isVertical ? 0.072 : 0.058), color: COLORS.gold }}>
-            <span style={{ transform: `translateX(${leftX}px)` }}>LOCKED IN&nbsp;</span>
-            <span style={{ transform: `translateX(${rightX}px)` }}>MODE</span>
+            <span style={{ transform: `translateX(${leftX}px)` }}>RAVEN</span>
+            <span style={{ transform: `translateX(${rightX}px)` }}>LOCK</span>
           </div>
         )}
         {impactFlash > 0 && <div style={{ position: "absolute", inset: 0, background: COLORS.gold, opacity: impactFlash, mixBlendMode: "screen" }} />}
@@ -127,7 +127,7 @@ export function Scene3LockedIn({ localFrame }: { localFrame: number }) {
         >
           <span style={{ width: base * 0.014, height: base * 0.014, borderRadius: "50%", background: COLORS.gold, opacity: dotPulse }} />
           <span style={{ fontFamily: FONT_BODY, fontWeight: 700, fontSize: base * 0.02, letterSpacing: "0.18em", color: COLORS.gold, textTransform: "uppercase" }}>
-            Locked In Mode
+            RavenLock
           </span>
         </div>
 

@@ -27,7 +27,7 @@ type Ctx = {
    *  instead of this directly; it's exposed mainly for the BETA badge itself. */
   betaMode: boolean;
   /** Computed once per user/betaMode fetch (lib/entitlements.ts) — the single source every
-   *  gated feature (blocked-sites cap, Break Gates, friend groups, Dead Man's Switch, badge
+   *  gated feature (blocked-sites cap, Break Gates, friend groups, Dead Man's Switch, feather
    *  rarity) checks, rather than each re-deriving beta/trial logic on its own. */
   entitlements: Entitlements;
 };
@@ -43,14 +43,14 @@ const FALLBACK_ENTITLEMENTS: Entitlements = {
   canUseBreakGates: true,
   canUseFriendGroups: true,
   canUseDeadMansSwitch: true,
-  maxBadgeRarity: ["common", "rare", "epic", "mythic", "legendary"],
+  maxFeatherRarity: ["common", "rare", "epic", "mythic", "legendary"],
   trialDaysLeft: null,
 };
 
 /** Fetches the signed-in user (auth + profile + streak sync) exactly once per app-shell
  *  mount, not once per page — every route under app/(app) reads from this instead of
  *  re-running that multi-round-trip fetch on every tab switch, which is what made
- *  switching between Dashboard/Badges/Stats/etc. feel like a fresh page load each time.
+ *  switching between Dashboard/Feathers/Stats/etc. feel like a fresh page load each time.
  *  app_config's beta_mode rides along in the same mount-time fetch, for the same reason. */
 export function CurrentUserProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();

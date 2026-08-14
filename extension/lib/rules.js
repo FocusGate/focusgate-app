@@ -59,7 +59,7 @@ function buildRules(domains) {
   }));
 }
 
-/** Installs blocking rules for the given domains, replacing any previous FocusGate rules. */
+/** Installs blocking rules for the given domains, replacing any previous Raven rules. */
 export async function applyBlockRules(domains) {
   const existing = await chrome.declarativeNetRequest.getDynamicRules();
   const existingIds = existing.map((r) => r.id).filter((id) => id >= RULE_ID_BASE && id < RULE_ID_BASE + 1000);
@@ -70,7 +70,7 @@ export async function applyBlockRules(domains) {
   });
 }
 
-/** Removes every FocusGate blocking rule — called when a session ends. */
+/** Removes every Raven blocking rule — called when a session ends. */
 export async function clearBlockRules() {
   const existing = await chrome.declarativeNetRequest.getDynamicRules();
   const existingIds = existing.map((r) => r.id).filter((id) => id >= RULE_ID_BASE && id < RULE_ID_BASE + 1000);

@@ -1,4 +1,4 @@
--- FocusGate schema — run in the Supabase SQL editor.
+-- Raven schema — run in the Supabase SQL editor.
 -- Safe to re-run: guards every create with IF NOT EXISTS / OR REPLACE.
 
 create extension if not exists "pgcrypto";
@@ -93,10 +93,10 @@ alter table public.waitlist add constraint waitlist_plan_check check (plan in ('
 -- 'Night Owl' isn't seeded here — it's deleted for good further down (see that comment),
 -- and seeding it here would just resurrect it on every re-run only to be deleted again.
 insert into public.badges (name, description, rarity, unlock_condition) values
-  ('First Lock', 'Complete your first Locked In session', 'common', 'completed_sessions >= 1'),
+  ('First Lock', 'Complete your first RavenLock session', 'common', 'completed_sessions >= 1'),
   ('Early Riser', 'Start a session before 8am', 'common', 'session started before 08:00 local time'),
   ('On Fire', 'Complete a 7-day study streak', 'rare', 'streak >= 7'),
-  ('Deep Worker', 'Complete a single 4-hour Locked In session', 'rare', 'longest_session_minutes >= 240'),
+  ('Deep Worker', 'Complete a single 4-hour RavenLock session', 'rare', 'longest_session_minutes >= 240'),
   ('Unstoppable', 'Complete a 30-day study streak', 'epic', 'streak >= 30'),
   ('Distraction Slayer', 'Block 1,000 distraction attempts', 'epic', 'blocked_attempts >= 1000'),
   ('FocusGate Legend', 'Use FocusGate every single day for 365 days', 'legendary', 'streak >= 365')
@@ -558,7 +558,7 @@ alter table public.break_notes add column if not exists actual_duration_seconds 
 alter table public.break_notes add column if not exists is_auto boolean not null default false;
 
 -- ---------- Session Modes ----------
--- Locked In Mode's actual blocking/enforcement is identical across every mode — these
+-- RavenLock's actual blocking/enforcement is identical across every mode — these
 -- columns only drive which *structure* wraps it (auto-cycling breaks, forced gate
 -- difficulty, a bound friend group, etc.), read client-side by lib/sessionModes.ts and
 -- LockedInOverlay.tsx. 'custom' is the original manual-duration/manual-break flow.
@@ -780,3 +780,92 @@ $$;
 -- fails with a 23505 (unique_violation), which startSession() catches and turns into the
 -- same friendly "already have a session running" message as its own pre-check.
 create unique index if not exists sessions_one_active_per_user on public.sessions (user_id) where completed = false;
+
+-- ---------- Raven rebrand: badges -> feathers ----------
+-- Pure rename, not a data migration: every row, id, and foreign key survives untouched.
+-- `alter table ... rename` carries indexes, RLS policies, CHECK constraints, and foreign
+-- keys through automatically (Postgres tracks those by OID, not by name) — the only things
+-- that need their own explicit statements below are the two constraint/policy *names*
+-- (cosmetic only, but renamed for cleanliness) and the one RPC function whose body is
+-- stored as text and would otherwise still reference the now-gone `badges`/`user_badges`
+-- names after the tables underneath it move. `rename to`/`rename column` both accept
+-- `if exists` at the table level, which is what makes re-running this block safe once the
+-- rename has already happened once.
+alter table if exists public.badges rename to feathers;
+alter table if exists public.user_badges rename to user_feathers;
+
+do $$
+begin
+  if exists (
+    select 1 from information_schema.columns
+    where table_schema = 'public' and table_name = 'user_feathers' and column_name = 'badge_id'
+  ) then
+    alter table public.user_feathers rename column badge_id to feather_id;
+  end if;
+end $$;
+
+-- Constraint/policy names: drop-and-recreate under both possible old names rather than
+-- `rename constraint`/`rename policy` (no IF EXISTS form for either), so this is safe
+-- however far a given install has already gotten through this block.
+alter table if exists public.feathers drop constraint if exists badges_rarity_check;
+alter table if exists public.feathers drop constraint if exists feathers_rarity_check;
+alter table if exists public.feathers add constraint feathers_rarity_check check (rarity in ('common', 'rare', 'epic', 'mythic', 'legendary'));
+
+drop policy if exists "badges read all" on public.feathers;
+drop policy if exists "feathers read all" on public.feathers;
+create policy "feathers read all" on public.feathers for select using (true);
+
+drop policy if exists "user_badges crud own" on public.user_feathers;
+drop policy if exists "user_feathers crud own" on public.user_feathers;
+create policy "user_feathers crud own" on public.user_feathers for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
+drop policy if exists "user_badges read groupmates" on public.user_feathers;
+drop policy if exists "user_feathers read groupmates" on public.user_feathers;
+create policy "user_feathers read groupmates" on public.user_feathers for select using (
+  exists (
+    select 1 from public.group_members gm1
+    join public.group_members gm2 on gm1.group_id = gm2.group_id
+    where gm1.user_id = auth.uid() and gm2.user_id = user_feathers.user_id
+  )
+);
+
+-- Live description text for two already-seeded rows still says "Locked In session" —
+-- editing the seed insert above only affects installs that haven't run it yet, so these
+-- fix the wording on rows that already exist. Plain UPDATE, no rename-collision guard
+-- needed (setting a column to a fixed value is idempotent on any number of re-runs).
+update public.feathers set description = 'Complete your first RavenLock session' where name = 'First Lock';
+update public.feathers set description = 'Complete a single 4-hour RavenLock session' where name = 'Deep Worker';
+
+-- "FocusGate Legend" becomes "The Golden Quill" — same 365-day condition, renamed in place
+-- (not deleted+reinserted) so anyone who already unlocked it keeps it, same pattern as the
+-- Early Bird -> Early Riser rename above. Guarded the same way: only fires on an install
+-- old enough to still have the literal old name, and only once.
+update public.feathers
+set name = 'The Golden Quill', description = 'Earned by using Raven every single day for 365 days.'
+where name = 'FocusGate Legend'
+  and not exists (select 1 from public.feathers f2 where f2.name = 'The Golden Quill');
+
+-- get_users_badge_milestone's body is `language sql` — stored as text and re-parsed on
+-- every call, so unlike constraints/policies it does NOT auto-follow the tables it
+-- references through a rename. It's dropped outright (not just replaced) since its old
+-- name and column shape (badge_id/badge_name/badge_description/badge_rarity) are both
+-- gone; get_users_feather_milestone below is its full replacement.
+drop function if exists public.get_users_badge_milestone();
+
+create or replace function public.get_users_feather_milestone()
+returns table (id uuid, email text, name text, feather_id uuid, feather_name text, feather_description text, feather_rarity text)
+language sql security definer as $$
+  select u.id, u.email, u.name, f.id as feather_id, f.name as feather_name, f.description as feather_description, f.rarity as feather_rarity
+  from public.users u
+  join public.user_feathers uf on uf.user_id = u.id
+  join public.feathers f on f.id = uf.feather_id
+  where f.rarity in ('rare', 'epic', 'mythic', 'legendary')
+    -- 'badge_' prefix kept as-is (not 'feather_') deliberately — milestone_emails_sent rows
+    -- already written by the old function used this prefix, and changing it here would make
+    -- every existing milestone look unsent, re-triggering a wave of "congrats" emails for
+    -- feathers people unlocked months ago.
+    and not exists (
+      select 1 from public.milestone_emails_sent m where m.user_id = u.id and m.milestone_type = 'badge_' || f.id::text
+    )
+    and coalesce((select p.email_opt_in from public.user_preferences p where p.user_id = u.id), true);
+$$;

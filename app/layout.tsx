@@ -7,8 +7,8 @@ import ScrollProgressBar from "@/components/ScrollProgressBar";
 import ScrollTriggerRefresh from "@/components/ScrollTriggerRefresh";
 import PostHogProvider from "@/components/analytics/PostHogProvider";
 
-const TITLE = "FocusGate — You said you'd study. Now prove it.";
-const DESCRIPTION = "FocusGate locks you in, blocks every distraction, and won't let you leave until you're done.";
+const TITLE = "Raven — You said you'd study. Now prove it.";
+const DESCRIPTION = "Raven locks you in, blocks every distraction, and won't let you leave until you're done.";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://focusgate.site"),
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     title: TITLE,
     description: DESCRIPTION,
     url: "https://focusgate.site",
-    siteName: "FocusGate",
+    siteName: "Raven",
     type: "website",
     // No og:image yet — public/ only has Next.js's default starter icons, no real
     // branded social-preview image exists in this repo. Add one (1200x630) and an
@@ -29,11 +29,12 @@ export const metadata: Metadata = {
     title: TITLE,
     description: DESCRIPTION,
   },
-  // The gold "F" mark on black — same source art as the Chrome extension's own icon
-  // (extension/icons/icon-source.png), just resized per use rather than redrawn, so the
-  // web tab and the extension toolbar icon are pixel-for-pixel the same mark. favicon.ico
-  // bundles 16/32/48px PNG frames (all modern browsers support PNG-in-ICO); icon-192/512
-  // cover PWA-style and Android home-screen use; apple-icon covers iOS "Add to Home Screen."
+  // Still the old gold "F" mark on black (same source art as the Chrome extension's own
+  // icon, extension/icons/icon-source.png) — flagged as pending redesign alongside the
+  // extension icons now that the brand is Raven, not FocusGate; file paths below are
+  // unchanged since the actual new raven artwork doesn't exist yet. favicon.ico bundles
+  // 16/32/48px PNG frames (all modern browsers support PNG-in-ICO); icon-192/512 cover
+  // PWA-style and Android home-screen use; apple-icon covers iOS "Add to Home Screen."
   icons: {
     icon: [
       { url: "/favicon.ico", sizes: "any" },

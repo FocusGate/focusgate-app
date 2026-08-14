@@ -81,12 +81,13 @@ export function Scene5BadgeUnlock({ localFrame }: { localFrame: number }) {
             );
           })}
 
-          {/* The actual FocusGate Legend badge glyph (components/app/badgeIcons.tsx's exact
-              path + gradient — a gold/white/sky-blue gem, not a circle-and-star this video
-              made up). Shown bare with a glow, matching how the real app's own unlock
-              celebration presents it (app/(app)/badges/page.tsx), not wrapped in a coin —
-              plus a slow continuous rotation, mirroring the real dashboard card's
-              fg-gem-rotate animation on an unlocked Legendary badge. */}
+          {/* The Golden Quill glyph — ported by hand from components/app/feathers/
+              GoldenQuillGlyph.tsx (three layered feather passes plus a small nib, gold
+              gradient), replacing this scene's earlier made-up gem shape. Shown bare with a
+              glow, matching how the real app's own unlock celebration presents it
+              (app/(app)/feathers/page.tsx), not wrapped in a coin — plus a slow continuous
+              rotation, mirroring the real dashboard card's fg-gem-rotate animation on an
+              unlocked Golden Quill. */}
           <div
             style={{
               transform: `scale(${badgeScale}) rotate(${(spd(localFrame) / 30) * (360 / 14)}deg)`,
@@ -95,20 +96,33 @@ export function Scene5BadgeUnlock({ localFrame }: { localFrame: number }) {
           >
             <svg width={badgeSize} height={badgeSize} viewBox="0 0 48 48" fill="none">
               <defs>
-                <linearGradient id="badge-gem" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0" stopColor={COLORS.gold} />
-                  <stop offset="0.5" stopColor={COLORS.white} />
-                  <stop offset="1" stopColor="#0EA5E9" />
+                <linearGradient id="quill-gold" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stopColor="#FCD34D" />
+                  <stop offset="0.45" stopColor={COLORS.gold} />
+                  <stop offset="1" stopColor="#B45309" />
                 </linearGradient>
               </defs>
-              <path d="M14 12h20l6 8-16 20L8 20z" fill="url(#badge-gem)" opacity="0.92" />
+              <g transform="rotate(-18 24 24) scale(1.28) translate(-4 -3)" opacity="0.18">
+                <path d="M24 5C31 9 36 16 34 24C32 31 28 36 23 40L24 40C24 40 24 22 24 5Z" fill="url(#quill-gold)" />
+                <path d="M24 5C24 5 24 22 24 40L23 40C19 36 16 30 17 23C18 15 21 9 24 5Z" fill="url(#quill-gold)" opacity="0.78" />
+              </g>
+              <g transform="rotate(-2 24 24) scale(1.1) translate(-1.5 -1)" opacity="0.5">
+                <path d="M24 5C31 9 36 16 34 24C32 31 28 36 23 40L24 40C24 40 24 22 24 5Z" fill="url(#quill-gold)" />
+                <path d="M24 5C24 5 24 22 24 40L23 40C19 36 16 30 17 23C18 15 21 9 24 5Z" fill="url(#quill-gold)" opacity="0.78" />
+              </g>
+              <g transform="rotate(14 24 24)">
+                <path d="M24 5C31 9 36 16 34 24C32 31 28 36 23 40L24 40C24 40 24 22 24 5Z" fill="url(#quill-gold)" />
+                <path d="M24 5C24 5 24 22 24 40L23 40C19 36 16 30 17 23C18 15 21 9 24 5Z" fill="url(#quill-gold)" opacity="0.78" />
+                <path d="M24 5C23.3 17 23.3 30 22.5 44" stroke="url(#quill-gold)" strokeWidth="1" fill="none" strokeLinecap="round" opacity="0.9" />
+              </g>
+              <path d="M22.7 40.5L21 47L24.1 44.3L27 47L25.3 40.5Z" fill="url(#quill-gold)" opacity="0.95" />
             </svg>
           </div>
         </div>
 
         <div style={{ marginTop: base * 0.045, textAlign: "center" }}>
           <div style={{ fontFamily: FONT_BODY, fontWeight: 700, fontSize: base * 0.02, letterSpacing: "0.18em", color: COLORS.goldMuted, textTransform: "uppercase" }}>
-            Legendary Badge Unlocked
+            Legendary — The Golden Quill
           </div>
           <div
             style={{
@@ -123,11 +137,11 @@ export function Scene5BadgeUnlock({ localFrame }: { localFrame: number }) {
               minHeight: base * 0.08,
             }}
           >
-            <TypewriterText text="FOCUSGATE LEGEND" startFrame={BADGE_NAME_START} framesPerChar={1.1} />
+            <TypewriterText text="THE GOLDEN QUILL" startFrame={BADGE_NAME_START} framesPerChar={1.1} />
           </div>
-          {/* Verbatim from LegendaryBadgeCard.tsx's unlocked state, not a paraphrase. */}
+          {/* Verbatim from GoldenQuillCard.tsx's unlocked state, not a paraphrase. */}
           <div style={{ opacity: subtitleOpacity, fontFamily: FONT_BODY, fontWeight: 600, fontStyle: "italic", fontSize: base * 0.022, color: COLORS.grey, marginTop: base * 0.014 }}>
-            Only 1% of users ever unlock this.
+            Only 1% of users ever hold one.
           </div>
         </div>
       </div>

@@ -89,7 +89,7 @@ export default function Problem() {
           </h2>
           <p style={{ color: "#9a9da4", fontSize: 18, lineHeight: 1.7, maxWidth: "54ch", marginTop: 30, textWrap: "pretty" }}>
             Your phone is designed by billion dollar companies to keep you scrolling. Every notification, every
-            autoplay, every infinite feed. FocusGate fights back.
+            autoplay, every infinite feed. Raven fights back.
           </p>
           <div style={{ display: "flex", gap: 14, flexWrap: "wrap", marginTop: 40 }}>
             {["3hrs lost daily", "45 days per year", "1 app to fix it"].map((t) => (
@@ -169,7 +169,7 @@ export default function Problem() {
               ))}
             </div>
             <div style={{ color: "#F59E0B", fontSize: 16, fontWeight: 700, marginTop: 26 }}>
-              FocusGate rewires it back.
+              Raven rewires it back.
             </div>
           </div>
         </motion.div>

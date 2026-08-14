@@ -111,7 +111,7 @@ export default function StatsPage() {
         <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 18 }}>Recent sessions</h2>
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           {sessions.length === 0 && !dataLoading && (
-            <span style={{ color: "#7a7d84", fontSize: 14 }}>No sessions yet — start your first Locked In session from the dashboard.</span>
+            <span style={{ color: "#7a7d84", fontSize: 14 }}>No sessions yet — start your first RavenLock session from the dashboard.</span>
           )}
           {sessions.slice(0, 10).map((s) => (
             <div key={s.id} style={{ display: "flex", justifyContent: "space-between", padding: "10px 0", borderBottom: "1px solid rgba(255,255,255,0.06)", fontSize: 14 }}>

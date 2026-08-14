@@ -1,5 +1,5 @@
-// lib/sessionModes.ts — the one place that defines what each Session Mode *is*. Locked In
-// Mode's actual enforcement (declarativeNetRequest blocking, anti-bypass, Break Gates, The
+// lib/sessionModes.ts — the one place that defines what each Session Mode *is*. RavenLock's
+// actual enforcement (declarativeNetRequest blocking, anti-bypass, Break Gates, The
 // Lounge) is identical underneath every mode — this file only describes the structure each
 // mode wraps around that same engine: duration rules, whether breaks are automatic, forced
 // gate difficulty, a bound friend group, and so on. Consumed by the mode-selection screen,

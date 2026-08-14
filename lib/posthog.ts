@@ -52,7 +52,7 @@ export type AnalyticsEvent =
   | "break_gate_passed"
   | "break_gate_failed"
   | "emergency_unblock_used"
-  | "badge_unlocked"
+  | "feather_unlocked"
   | "upgrade_button_clicked"
   | "dead_mans_switch_triggered";
 

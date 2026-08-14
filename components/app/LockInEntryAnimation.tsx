@@ -62,7 +62,7 @@ export default function LockInEntryAnimation({ onDone }: { onDone: () => void })
               margin: 0,
             }}
           >
-            You are now <span style={{ color: "#b08d57", fontStyle: "italic" }}>Locked In.</span>
+            You are now <span style={{ color: "#b08d57", fontStyle: "italic" }}>in RavenLock.</span>
           </motion.h1>
         </motion.div>
       </motion.div>

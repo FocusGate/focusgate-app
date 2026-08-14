@@ -105,7 +105,7 @@ function renderNothingToDo() {
     <div class="challenge__card challenge__card--center">
       <div class="challenge__icon">🔒</div>
       <h1 class="challenge__title">Nothing to do here</h1>
-      <p class="challenge__subtitle">Open this from the "Request a Break" button in the FocusGate popup.</p>
+      <p class="challenge__subtitle">Open this from the "Request a Break" button in the Raven popup.</p>
       <button class="challenge__btn challenge__btn--ghost" id="close-btn">Close this tab</button>
     </div>
   `;

@@ -1,20 +1,20 @@
 // daily-email-checks — invoked once a day by pg_cron (see supabase/functions/README.md for
 // the exact `cron.schedule(...)` call and where to confirm it's actually running). Runs all
 // three checks in one pass: trial ending tomorrow, 5+ days inactive, and the 7-day-streak /
-// first-Rare+-badge congratulations milestones. The heavy "who qualifies" logic lives in
+// first-Rare+-feather congratulations milestones. The heavy "who qualifies" logic lives in
 // Postgres (schema.sql's get_users_*() functions) — this function's job is just to call
 // each one, send whatever it gets back, and (for the two milestone checks) record that it
 // sent it so tomorrow's run doesn't send it again.
 
 import { createClient } from "jsr:@supabase/supabase-js@2";
-import { trialEndingEmail, reEngagementEmail, milestoneStreakEmail, milestoneBadgeEmail } from "../_shared/emailTemplates.ts";
+import { trialEndingEmail, reEngagementEmail, milestoneStreakEmail, milestoneFeatherEmail } from "../_shared/emailTemplates.ts";
 import { sendAndLog } from "../_shared/resend.ts";
 
 const STREAK_THRESHOLD = 7;
 
 Deno.serve(async (_req: Request) => {
   const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
-  const results = { trialEnding: 0, reEngagement: 0, streakMilestone: 0, badgeMilestone: 0, errors: [] as string[] };
+  const results = { trialEnding: 0, reEngagement: 0, streakMilestone: 0, featherMilestone: 0, errors: [] as string[] };
 
   // ---- 1. Trial ending tomorrow ----
   try {
@@ -60,20 +60,22 @@ Deno.serve(async (_req: Request) => {
     results.errors.push(`milestone_streak: ${String(err)}`);
   }
 
-  // ---- 3b. First Rare+ badge (per badge, so a later different Rare+ badge congratulates again) ----
+  // ---- 3b. First Rare+ feather (per feather, so a later different Rare+ feather congratulates again) ----
   try {
-    const { data: rows, error } = await supabase.rpc("get_users_badge_milestone");
+    const { data: rows, error } = await supabase.rpc("get_users_feather_milestone");
     if (error) throw error;
     for (const r of rows ?? []) {
-      const { subject, html } = milestoneBadgeEmail(r.name, { name: r.badge_name, description: r.badge_description, rarity: r.badge_rarity });
-      const { ok } = await sendAndLog(supabase, { userId: r.id, to: r.email, type: "milestone_badge", subject, html });
+      const { subject, html } = milestoneFeatherEmail(r.name, { name: r.feather_name, description: r.feather_description, rarity: r.feather_rarity });
+      const { ok } = await sendAndLog(supabase, { userId: r.id, to: r.email, type: "milestone_feather", subject, html });
       if (ok) {
-        results.badgeMilestone++;
-        await supabase.from("milestone_emails_sent").insert({ user_id: r.id, milestone_type: `badge_${r.badge_id}` });
+        results.featherMilestone++;
+        // 'badge_' prefix kept as-is here too — see schema.sql's get_users_feather_milestone
+        // comment; it's the same dedup key the old function already wrote, not a new one.
+        await supabase.from("milestone_emails_sent").insert({ user_id: r.id, milestone_type: `badge_${r.feather_id}` });
       }
     }
   } catch (err) {
-    results.errors.push(`milestone_badge: ${String(err)}`);
+    results.errors.push(`milestone_feather: ${String(err)}`);
   }
 
   return new Response(JSON.stringify({ ok: results.errors.length === 0, ...results }), {

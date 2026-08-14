@@ -21,7 +21,7 @@ import {
   endSessionPause,
   subscribeToSessionPause,
   type SessionPause,
-  type NewlyUnlockedBadge,
+  type NewlyUnlockedFeather,
 } from "@/lib/supabase";
 import { sendBreakReminderEmail } from "@/lib/email";
 import { track } from "@/lib/posthog";
@@ -105,13 +105,13 @@ export default function LockedInOverlay({
   /** Returns the *actual* recorded duration alongside newly-unlocked badges — not
    *  necessarily totalSeconds/60, since an Emergency Unblock (or, in principle, any other
    *  early end) finishes the session well short of its planned length. */
-  onComplete: () => Promise<{ unlocked: NewlyUnlockedBadge[]; durationMinutes: number }>;
+  onComplete: () => Promise<{ unlocked: NewlyUnlockedFeather[]; durationMinutes: number }>;
   onFinished: () => void;
   onStartAnother: () => void;
 }) {
   const [seconds, setSeconds] = useState(initialSecondsLeft ?? totalSeconds);
   const [phase, setPhase] = useState<"running" | "complete">("running");
-  const [unlockedBadges, setUnlockedBadges] = useState<NewlyUnlockedBadge[]>([]);
+  const [unlockedFeathers, setUnlockedFeathers] = useState<NewlyUnlockedFeather[]>([]);
   // Seeded from the plan, corrected to the real value the instant onComplete() resolves —
   // this default is only ever visible for handleComplete's own 1.6s confetti-flash delay,
   // never in the actually-rendered Session Complete screen below.
@@ -360,7 +360,7 @@ export default function LockedInOverlay({
     // Lets FlipClock's own brief internal completion flash (confetti + "Session
     // Complete 🏆") play out before swapping to the fuller Session Complete screen.
     setTimeout(() => {
-      setUnlockedBadges(unlocked);
+      setUnlockedFeathers(unlocked);
       setFinalDurationMinutes(durationMinutes);
       setPhase("complete");
     }, 1600);
@@ -371,7 +371,7 @@ export default function LockedInOverlay({
       <SessionCompleteScreen
         durationMinutes={finalDurationMinutes}
         streak={streak}
-        unlockedBadges={unlockedBadges}
+        unlockedFeathers={unlockedFeathers}
         onStartAnother={onStartAnother}
         onReturnToDashboard={onFinished}
         modeExtra={<ModeCompleteExtra mode={mode} sessionId={sessionId} groupId={groupId} sessionStartIso={sessionStartIso} />}

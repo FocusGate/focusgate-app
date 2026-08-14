@@ -177,7 +177,7 @@ export async function getUser() {
 
 // ---------- account ----------
 
-/** Deletes the app's profile row (cascades to sessions/blocked_sites/user_badges/
+/** Deletes the app's profile row (cascades to sessions/blocked_sites/user_feathers/
  *  group_members/owned friend_groups via existing FKs) and signs out. Does NOT delete
  *  the underlying Supabase Auth login — that needs a service-role key, which this
  *  project doesn't have configured. Callers must disclose this in the UI. */
@@ -236,7 +236,7 @@ export async function startSession(
 ) {
   const existing = await getActiveSession(userId).catch(() => null);
   if (existing) {
-    throw new Error("You already have a Locked In session running — finish or end it before starting another.");
+    throw new Error("You already have a RavenLock session running — finish or end it before starting another.");
   }
 
   const { data, error } = await supabase
@@ -254,7 +254,7 @@ export async function startSession(
     .single();
   if (error) {
     if (error.code === "23505") {
-      throw new Error("You already have a Locked In session running — finish or end it before starting another.");
+      throw new Error("You already have a RavenLock session running — finish or end it before starting another.");
     }
     throw error;
   }
@@ -341,7 +341,7 @@ export async function endSession(sessionId: string) {
   // Wall-clock time minus real break time (now correctly including a mode's own
   // auto-triggered breaks, not just manually-requested ones — see is_auto on
   // break_notes) — otherwise a 4-cycle Pomodoro session's 15 minutes of scheduled rest
-  // got counted as focus time, inflating total_focus_hours/streaks/badges for exactly
+  // got counted as focus time, inflating total_focus_hours/streaks/feathers for exactly
   // the modes that pause automatically (Pomodoro, All Nighter).
   const pausedSeconds = await getSessionPausedSeconds(sessionId).catch(() => 0);
   const totalSeconds = (endTime.getTime() - startTime.getTime()) / 1000;
@@ -369,7 +369,7 @@ export async function endSession(sessionId: string) {
     .eq("id", session.user_id);
   if (updateError) throw updateError;
 
-  // Streak must be current before the caller runs checkAndUnlockBadges — badge checks
+  // Streak must be current before the caller runs checkAndUnlockFeathers — feather checks
   // read `users.streak` directly and would otherwise see yesterday's value.
   await computeAndSyncStreak(session.user_id);
 
@@ -381,7 +381,7 @@ export async function endSession(sessionId: string) {
  * drift) and writes back to `users` only if changed. Chosen over a pure incremented
  * counter (there's no increment logic anywhere today, and a counter alone can't handle
  * "the user simply didn't open the app on a missed day" decay) and over a pure read-only
- * aggregation (every existing `.streak` reader — getStreak, checkAndUnlockBadges, every
+ * aggregation (every existing `.streak` reader — getStreak, checkAndUnlockFeathers, every
  * page's stat card — reads the stored column; switching them all to a separate read path
  * would be a much bigger change for no real benefit). Called from both `getUser()` (so
  * decay self-heals on every page load) and `endSession()` (so it's instant at completion).
@@ -612,53 +612,53 @@ export async function updateUserPreferences(userId: string, patch: Partial<UserP
   return rowToPreferences(data);
 }
 
-// ---------- badges ----------
+// ---------- feathers ----------
 
-export async function unlockBadge(userId: string, badgeId: string) {
+export async function unlockFeather(userId: string, featherId: string) {
   const { data: existing } = await supabase
-    .from("user_badges")
+    .from("user_feathers")
     .select("id")
     .eq("user_id", userId)
-    .eq("badge_id", badgeId)
+    .eq("feather_id", featherId)
     .maybeSingle();
   if (existing) return existing;
 
   const { data, error } = await supabase
-    .from("user_badges")
-    .insert({ user_id: userId, badge_id: badgeId, unlocked_at: new Date().toISOString() })
+    .from("user_feathers")
+    .insert({ user_id: userId, feather_id: featherId, unlocked_at: new Date().toISOString() })
     .select()
     .single();
   if (error) throw error;
   return data;
 }
 
-export async function getUserBadges(userId: string) {
+export async function getUserFeathers(userId: string) {
   const { data, error } = await supabase
-    .from("user_badges")
-    .select("*, badges(*)")
+    .from("user_feathers")
+    .select("*, feathers(*)")
     .eq("user_id", userId);
   if (error) throw error;
   return data;
 }
 
-export type BadgeRow = { id: string; name: string; description: string; rarity: string; unlock_condition: string };
+export type FeatherRow = { id: string; name: string; description: string; rarity: string; unlock_condition: string };
 
-// Badges special-cased by name rather than parsed generically from `unlock_condition` —
+// Feathers special-cased by name rather than parsed generically from `unlock_condition` —
 // either because the condition isn't a `metric >= number` shape (Weekend Warrior, Clean
 // Slate, Untouchable), or because it depends on cross-user leaderboard data instead of
 // this user's own stats (Iron Focus, handled entirely outside this function — see
 // recordWeeklyLeaderboardWin/checkIronFocus below).
-const SPECIAL_CASED_BADGES = new Set(["Early Riser", "Clean Slate", "Weekend Warrior", "Untouchable", "Iron Focus"]);
+const SPECIAL_CASED_FEATHERS = new Set(["Early Riser", "Clean Slate", "Weekend Warrior", "Untouchable", "Iron Focus"]);
 
 /**
- * Fetches everything checkAndUnlockBadges and getBadgeProgress both need and reduces it
+ * Fetches everything checkAndUnlockFeathers and getFeatherProgress both need and reduces it
  * to one metric context, so the two don't duplicate five near-identical queries between
  * them. Session-day/weekday checks use UTC hours/day, matching this file's and
  * lib/stats.ts's existing UTC-day convention (no per-user timezone anywhere in this schema).
  */
-async function buildBadgeContext(userId: string): Promise<{ badges: BadgeRow[]; ctx: BadgeMetricCtx; alreadyUnlockedIds: Set<string>; special: { hasEarlyRiser: boolean; hasCleanSlate: boolean; hasWeekendWarrior: boolean; untouchable: boolean } }> {
+async function buildFeatherContext(userId: string): Promise<{ feathers: FeatherRow[]; ctx: BadgeMetricCtx; alreadyUnlockedIds: Set<string>; special: { hasEarlyRiser: boolean; hasCleanSlate: boolean; hasWeekendWarrior: boolean; untouchable: boolean } }> {
   const [
-    { data: badges, error: badgesError },
+    { data: feathers, error: feathersError },
     { data: user, error: userError },
     { data: sessions, error: sessionsError },
     { data: existing, error: existingError },
@@ -666,15 +666,15 @@ async function buildBadgeContext(userId: string): Promise<{ badges: BadgeRow[]; 
     { data: emergency, error: emergencyError },
     { count: interruptedCount, error: interruptedError },
   ] = await Promise.all([
-    supabase.from("badges").select("*"),
+    supabase.from("feathers").select("*"),
     supabase.from("users").select("streak, total_focus_hours, blocked_attempts").eq("id", userId).single(),
     supabase.from("sessions").select("id, start_time, duration_minutes, completed").eq("user_id", userId).eq("completed", true),
-    supabase.from("user_badges").select("badge_id").eq("user_id", userId),
+    supabase.from("user_feathers").select("feather_id").eq("user_id", userId),
     supabase.from("break_gate_attempts").select("session_id, passed").eq("user_id", userId),
     supabase.from("emergency_unblocks").select("session_id").eq("user_id", userId),
     supabase.from("sessions").select("id", { count: "exact", head: true }).eq("user_id", userId).eq("interrupted_by_uninstall", true),
   ]);
-  if (badgesError) throw badgesError;
+  if (feathersError) throw feathersError;
   if (userError) throw userError;
   if (sessionsError) throw sessionsError;
   if (existingError) throw existingError;
@@ -682,7 +682,7 @@ async function buildBadgeContext(userId: string): Promise<{ badges: BadgeRow[]; 
   if (emergencyError) throw emergencyError;
   if (interruptedError) throw interruptedError;
 
-  const alreadyUnlockedIds = new Set((existing ?? []).map((b) => b.badge_id));
+  const alreadyUnlockedIds = new Set((existing ?? []).map((f) => f.feather_id));
   const sessionsWithGateAttempt = new Set((gateAttempts ?? []).map((a) => a.session_id).filter((id): id is string => !!id));
   const emergencySessionIds = new Set((emergency ?? []).map((e) => e.session_id).filter((id): id is string => !!id));
 
@@ -711,28 +711,28 @@ async function buildBadgeContext(userId: string): Promise<{ badges: BadgeRow[]; 
     untouchable: (user.streak ?? 0) >= 90 && (interruptedCount ?? 0) === 0,
   };
 
-  return { badges: (badges ?? []) as BadgeRow[], ctx, alreadyUnlockedIds, special };
+  return { feathers: (feathers ?? []) as FeatherRow[], ctx, alreadyUnlockedIds, special };
 }
 
 /**
- * Evaluates the fixed FocusGate badge set against the user's current stats
- * and unlocks any newly-earned ones. Matched by badge name since
+ * Evaluates the fixed Raven feather set against the user's current stats
+ * and unlocks any newly-earned ones. Matched by feather name since
  * `unlock_condition` is free-form copy, not a machine-readable rule.
  */
-export type NewlyUnlockedBadge = { id: string; name: string; description: string; rarity: string; unlocked_at: string };
+export type NewlyUnlockedFeather = { id: string; name: string; description: string; rarity: string; unlocked_at: string };
 
 /** `allowedRarities` — restricted (post-trial, non-beta) accounts stop earning anything
  *  above Common; omit it (every other caller) for unrestricted behavior. Filtered before
- *  the already-unlocked check below, not after — a badge a restricted account technically
+ *  the already-unlocked check below, not after — a feather a restricted account technically
  *  qualifies for but can't earn shouldn't consume a "newly unlocked" slot or otherwise be
  *  treated as earned; it'll unlock for real the moment they're no longer restricted and
  *  this runs again. */
-export async function checkAndUnlockBadges(userId: string, allowedRarities?: string[]): Promise<NewlyUnlockedBadge[]> {
-  const { badges, ctx, alreadyUnlockedIds, special } = await buildBadgeContext(userId);
+export async function checkAndUnlockFeathers(userId: string, allowedRarities?: string[]): Promise<NewlyUnlockedFeather[]> {
+  const { feathers, ctx, alreadyUnlockedIds, special } = await buildFeatherContext(userId);
 
-  const earned = badges.filter((badge) => {
-    if (allowedRarities && !allowedRarities.includes(badge.rarity)) return false;
-    switch (badge.name) {
+  const earned = feathers.filter((feather) => {
+    if (allowedRarities && !allowedRarities.includes(feather.rarity)) return false;
+    switch (feather.name) {
       case "Early Riser":
         return special.hasEarlyRiser;
       case "Clean Slate":
@@ -744,7 +744,7 @@ export async function checkAndUnlockBadges(userId: string, allowedRarities?: str
       case "Iron Focus":
         return false; // handled by recordWeeklyLeaderboardWin/checkIronFocus, not here
       default: {
-        const parsed = parseThreshold(badge.unlock_condition);
+        const parsed = parseThreshold(feather.unlock_condition);
         if (!parsed) return false;
         const value = getMetricValue(parsed.metric, ctx);
         return value !== null && value >= parsed.target;
@@ -752,25 +752,25 @@ export async function checkAndUnlockBadges(userId: string, allowedRarities?: str
     }
   });
 
-  // Filtered to badges the user didn't already have — unlockBadge() itself is idempotent
-  // (returns the existing row rather than erroring), but without this filter every badge
+  // Filtered to feathers the user didn't already have — unlockFeather() itself is idempotent
+  // (returns the existing row rather than erroring), but without this filter every feather
   // the user ever qualified for would be re-reported as "newly unlocked" on every single
   // session completion, since `earned` re-matches all of them every time this runs.
-  const newlyUnlocked: NewlyUnlockedBadge[] = [];
-  for (const badge of earned) {
-    if (alreadyUnlockedIds.has(badge.id)) continue;
-    const row = await unlockBadge(userId, badge.id);
-    newlyUnlocked.push({ id: badge.id, name: badge.name, description: badge.description, rarity: badge.rarity, unlocked_at: row.unlocked_at });
+  const newlyUnlocked: NewlyUnlockedFeather[] = [];
+  for (const feather of earned) {
+    if (alreadyUnlockedIds.has(feather.id)) continue;
+    const row = await unlockFeather(userId, feather.id);
+    newlyUnlocked.push({ id: feather.id, name: feather.name, description: feather.description, rarity: feather.rarity, unlocked_at: row.unlocked_at });
   }
   return newlyUnlocked;
 }
 
-const PROGRESS_ELIGIBLE_BADGES = new Set([
+const PROGRESS_ELIGIBLE_FEATHERS = new Set([
   "First Lock",
   "On Fire",
   "Deep Worker",
   "Unstoppable",
-  "FocusGate Legend",
+  "The Golden Quill",
   "Gate Keeper",
   "No Excuses",
   "Century Club",
@@ -778,33 +778,33 @@ const PROGRESS_ELIGIBLE_BADGES = new Set([
   "The Regulator",
 ]);
 
-export type BadgeProgress = {
-  badge: BadgeRow;
+export type FeatherProgress = {
+  feather: FeatherRow;
   unlocked: boolean;
   current: number;
   target: number;
   pct: number;
 };
 
-/** Progress bars only for numeric-threshold badges — everything in SPECIAL_CASED_BADGES
- *  (time-of-day/weekday/streak-condition badges) is deliberately omitted rather than shown
+/** Progress bars only for numeric-threshold feathers — everything in SPECIAL_CASED_FEATHERS
+ *  (time-of-day/weekday/streak-condition feathers) is deliberately omitted rather than shown
  *  with a fake 0% bar, same as the original Early Bird/Night Owl exclusion. */
-export async function getBadgeProgress(userId: string): Promise<BadgeProgress[]> {
-  const { badges, ctx, alreadyUnlockedIds } = await buildBadgeContext(userId);
+export async function getFeatherProgress(userId: string): Promise<FeatherProgress[]> {
+  const { feathers, ctx, alreadyUnlockedIds } = await buildFeatherContext(userId);
 
-  const result: BadgeProgress[] = [];
-  for (const badge of badges) {
-    if (SPECIAL_CASED_BADGES.has(badge.name) || !PROGRESS_ELIGIBLE_BADGES.has(badge.name)) continue;
-    const parsed = parseThreshold(badge.unlock_condition);
+  const result: FeatherProgress[] = [];
+  for (const feather of feathers) {
+    if (SPECIAL_CASED_FEATHERS.has(feather.name) || !PROGRESS_ELIGIBLE_FEATHERS.has(feather.name)) continue;
+    const parsed = parseThreshold(feather.unlock_condition);
     if (!parsed) continue;
     // Metrics like total_focus_hours accumulate as a raw float (e.g. 0.9333333333333333
     // hours) — round to 1 decimal before it ever reaches the UI, since "current / target"
-    // is rendered verbatim by BadgeCard/BadgeProgressBar with no formatting of its own.
+    // is rendered verbatim by FeatherCard/FeatherProgressBar with no formatting of its own.
     const rawCurrent = getMetricValue(parsed.metric, ctx) ?? 0;
     const current = Math.round(rawCurrent * 10) / 10;
     result.push({
-      badge,
-      unlocked: alreadyUnlockedIds.has(badge.id),
+      feather,
+      unlocked: alreadyUnlockedIds.has(feather.id),
       current: Math.min(current, parsed.target),
       target: parsed.target,
       pct: Math.max(0, Math.min(100, Math.round((rawCurrent / parsed.target) * 100))),
@@ -845,7 +845,7 @@ async function checkIronFocus(userId: string): Promise<void> {
   }
 
   const qualifies = Array.from(byGroup.values()).some((weeks) => hasConsecutiveISOWeeks(weeks, 4));
-  if (qualifies) await unlockBadgeByName(userId, "Iron Focus");
+  if (qualifies) await unlockFeatherByName(userId, "Iron Focus");
 }
 
 // ---------- friend groups ----------
@@ -1115,24 +1115,24 @@ export async function saveGameBest(userId: string, game: GameSlug, score: number
 
 // ---------- Friction Triggers: break gates ----------
 
-async function unlockBadgeByName(userId: string, name: string): Promise<void> {
-  const { data: badge, error } = await supabase.from("badges").select("id").eq("name", name).maybeSingle();
+async function unlockFeatherByName(userId: string, name: string): Promise<void> {
+  const { data: feather, error } = await supabase.from("feathers").select("id").eq("name", name).maybeSingle();
   if (error) throw error;
-  if (!badge) return; // migration not run yet — fail soft rather than throw
-  await unlockBadge(userId, badge.id);
+  if (!feather) return; // migration not run yet — fail soft rather than throw
+  await unlockFeather(userId, feather.id);
 }
 
 /** Logs a break-gate pass/fail attempt. A pass also unlocks "Focused Under Pressure" —
- *  checked directly by name here rather than through checkAndUnlockBadges' generic
+ *  checked directly by name here rather than through checkAndUnlockFeathers' generic
  *  `metric >= threshold` parser, since "passed at least one gate" isn't a numeric-metric
- *  badge tied to session stats. Badge-unlock failure doesn't fail the whole call — the
+ *  feather tied to session stats. Feather-unlock failure doesn't fail the whole call — the
  *  attempt itself is the thing that must not silently drop. */
 export async function logBreakGateAttempt(userId: string, sessionId: string | null, game: GameSlug, passed: boolean): Promise<void> {
   const { error } = await supabase.from("break_gate_attempts").insert({ user_id: userId, session_id: sessionId, game, passed });
   if (error) throw error;
   if (passed) {
     try {
-      await unlockBadgeByName(userId, "Focused Under Pressure");
+      await unlockFeatherByName(userId, "Focused Under Pressure");
     } catch {
       // non-fatal — the pass is already logged
     }
