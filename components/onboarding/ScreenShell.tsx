@@ -15,7 +15,7 @@ export function ScreenHeading({ eyebrow, title, subtitle }: { eyebrow?: string; 
   return (
     <div style={{ marginBottom: 32 }}>
       {eyebrow && (
-        <div style={{ color: "#b08d57", fontSize: 13, fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", marginBottom: 16 }}>
+        <div style={{ color: "#F59E0B", fontSize: 13, fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", marginBottom: 16 }}>
           {eyebrow}
         </div>
       )}

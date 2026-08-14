@@ -20,7 +20,7 @@ const DOTS = Array.from({ length: 16 }, (_, i) => ({
 
 // subtle mid-depth blurred orbs — the "middle decorative" parallax layer
 const ORBS = [
-  { left: "12%", top: "18%", size: 260, color: "rgba(176,141,87,0.14)" },
+  { left: "12%", top: "18%", size: 260, color: "rgba(245, 158, 11,0.14)" },
   { left: "82%", top: "12%", size: 320, color: "rgba(255,255,255,0.06)" },
   { left: "70%", top: "62%", size: 220, color: "rgba(245,158,11,0.1)" },
 ];
@@ -145,7 +145,7 @@ export default function Hero() {
           ))}
           <br />
           {LINE_2.split(" ").map((w, i) => (
-            <MotionWord key={`l2-${i}`} text={w} style={{ fontStyle: "italic", color: "#b08d57" }} />
+            <MotionWord key={`l2-${i}`} text={w} style={{ fontStyle: "italic", color: "#F59E0B" }} />
           ))}
         </motion.h1>
 
@@ -163,7 +163,7 @@ export default function Hero() {
                 display: "inline-flex",
                 alignItems: "center",
                 gap: 10,
-                background: "linear-gradient(180deg, #d4af7a, #b08d57)",
+                background: "linear-gradient(180deg, #FBBF24, #F59E0B)",
                 color: "#0a0a0a",
                 border: "none",
                 padding: "16px 32px",
@@ -172,7 +172,7 @@ export default function Hero() {
                 fontWeight: 800,
                 cursor: "pointer",
                 textDecoration: "none",
-                boxShadow: "0 0 30px rgba(176,141,87,0.4)",
+                boxShadow: "0 0 30px rgba(245, 158, 11,0.4)",
               }}
             >
               🧩 Add to Chrome — Free

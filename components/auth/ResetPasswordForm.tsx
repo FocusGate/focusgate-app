@@ -84,7 +84,7 @@ export default function ResetPasswordForm() {
         </form>
 
         <p style={{ color: "#7a7d84", fontSize: 14, textAlign: "center", marginTop: 24 }}>
-          <Link href="/login" style={{ color: "#b08d57", fontWeight: 600 }}>
+          <Link href="/login" style={{ color: "#F59E0B", fontWeight: 600 }}>
             Back to sign in
           </Link>
         </p>

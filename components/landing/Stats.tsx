@@ -114,7 +114,7 @@ function StatGold({ target, prefix, label }: { target: number; prefix?: string; 
           fontSize: 88,
           lineHeight: 1,
           letterSpacing: "-0.02em",
-          color: "#b08d57",
+          color: "#F59E0B",
           fontVariantNumeric: "tabular-nums",
         }}
       />

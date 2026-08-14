@@ -27,23 +27,23 @@ export default function Screen13Summary({
       <div
         style={{
           background: "#0A0A0A",
-          border: "1px solid rgba(176,141,87,0.4)",
+          border: "1px solid rgba(245, 158, 11,0.4)",
           borderRadius: 24,
           padding: "36px 28px",
           marginBottom: 24,
         }}
       >
         <h1 style={{ fontFamily: "'Instrument Serif', serif", fontSize: "clamp(26px, 4vw, 34px)", color: "#fff", lineHeight: 1.3, margin: 0 }}>
-          {displayName}, you will have unbreakable focus by <span style={{ color: "#b08d57" }}>{targetDate}</span>.
+          {displayName}, you will have unbreakable focus by <span style={{ color: "#F59E0B" }}>{targetDate}</span>.
         </h1>
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0,1fr))", gap: 10, marginTop: 28 }}>
-          <StatTile icon={<Smartphone size={18} color="#b08d57" />} label={`${hoursSavedDaily}+ Hours Saved Daily`} />
-          <StatTile icon={<ShieldCheck size={18} color="#b08d57" />} label="Zero-Cheating Lockout Mode" />
-          <StatTile icon={<Flame size={18} color="#b08d57" />} label="Unstoppable Focus Streak" />
+          <StatTile icon={<Smartphone size={18} color="#F59E0B" />} label={`${hoursSavedDaily}+ Hours Saved Daily`} />
+          <StatTile icon={<ShieldCheck size={18} color="#F59E0B" />} label="Zero-Cheating Lockout Mode" />
+          <StatTile icon={<Flame size={18} color="#F59E0B" />} label="Unstoppable Focus Streak" />
         </div>
 
-        <div style={{ marginTop: 24, color: "#b08d57", fontSize: 13, fontWeight: 700 }}>⚡ {daysLostPerYear(hours)}+ hours reclaimed this year</div>
+        <div style={{ marginTop: 24, color: "#F59E0B", fontSize: 13, fontWeight: 700 }}>⚡ {daysLostPerYear(hours)}+ hours reclaimed this year</div>
 
         {primaryGoalLabel && (
           <div style={{ marginTop: 14, color: "#9a9da4", fontSize: 13 }}>

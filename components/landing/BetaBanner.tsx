@@ -19,7 +19,7 @@ export default function BetaBanner() {
             fontSize: 68,
             lineHeight: 1.0,
             letterSpacing: "-0.02em",
-            color: "#b08d57",
+            color: "#F59E0B",
           }}
         >
           Free during beta.

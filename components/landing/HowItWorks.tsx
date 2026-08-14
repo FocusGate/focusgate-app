@@ -36,7 +36,7 @@ export default function HowItWorks() {
               key={s.n}
               style={{
                 background: "#0A0A0A",
-                border: "1px solid rgba(176,141,87,0.15)",
+                border: "1px solid rgba(245, 158, 11,0.15)",
                 borderRadius: 20,
                 padding: "34px 26px",
                 textAlign: "left",
@@ -47,9 +47,9 @@ export default function HowItWorks() {
                   width: 40,
                   height: 40,
                   borderRadius: 12,
-                  background: "rgba(176,141,87,0.12)",
-                  border: "1px solid rgba(176,141,87,0.35)",
-                  color: "#d4af7a",
+                  background: "rgba(245, 158, 11,0.12)",
+                  border: "1px solid rgba(245, 158, 11,0.35)",
+                  color: "#FBBF24",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",

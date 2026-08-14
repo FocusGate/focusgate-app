@@ -88,7 +88,7 @@ export default function SignupForm() {
               width: 56,
               height: 56,
               borderRadius: "50%",
-              background: "linear-gradient(135deg, #F59E0B, #b08d57)",
+              background: "linear-gradient(135deg, #F59E0B, #F59E0B)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -107,7 +107,7 @@ export default function SignupForm() {
             account, then sign in below.
           </p>
 
-          <Link href="/login" style={{ display: "inline-block", marginTop: 26, color: "#b08d57", fontWeight: 600, fontSize: 14 }}>
+          <Link href="/login" style={{ display: "inline-block", marginTop: 26, color: "#F59E0B", fontWeight: 600, fontSize: 14 }}>
             Back to sign in
           </Link>
         </div>
@@ -166,7 +166,7 @@ export default function SignupForm() {
 
         <p style={{ color: "#7a7d84", fontSize: 14, textAlign: "center", marginTop: 24 }}>
           Already have an account?{" "}
-          <Link href="/login" style={{ color: "#b08d57", fontWeight: 600 }}>
+          <Link href="/login" style={{ color: "#F59E0B", fontWeight: 600 }}>
             Sign in
           </Link>
         </p>

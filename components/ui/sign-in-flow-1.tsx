@@ -32,7 +32,7 @@ export interface SignInPageProps {
 /** Raven gold, matching --fg-gold-bright / --fg-gold in globals.css. */
 const GOLD_DOTS = [
   [245, 158, 11],
-  [176, 141, 87],
+  [245, 158, 11],
 ];
 
 export const CanvasRevealEffect = ({
@@ -296,7 +296,7 @@ const Shader: React.FC<ShaderProps> = ({ source, uniforms, maxFps = 60 }) => {
 const AnimatedNavLink = ({ href, children }: { href: string; children: React.ReactNode }) => (
   <Link href={href} className="group relative block overflow-hidden h-5 text-xs tracking-[0.14em] uppercase">
     <div className="flex flex-col transition-transform duration-300 ease-out group-hover:-translate-y-1/2">
-      <span className="h-5 flex items-center text-[#b79a6f]">{children}</span>
+      <span className="h-5 flex items-center text-[#F59E0B]">{children}</span>
       <span className="h-5 flex items-center text-[#F59E0B]">{children}</span>
     </div>
   </Link>
@@ -338,7 +338,7 @@ function RavenAuthNav({ mode }: { mode: "login" | "signup" }) {
       <Link
         href={swapHref}
         className="relative z-10 block text-center px-4 py-2 sm:px-3 text-xs sm:text-sm font-semibold text-black
-                   bg-gradient-to-br from-[#F59E0B] to-[#b08d57] rounded-full transition-all duration-200 w-full sm:w-auto"
+                   bg-gradient-to-br from-[#F59E0B] to-[#F59E0B] rounded-full transition-all duration-200 w-full sm:w-auto"
       >
         {swapLabel}
       </Link>
@@ -369,7 +369,7 @@ function RavenAuthNav({ mode }: { mode: "login" | "signup" }) {
         <div className="hidden sm:flex items-center gap-3">{swapButton}</div>
 
         <button
-          className="sm:hidden flex items-center justify-center w-8 h-8 text-[#b08d57] focus:outline-none"
+          className="sm:hidden flex items-center justify-center w-8 h-8 text-[#F59E0B] focus:outline-none"
           onClick={() => setIsOpen(!isOpen)}
           aria-label={isOpen ? "Close menu" : "Open menu"}
         >
@@ -390,7 +390,7 @@ function RavenAuthNav({ mode }: { mode: "login" | "signup" }) {
       >
         <nav className="flex flex-col items-center space-y-4 text-base w-full">
           {navLinksData.map((link) => (
-            <Link key={link.href} href={link.href} className="text-[#b79a6f] hover:text-[#F59E0B] transition-colors w-full text-center">
+            <Link key={link.href} href={link.href} className="text-[#F59E0B] hover:text-[#F59E0B] transition-colors w-full text-center">
               {link.label}
             </Link>
           ))}
@@ -717,7 +717,7 @@ export const SignInPage = ({ className, mode = "login" }: SignInPageProps) => {
                       className="py-10"
                     >
                       <div
-                        className="mx-auto w-16 h-16 rounded-full bg-gradient-to-br from-[#F59E0B] to-[#b08d57] flex items-center justify-center"
+                        className="mx-auto w-16 h-16 rounded-full bg-gradient-to-br from-[#F59E0B] to-[#F59E0B] flex items-center justify-center"
                         style={{ boxShadow: "0 0 40px rgba(245,158,11,0.45)" }}
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-black" viewBox="0 0 20 20" fill="currentColor">

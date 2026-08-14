@@ -68,7 +68,7 @@ export default function LoginForm() {
             onChange={(e) => setPassword(e.target.value)}
             style={inputStyle}
           />
-          <Link href="/forgot-password" style={{ color: "#b08d57", fontSize: 13, fontWeight: 600, alignSelf: "flex-end", marginTop: -4 }}>
+          <Link href="/forgot-password" style={{ color: "#F59E0B", fontSize: 13, fontWeight: 600, alignSelf: "flex-end", marginTop: -4 }}>
             Forgot your password?
           </Link>
           {error && <p style={{ color: "#f87171", fontSize: 13 }}>{error}</p>}
@@ -79,7 +79,7 @@ export default function LoginForm() {
 
         <p style={{ color: "#7a7d84", fontSize: 14, textAlign: "center", marginTop: 24 }}>
           New to Raven?{" "}
-          <Link href="/signup" style={{ color: "#b08d57", fontWeight: 600 }}>
+          <Link href="/signup" style={{ color: "#F59E0B", fontWeight: 600 }}>
             Create an account
           </Link>
         </p>
