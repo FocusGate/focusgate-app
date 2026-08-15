@@ -60,7 +60,7 @@ export default function Navbar() {
               target="_blank"
               rel="noopener noreferrer"
               className="fg-navlink"
-              style={{ display: "flex", alignItems: "center", gap: 6, color: "#F59E0B", fontSize: 12, fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", textDecoration: "none" }}
+              style={{ display: "flex", alignItems: "center", gap: 6, color: "#b79a6f", fontSize: 12, fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", textDecoration: "none" }}
             >
               🧩 Extension
             </a>
@@ -74,8 +74,8 @@ export default function Navbar() {
 
           <button className="fg-hamburger" aria-label="Menu" onClick={() => setMenuOpen(true)}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <line x1="4" y1="8" x2="20" y2="8" stroke="#F59E0B" strokeWidth="1.8" strokeLinecap="round" />
-              <line x1="4" y1="14" x2="20" y2="14" stroke="#F59E0B" strokeWidth="1.8" strokeLinecap="round" />
+              <line x1="4" y1="8" x2="20" y2="8" stroke="#b08d57" strokeWidth="1.8" strokeLinecap="round" />
+              <line x1="4" y1="14" x2="20" y2="14" stroke="#b08d57" strokeWidth="1.8" strokeLinecap="round" />
             </svg>
           </button>
         </div>
@@ -88,8 +88,8 @@ export default function Navbar() {
           style={{ position: "absolute", top: 22, right: 24, background: "transparent", border: "none", cursor: "pointer" }}
         >
           <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
-            <line x1="6" y1="6" x2="18" y2="18" stroke="#F59E0B" strokeWidth="1.8" strokeLinecap="round" />
-            <line x1="18" y1="6" x2="6" y2="18" stroke="#F59E0B" strokeWidth="1.8" strokeLinecap="round" />
+            <line x1="6" y1="6" x2="18" y2="18" stroke="#b08d57" strokeWidth="1.8" strokeLinecap="round" />
+            <line x1="18" y1="6" x2="6" y2="18" stroke="#b08d57" strokeWidth="1.8" strokeLinecap="round" />
           </svg>
         </button>
         {["features", "feathers", "pricing"].map((id) => (
@@ -130,7 +130,7 @@ function NavLink({ href, children }: { href: string; children: React.ReactNode }
       whileHover="hover"
       style={{
         position: "relative",
-        color: "#F59E0B",
+        color: "#b79a6f",
         fontSize: 12,
         fontWeight: 600,
         letterSpacing: "0.14em",
@@ -147,7 +147,7 @@ function NavLink({ href, children }: { href: string; children: React.ReactNode }
           right: 0,
           bottom: -4,
           height: 1,
-          background: "#F59E0B",
+          background: "#b08d57",
           transformOrigin: "left center",
         }}
       />

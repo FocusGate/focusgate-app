@@ -2,7 +2,7 @@
 
 :root {
   --fg-bg: #060606;
-  --fg-gold: #F59E0B;
+  --fg-gold: #b08d57;
   --fg-gold-bright: #F59E0B;
   /* the "Apple spring" ease — matches the GSAP `EASE` in lib/gsap.ts */
   --fg-ease: cubic-bezier(0.16, 1, 0.3, 1);
@@ -55,10 +55,10 @@ a:hover { color: #fff; }
 
 .fg-reveal { opacity: 0; transform: translateY(16px); }
 
-.fg-live-pill { animation: fg-hover-up 3s ease-in-out infinite; border: 1px solid rgba(245, 158, 11,0.5); box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: border-color 0.3s var(--fg-ease), box-shadow 0.3s var(--fg-ease); }
+.fg-live-pill { animation: fg-hover-up 3s ease-in-out infinite; border: 1px solid rgba(176,141,87,0.5); box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: border-color 0.3s var(--fg-ease), box-shadow 0.3s var(--fg-ease); }
 
 .fg-presence-dot { animation: fg-pulse 1.6s ease-in-out infinite; box-shadow: 0 0 6px rgba(34,197,94,0.8); }
-.fg-live-pill:hover { border-color: #FBBF24; box-shadow: 0 12px 40px rgba(245, 158, 11,0.4), 0 0 24px rgba(245, 158, 11,0.35); }
+.fg-live-pill:hover { border-color: #e0c48f; box-shadow: 0 12px 40px rgba(176,141,87,0.4), 0 0 24px rgba(176,141,87,0.35); }
 
 .fg-timer-card { transition: transform 0.4s var(--fg-ease), border-color 0.4s var(--fg-ease), box-shadow 0.4s var(--fg-ease); }
 .fg-timer-card:hover { transform: translateY(-4px); border-color: rgba(255,255,255,0.34) !important; box-shadow: 0 55px 95px rgba(0,0,0,0.7), 0 0 90px rgba(255,255,255,0.13) !important; }
@@ -75,8 +75,8 @@ a:hover { color: #fff; }
 .fg-float-nav { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 1180px; z-index: 200; border-radius: 999px; background: transparent; border: 1px solid transparent; box-shadow: none; transition: background 0.3s var(--fg-ease), border-color 0.3s var(--fg-ease), box-shadow 0.3s var(--fg-ease), backdrop-filter 0.3s var(--fg-ease); }
 .fg-float-nav.scrolled { background: rgba(10,10,10,0.8); border-color: #1E293B; box-shadow: 0 12px 40px rgba(0,0,0,0.45); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
 
-.fg-cta-nav { background: #F59E0B; color: #fff; padding: 10px 20px; border-radius: 999px; font-size: 13px; font-weight: 700; text-decoration: none; box-shadow: 0 0 20px rgba(245, 158, 11,0.4); transition: box-shadow 0.3s var(--fg-ease), transform 0.3s var(--fg-ease); }
-.fg-cta-nav:hover { box-shadow: 0 0 34px rgba(245, 158, 11,0.75); transform: translateY(-1px); color: #fff; }
+.fg-cta-nav { background: #b08d57; color: #fff; padding: 10px 20px; border-radius: 999px; font-size: 13px; font-weight: 700; text-decoration: none; box-shadow: 0 0 20px rgba(176,141,87,0.4); transition: box-shadow 0.3s var(--fg-ease), transform 0.3s var(--fg-ease); }
+.fg-cta-nav:hover { box-shadow: 0 0 34px rgba(176,141,87,0.75); transform: translateY(-1px); color: #fff; }
 
 .fg-hamburger { display: none; background: transparent; border: none; cursor: pointer; padding: 6px; align-items: center; justify-content: center; }
 /* 1024px, not the more typical 760px "mobile" cutoff: the desktop nav's 4 links + logo +
@@ -95,7 +95,7 @@ a:hover { color: #fff; }
   .fg-mobile-menu .fg-cta-nav { display: inline-block; }
 }
 
-.fg-navlink:hover { color: #FBBF24 !important; }
+.fg-navlink:hover { color: #d8bd8f !important; }
 
 .fg-badge { transition: transform 0.3s var(--fg-ease), box-shadow 0.3s var(--fg-ease); }
 .fg-badge:hover { transform: translateY(-8px) scale(1.1); z-index: 3; }
@@ -199,7 +199,7 @@ a:hover { color: #fff; }
 .fg-mobile-menu { position: fixed; inset: 0; z-index: 300; background: rgba(6,6,6,0.98); backdrop-filter: blur(10px); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 32px; opacity: 0; pointer-events: none; transition: opacity 0.3s var(--fg-ease); }
 .fg-mobile-menu.fg-open { opacity: 1; pointer-events: auto; }
 .fg-mobile-menu a { font-size: 22px; font-weight: 600; color: #d8d8dc; letter-spacing: 0.02em; }
-.fg-mobile-menu a:hover { color: #F59E0B; }
+.fg-mobile-menu a:hover { color: #b08d57; }
 
 /* ---------- gold custom cursor ---------- */
 .fg-cursor { position: fixed; top: 0; left: 0; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%; background: #F59E0B; box-shadow: 0 0 12px rgba(245,158,11,0.8); pointer-events: none; z-index: 9999; mix-blend-mode: normal; will-change: transform; }

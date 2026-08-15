@@ -6,13 +6,13 @@ import { Monitor, Smartphone } from "lucide-react";
 import { RevealGroup, RevealItem } from "@/components/motion/Reveal";
 import { joinRoadmapWaitlist, type RoadmapPlatform } from "@/lib/supabase";
 
-// #F59E0B is Raven's signature brand gold — the same color as the wordmark in the
+// #b08d57 is Raven's signature brand gold — the same color as the wordmark in the
 // Navbar, the Pricing "BEST DEAL" card, and the BetaBanner headline — used here for the
 // ribbons/badges/form so this section still reads as "ours," just quieter than the
 // vibrant "available now" feel of Pricing right above it. #F59E0B is a separate, brighter
 // accent used elsewhere in the app (Problem.tsx's eyebrow, The Gates, FlipClock).
-const MUTED_GOLD = "#F59E0B";
-const MUTED_GOLD_RGB = "245, 158, 11"; // same color as MUTED_GOLD, decomposed for rgba() alpha blends below
+const MUTED_GOLD = "#b08d57";
+const MUTED_GOLD_RGB = "176, 141, 87"; // same color as MUTED_GOLD, decomposed for rgba() alpha blends below
 const BRIGHT_GOLD = "#F59E0B";
 
 type RoadmapCardData = {

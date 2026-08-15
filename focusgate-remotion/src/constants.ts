@@ -11,7 +11,7 @@ export const COLORS = {
   blackDeep: "#060606", // landing page's darkest sections use this, one step below black
   gold: "#F59E0B",
   goldLight: "#FBBF24", // top of the gold gradient buttons/glows use throughout the app
-  goldMuted: "#F59E0B", // the wordmark/secondary-gold color used site-wide
+  goldMuted: "#b08d57", // the wordmark/secondary-gold color used site-wide
   amber: "#F97316", // the timer bar's mid-urgency stop (Scene 4) — brief's third palette color
   white: "#FFFFFF",
   grey: "#9a9da4", // secondary/body text grey used throughout the app

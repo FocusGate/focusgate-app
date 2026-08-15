@@ -1,15 +1,15 @@
 /* styles.css — shared theme for popup.html and blocked.html.
    Colors match the Raven web app's brand: near-black background, muted gray text,
-   and #F59E0B "brand gold" for accents. */
+   and #b08d57 "brand gold" for accents. */
 
 :root {
   --fg-bg: #08080a;
   --fg-surface: #121216;
-  --fg-border: rgba(245, 158, 11, 0.15);
+  --fg-border: rgba(176, 141, 87, 0.15);
   --fg-text: #ffffff;
   --fg-muted: #8a8a93;
-  --fg-gold: #F59E0B;
-  --fg-gold-bright: #FBBF24;
+  --fg-gold: #b08d57;
+  --fg-gold-bright: #d4af7a;
   --fg-red: #f87171;
   --fg-green: #4ade80;
   /* The Lounge — warm, dim-lit break palette, deliberately not gold/black. Same four
@@ -156,8 +156,8 @@ textarea:focus {
 
 .popup__badge--active {
   color: var(--fg-gold-bright);
-  background: rgba(245, 158, 11, 0.12);
-  border-color: rgba(245, 158, 11, 0.4);
+  background: rgba(176, 141, 87, 0.12);
+  border-color: rgba(176, 141, 87, 0.4);
 }
 
 .popup__badge--break {
@@ -183,7 +183,7 @@ textarea:focus {
   padding: 15px 0;
   font-size: 14px;
   text-align: center;
-  box-shadow: 0 4px 24px rgba(245, 158, 11, 0.3);
+  box-shadow: 0 4px 24px rgba(176, 141, 87, 0.3);
 }
 
 .popup__status {
@@ -223,7 +223,7 @@ textarea:focus {
 
 .popup__clock--active {
   color: var(--fg-gold-bright);
-  text-shadow: 0 0 30px rgba(245, 158, 11, 0.35);
+  text-shadow: 0 0 30px rgba(176, 141, 87, 0.35);
 }
 
 .popup__clock--green {
@@ -232,8 +232,8 @@ textarea:focus {
 }
 
 .popup__status--gold {
-  border-color: rgba(245, 158, 11, 0.4);
-  box-shadow: 0 0 24px rgba(245, 158, 11, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  border-color: rgba(176, 141, 87, 0.4);
+  box-shadow: 0 0 24px rgba(176, 141, 87, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.03);
 }
 
 .popup__status--green {
@@ -406,14 +406,14 @@ textarea:focus {
 }
 
 .popup__action-btn--break {
-  background: rgba(245, 158, 11, 0.12);
+  background: rgba(176, 141, 87, 0.12);
   color: var(--fg-gold-bright);
-  border: 1px solid rgba(245, 158, 11, 0.35);
+  border: 1px solid rgba(176, 141, 87, 0.35);
 }
 
 .popup__action-btn--break:not(:disabled):hover {
-  background: rgba(245, 158, 11, 0.18);
-  border-color: rgba(245, 158, 11, 0.55);
+  background: rgba(176, 141, 87, 0.18);
+  border-color: rgba(176, 141, 87, 0.55);
 }
 
 .popup__divider {
@@ -657,7 +657,7 @@ textarea:focus {
 .blocked__lock {
   font-size: 42px;
   margin-bottom: 20px;
-  filter: drop-shadow(0 0 24px rgba(245, 158, 11, 0.4));
+  filter: drop-shadow(0 0 24px rgba(176, 141, 87, 0.4));
   animation: fg-pulse 2.4s ease-in-out infinite;
 }
 
@@ -687,10 +687,10 @@ textarea:focus {
 .blocked__countdown {
   margin-top: 38px;
   padding: 22px 40px;
-  border: 1px solid rgba(245, 158, 11, 0.35);
+  border: 1px solid rgba(176, 141, 87, 0.35);
   border-radius: 18px;
-  background: linear-gradient(180deg, rgba(245, 158, 11, 0.08), rgba(245, 158, 11, 0.03));
-  box-shadow: 0 0 40px rgba(245, 158, 11, 0.1);
+  background: linear-gradient(180deg, rgba(176, 141, 87, 0.08), rgba(176, 141, 87, 0.03));
+  box-shadow: 0 0 40px rgba(176, 141, 87, 0.1);
 }
 
 .blocked__countdown-label {

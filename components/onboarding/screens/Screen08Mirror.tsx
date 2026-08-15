@@ -12,13 +12,13 @@ export default function Screen08Mirror({ hoursLost, onNext }: { hoursLost: strin
       <div
         style={{
           background: "#0A0A0A",
-          border: "1px solid rgba(245, 158, 11,0.4)",
+          border: "1px solid rgba(176,141,87,0.4)",
           borderRadius: 20,
           padding: "36px 24px",
           marginBottom: 28,
         }}
       >
-        <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 64, color: "#F59E0B", lineHeight: 1 }}>~{days} days</div>
+        <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 64, color: "#b08d57", lineHeight: 1 }}>~{days} days</div>
         <p style={{ color: "#9a9da4", fontSize: 15, marginTop: 12 }}>lost to distractions every year, at {hours} hours a day.</p>
       </div>
       <p style={{ color: "#7a7d84", fontSize: 14, marginBottom: 28 }}>That&apos;s almost {Math.round(days / 7)} weeks of your life — every single year.</p>

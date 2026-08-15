@@ -261,7 +261,7 @@ export default function DashboardPage() {
 
       <h1 style={{ fontSize: 28, fontWeight: 700 }}>{greeting(user.name)}</h1>
       <p style={{ color: "#9a9da4", marginTop: 6 }}>Ready to get locked in?</p>
-      {goalLine && <p style={{ color: "#F59E0B", fontSize: 13, fontWeight: 600, marginTop: 10 }}>{goalLine}</p>}
+      {goalLine && <p style={{ color: "#b08d57", fontSize: 13, fontWeight: 600, marginTop: 10 }}>{goalLine}</p>}
 
       <TrialStatusBanner betaMode={betaMode} entitlements={entitlements} />
 

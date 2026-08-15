@@ -370,7 +370,7 @@ async function tick() {
 function updateBadge(session) {
   const minutes = Math.ceil(getDisplayRemainingMs(session) / 60_000);
   chrome.action.setBadgeText({ text: String(minutes) });
-  chrome.action.setBadgeBackgroundColor({ color: "#F59E0B" });
+  chrome.action.setBadgeBackgroundColor({ color: "#b08d57" });
 }
 
 /** Green badge while a break is running, showing minutes left of the pause. */

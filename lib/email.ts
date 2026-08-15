@@ -30,7 +30,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 // (new domain, new SPF/DKIM/DMARC records, re-verification in Resend) once that's ready.
 const FROM = "Raven <support@focusgate.site>";
 
-const GOLD = "#F59E0B";
+const GOLD = "#b08d57";
 const GOLD_BRIGHT = "#F59E0B";
 const INK = "#141413";
 const MUTED = "#6b6b6b";

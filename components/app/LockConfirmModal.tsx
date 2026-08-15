@@ -44,7 +44,7 @@ export default function LockConfirmModal({
           background: "rgba(10,10,10,0.85)",
           backdropFilter: "blur(20px)",
           WebkitBackdropFilter: "blur(20px)",
-          border: "1px solid rgba(245, 158, 11,0.3)",
+          border: "1px solid rgba(176,141,87,0.3)",
           borderRadius: 24,
           padding: 36,
           maxWidth: 440,
@@ -60,7 +60,7 @@ export default function LockConfirmModal({
           Not by closing your laptop. Not by restarting. Not by anything until the {minutes}-minute timer ends.
         </p>
         <p style={{ color: "#7a7d84", fontSize: 12, marginTop: 18 }}>
-          Type <span style={{ color: "#F59E0B", fontWeight: 700 }}>{CONFIRM_PHRASE}</span> to confirm.
+          Type <span style={{ color: "#b08d57", fontWeight: 700 }}>{CONFIRM_PHRASE}</span> to confirm.
         </p>
         <input
           autoFocus
@@ -74,7 +74,7 @@ export default function LockConfirmModal({
             width: "100%",
             marginTop: 12,
             background: "#0A0A0A",
-            border: `1px solid ${ready ? "#F59E0B" : "rgba(255,255,255,0.12)"}`,
+            border: `1px solid ${ready ? "#b08d57" : "rgba(255,255,255,0.12)"}`,
             color: "#fff",
             padding: "14px 16px",
             borderRadius: 12,
@@ -106,7 +106,7 @@ export default function LockConfirmModal({
             disabled={!ready}
             style={{
               flex: 1,
-              background: ready ? "linear-gradient(180deg, #FBBF24, #F59E0B)" : "#26262b",
+              background: ready ? "linear-gradient(180deg, #d4af7a, #b08d57)" : "#26262b",
               color: ready ? "#0a0a0a" : "#5b5e66",
               border: "none",
               padding: "13px 0",

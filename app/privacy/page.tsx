@@ -12,7 +12,7 @@ const h2Style: React.CSSProperties = { color: "#fff", fontSize: 21, fontWeight: 
 const h3Style: React.CSSProperties = { color: "#e8e8ea", fontSize: 15, fontWeight: 700, marginTop: 20, marginBottom: 6 };
 const pStyle: React.CSSProperties = { color: "#9a9da4", fontSize: 15, lineHeight: 1.75 };
 const ulStyle: React.CSSProperties = { color: "#9a9da4", fontSize: 15, lineHeight: 1.75, paddingLeft: 20, margin: "8px 0" };
-const codeStyle: React.CSSProperties = { color: "#F59E0B", background: "rgba(245, 158, 11,0.1)", padding: "1px 6px", borderRadius: 4, fontSize: 13.5 };
+const codeStyle: React.CSSProperties = { color: "#b08d57", background: "rgba(176,141,87,0.1)", padding: "1px 6px", borderRadius: 4, fontSize: 13.5 };
 
 export default function PrivacyPolicyPage() {
   return (
@@ -71,7 +71,7 @@ export default function PrivacyPolicyPage() {
             contractually/technically restricted to that purpose — we do not sell data to them or anyone else.
           </p>
           <ul style={ulStyle}>
-            <li><strong style={{ color: "#d8d8dc" }}>Supabase</strong> — hosts our database and handles authentication. See <a href="https://supabase.com/privacy" target="_blank" rel="noopener noreferrer" style={{ color: "#F59E0B" }}>Supabase&apos;s privacy policy</a>.</li>
+            <li><strong style={{ color: "#d8d8dc" }}>Supabase</strong> — hosts our database and handles authentication. See <a href="https://supabase.com/privacy" target="_blank" rel="noopener noreferrer" style={{ color: "#b08d57" }}>Supabase&apos;s privacy policy</a>.</li>
             <li><strong style={{ color: "#d8d8dc" }}>WorldTimeAPI</strong> — the Chrome extension periodically checks the current UTC time from this public API to stop a session timer from being shortened by changing your computer&apos;s clock. No account or personal information is sent with this request.</li>
           </ul>
         </section>
@@ -109,7 +109,7 @@ export default function PrivacyPolicyPage() {
           <h2 style={h2Style}>8. Contact us</h2>
           <p style={pStyle}>
             Questions about this policy or your data? Email{" "}
-            <a href="mailto:support@focusgate.site" style={{ color: "#F59E0B" }}>support@focusgate.site</a>.
+            <a href="mailto:support@focusgate.site" style={{ color: "#b08d57" }}>support@focusgate.site</a>.
           </p>
         </section>
       </main>
