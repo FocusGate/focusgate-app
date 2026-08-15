@@ -2,7 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 import { animate, motion, useAnimation } from "framer-motion";
-import { spawnParticles, spawnConfetti } from "@/lib/particles";
+import { spawnParticles } from "@/lib/particles";
+import { TalonLockIcon } from "@/components/icons/TalonLockIcon";
+import { FeatherFall } from "@/components/celebrations/FeatherFall";
 import FlipUnit from "./FlipUnit";
 
 export type FlipClockProps = {
@@ -41,6 +43,7 @@ export default function FlipClock({
 
   const [shaking, setShaking] = useState(false);
   const shakeControls = useAnimation();
+  const [celebrating, setCelebrating] = useState(false);
 
   const CIRC = 2 * Math.PI * 92;
 
@@ -76,7 +79,7 @@ export default function FlipClock({
     }
 
     if (clamped === 0 && prev > 0) {
-      if (cardRef.current) spawnConfetti(cardRef.current);
+      setCelebrating(true);
       onComplete?.();
     }
 
@@ -186,7 +189,8 @@ export default function FlipClock({
               cursor: "not-allowed",
             }}
           >
-            🔒 Cannot end session early
+            <TalonLockIcon size={14} color="#8a8570" />
+            Cannot end session early
             {shaking && (
               <span
                 style={{
@@ -261,6 +265,7 @@ export default function FlipClock({
           )}
         </div>
       </div>
+      <FeatherFall active={celebrating} count={25} onDone={() => setCelebrating(false)} />
     </div>
   );
 }

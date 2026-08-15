@@ -656,6 +656,7 @@ textarea:focus {
 
 .blocked__lock {
   font-size: 42px;
+  color: var(--fg-gold-bright);
   margin-bottom: 20px;
   filter: drop-shadow(0 0 24px rgba(176, 141, 87, 0.4));
   animation: fg-pulse 2.4s ease-in-out infinite;
@@ -839,6 +840,7 @@ textarea:focus {
 
 .challenge__icon {
   font-size: 34px;
+  color: var(--fg-gold-bright);
   margin-bottom: 14px;
 }
 

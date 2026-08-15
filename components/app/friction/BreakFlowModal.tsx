@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { X } from "lucide-react";
+import { TalonLockIcon } from "@/components/icons/TalonLockIcon";
 import MathSprintGate from "./gates/MathSprintGate";
 import MemoryMatchGate from "./gates/MemoryMatchGate";
 import GeographyQuizGate from "./gates/GeographyQuizGate";
@@ -306,7 +307,9 @@ export default function BreakFlowModal({
 
         {step === "failed" && (
           <div className="fg-shake-standalone" style={{ textAlign: "center", padding: "20px 0" }}>
-            <div style={{ fontSize: 32 }}>🔒</div>
+            <div style={{ display: "flex", justifyContent: "center" }}>
+              <TalonLockIcon size={32} />
+            </div>
             <h3 style={{ color: "#fff", fontSize: 18, fontWeight: 800, marginTop: 12 }}>Session continues.</h3>
             <p style={{ color: "#f87171", fontSize: 14, marginTop: 6 }}>Try again next time.</p>
           </div>

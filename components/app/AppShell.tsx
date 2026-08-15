@@ -7,6 +7,7 @@ import { Home, Trophy, BarChart3, Users, Settings, LogOut, ShieldAlert } from "l
 import { signOut } from "@/lib/supabase";
 import { saveKnownEmail } from "@/lib/returningUser";
 import { RavenMark } from "@/components/landing/Navbar";
+import { TalonLockIcon } from "@/components/icons/TalonLockIcon";
 import Avatar from "@/components/app/Avatar";
 import MobileNav from "@/components/app/MobileNav";
 import SignOutConfirmDialog from "@/components/app/SignOutConfirmDialog";
@@ -98,8 +99,9 @@ export default function AppShell({
         )}
 
         {hasActiveSession ? (
-          <div style={{ fontSize: 12, color: "#5b5e66", padding: "0 14px", lineHeight: 1.5 }}>
-            🔒 Locked in — navigation is disabled until your session ends.
+          <div style={{ fontSize: 12, color: "#5b5e66", padding: "0 14px", lineHeight: 1.5, display: "flex", gap: 7 }}>
+            <TalonLockIcon size={13} color="#5b5e66" />
+            <span>Locked in — navigation is disabled until your session ends.</span>
           </div>
         ) : (
           <nav style={{ display: "flex", flexDirection: "column", gap: 4 }}>

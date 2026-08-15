@@ -3,19 +3,13 @@
 import { useLayoutEffect, useRef } from "react";
 import { gsap, ScrollTrigger, ensureGsapPlugins } from "@/lib/gsap";
 import TiltCard from "@/components/TiltCard";
+import { TalonLockIcon } from "@/components/icons/TalonLockIcon";
 
 const CARDS = [
   {
     title: "RavenLock",
     desc: "Once you start a session, there's no exit button. No pausing, no early quitting — just the timer and the work.",
-    icon: (
-      <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
-        <path d="M5 21V11a7 7 0 0 1 14 0v10" stroke="#F59E0B" strokeWidth="1.7" fill="none" strokeLinecap="round" />
-        <line x1="3.6" y1="21" x2="20.4" y2="21" stroke="#F59E0B" strokeWidth="1.7" strokeLinecap="round" />
-        <circle cx="12" cy="12.4" r="1.5" fill="#F59E0B" />
-        <path d="M12 13.6V16.6" stroke="#F59E0B" strokeWidth="1.7" strokeLinecap="round" />
-      </svg>
-    ),
+    icon: <TalonLockIcon size={40} />,
   },
   {
     title: "Friend Notifications",

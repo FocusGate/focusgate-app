@@ -7,6 +7,7 @@ import { checkAndUnlockFeathers, getFeatherProgress, getUserFeathers, type Feath
 import { createClient } from "@/lib/supabase/client";
 import { getFeatherIcon, TIER_META, TIER_ORDER, isValidTier, type BadgeTier } from "@/components/app/featherIcons";
 import { spawnConfetti } from "@/lib/particles";
+import { FeatherFall } from "@/components/celebrations/FeatherFall";
 import FeatherModal, { type FeatherModalData } from "@/components/app/feathers/FeatherModal";
 import type { FeatherCardData } from "@/components/app/feathers/FeatherCard";
 import GoldenQuillCard from "@/components/app/feathers/GoldenQuillCard";
@@ -14,16 +15,18 @@ import TwoRowFeatherShowcase, { type ShowcaseFeather } from "@/components/feathe
 
 type UserFeather = { feather_id: string; unlocked_at: string; feathers: FeatherCardData };
 
-// Louder confetti the rarer the tier — "more dramatic unlock animations than Common and
-// Rare" is the actual ask; this is that, scaled off the same spawnConfetti() everything
-// else already uses rather than a bespoke effect per tier.
-const CELEBRATION_BURST: Record<BadgeTier, { count: number; distance: number }> = {
-  common: { count: 60, distance: 220 },
-  rare: { count: 75, distance: 250 },
-  epic: { count: 95, distance: 290 },
-  mythic: { count: 130, distance: 340 },
-  legendary: { count: 170, distance: 400 },
+// Louder the rarer the tier — "more dramatic unlock animations than Common and Rare" is the
+// actual ask. Every tier gets a FeatherFall; only Legendary (the Golden Quill) also keeps
+// the old gold-particle-glow burst layered on top, per an explicit "biggest celebration
+// moment in the app" ask — every other tier dropped the particle burst entirely.
+const FEATHER_FALL_COUNT: Record<BadgeTier, number> = {
+  common: 8,
+  rare: 10,
+  epic: 12,
+  mythic: 16,
+  legendary: 45,
 };
+const LEGENDARY_PARTICLE_BURST = { count: 170, distance: 400 };
 
 // How long the feather-drift-down beat plays before the particle burst fires — matches
 // the celebration overlay's own feather transition duration below.
@@ -36,6 +39,7 @@ export default function FeathersPage() {
   const [progressById, setProgressById] = useState<Map<string, FeatherProgress>>(new Map());
   const [celebrating, setCelebrating] = useState<FeatherCardData | null>(null);
   const [selectedFeather, setSelectedFeather] = useState<FeatherCardData | null>(null);
+  const [fallActive, setFallActive] = useState(false);
   const celebrateRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -70,18 +74,21 @@ export default function FeathersPage() {
   }, [user]);
 
   useEffect(() => {
-    if (!celebrating || !celebrateRef.current) return;
-    // The feather settles into place first, THEN the particle burst fires — a floating-
-    // down beat before the fireworks, not both at once.
+    if (!celebrating) return;
+    // The feather settles into place first, THEN FeatherFall fires — a floating-down beat
+    // before the fall, not both at once.
     const tier = isValidTier(celebrating.rarity) ? celebrating.rarity : "common";
-    const burst = CELEBRATION_BURST[tier];
     const timer = setTimeout(() => {
-      if (!celebrateRef.current) return;
-      spawnConfetti(celebrateRef.current, {
-        count: burst.count,
-        distance: burst.distance,
-        colors: tier === "mythic" || tier === "legendary" ? [TIER_META[tier].glow, "#ffffff", getFeatherIcon(tier).color] : undefined,
-      });
+      setFallActive(true);
+      // Golden Quill only: the old gold-particle glow burst, layered on top of FeatherFall
+      // rather than replaced by it, for the single biggest celebration moment in the app.
+      if (tier === "legendary" && celebrateRef.current) {
+        spawnConfetti(celebrateRef.current, {
+          count: LEGENDARY_PARTICLE_BURST.count,
+          distance: LEGENDARY_PARTICLE_BURST.distance,
+          colors: [TIER_META.legendary.glow, "#ffffff", getFeatherIcon("legendary").color],
+        });
+      }
     }, DRIFT_MS);
     return () => clearTimeout(timer);
   }, [celebrating]);
@@ -121,6 +128,14 @@ export default function FeathersPage() {
 
   return (
     <>
+      <FeatherFall
+        active={fallActive}
+        count={FEATHER_FALL_COUNT[celebratingTier]}
+        slow={celebratingTier === "legendary"}
+        includeQuills={celebratingTier === "legendary"}
+        onDone={() => setFallActive(false)}
+      />
+
       <AnimatePresence>
         {celebrating && (
           <motion.div

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { TalonLockIcon } from "@/components/icons/TalonLockIcon";
 
 const CONFIRM_PHRASE = "I AM IN RAVENLOCK";
 
@@ -52,7 +53,9 @@ export default function LockConfirmModal({
           textAlign: "center",
         }}
       >
-        <div style={{ fontSize: 34, marginBottom: 16 }}>🔒</div>
+        <div style={{ marginBottom: 16, display: "flex", justifyContent: "center" }}>
+          <TalonLockIcon size={34} />
+        </div>
         <h2 style={{ color: "#fff", fontSize: 21, fontWeight: 800, margin: 0, lineHeight: 1.3 }}>
           Once started, this cannot be undone.
         </h2>

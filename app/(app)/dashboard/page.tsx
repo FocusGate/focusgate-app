@@ -10,6 +10,7 @@ import TrialStatusBanner from "@/components/app/dashboard/TrialStatusBanner";
 import { useCurrentUserContext, type CurrentUser } from "@/contexts/CurrentUserContext";
 import { sendFeatherUnlockEmail } from "@/lib/email";
 import { track } from "@/lib/posthog";
+import { FeatherFall } from "@/components/celebrations/FeatherFall";
 import {
   addBlockedSite,
   checkAndUnlockFeathers,
@@ -83,6 +84,11 @@ export default function DashboardPage() {
   const checkedForActiveSessionRef = useRef(false);
   const lastConfigRef = useRef<StartConfig | null>(null);
   const [prefs, setPrefs] = useState<UserPreferences | null>(null);
+  // Set the instant a session-complete refresh shows the streak crossing 7/30/90/365 —
+  // FeatherFall is a fixed full-viewport overlay, so rendering it here (rather than inside
+  // LockedInOverlay's own tree) still covers the whole screen regardless of what else is
+  // showing underneath (the Session Complete screen, the dashboard itself, etc.).
+  const [streakFallActive, setStreakFallActive] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -209,8 +215,17 @@ export default function DashboardPage() {
     const durationMinutes = completed.duration_minutes ?? 0;
     track("session_completed", { duration_minutes: durationMinutes });
     const unlocked = await checkAndUnlockFeathers(user.id, entitlements.maxFeatherRarity);
+    const streakBefore = user.streak;
     const refreshed = await getUser();
     if (refreshed) setUser(refreshed as CurrentUser);
+    // Streak milestone FeatherFall — fires once, exactly on the session-complete refresh
+    // where the streak actually crosses one of these thresholds (streak only ever
+    // increments by 1/day, so this comparison alone is enough of a dedup guard; no
+    // localStorage bookkeeping needed the way the Feathers page's "already seen" check is).
+    const streakAfter = refreshed?.streak ?? streakBefore;
+    if ([7, 30, 90, 365].some((m) => streakBefore < m && streakAfter >= m)) {
+      setStreakFallActive(true);
+    }
     setSessions((prev) => [{ id: sessionId, start_time: new Date().toISOString(), duration_minutes: durationMinutes, completed: true }, ...prev]);
     // Fire-and-forget, one per feather — the Session Complete screen already animates these
     // in from `unlocked` itself, so the email is a second channel, not the primary signal.
@@ -227,6 +242,8 @@ export default function DashboardPage() {
 
   return (
     <>
+      <FeatherFall active={streakFallActive} count={24} onDone={() => setStreakFallActive(false)} />
+
       {entering && <LockInEntryAnimation onDone={() => setEntering(false)} />}
 
       {sessionId && (

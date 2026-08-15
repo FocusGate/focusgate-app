@@ -15,6 +15,18 @@
 
 const root = document.getElementById("challenge-root");
 
+// The Talon-Lock icon (components/icons/TalonLockIcon.tsx, ported by hand — this extension
+// has no build step to import a React component from) — replaces the old 🔒 emoji anywhere
+// it stood in for "this is locked," matching .challenge__icon's own color via currentColor.
+const TALON_LOCK_SVG = `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" style="vertical-align: -0.15em;">
+  <rect x="11" y="3" width="2" height="12" rx="0.5" fill="currentColor" />
+  <g transform="translate(12 12)">
+    <path transform="rotate(-110)" d="M-1 0L1 0L2.5 5L0.5 8L-2 6L-1.5 3Z" fill="currentColor" />
+    <path transform="rotate(10)" d="M-1 0L1 0L2.5 5L0.5 8L-2 6L-1.5 3Z" fill="currentColor" />
+    <path transform="rotate(130)" d="M-1 0L1 0L2.5 5L0.5 8L-2 6L-1.5 3Z" fill="currentColor" />
+  </g>
+</svg>`;
+
 const ACCENTS = { "math-sprint": "#F59E0B", "memory-match": "#A78BFA", "geography-quiz": "#FB923C" };
 const LABELS = { "math-sprint": "Math Sprint", "memory-match": "Memory Match", "geography-quiz": "Geography Quiz" };
 
@@ -103,7 +115,7 @@ function randomInt(min, max) {
 function renderNothingToDo() {
   root.innerHTML = `
     <div class="challenge__card challenge__card--center">
-      <div class="challenge__icon">🔒</div>
+      <div class="challenge__icon">${TALON_LOCK_SVG}</div>
       <h1 class="challenge__title">Nothing to do here</h1>
       <p class="challenge__subtitle">Open this from the "Request a Break" button in the Raven popup.</p>
       <button class="challenge__btn challenge__btn--ghost" id="close-btn">Close this tab</button>
@@ -160,7 +172,7 @@ function finish(passed, slug) {
     chrome.runtime.sendMessage({ type: "BREAK_CHALLENGE_RESULT", passed: false, game: slug }).catch(() => {});
     root.innerHTML = `
       <div class="challenge__card challenge__card--center fg-shake">
-        <div class="challenge__icon">🔒</div>
+        <div class="challenge__icon">${TALON_LOCK_SVG}</div>
         <h1 class="challenge__title">Session continues.</h1>
         <p class="challenge__subtitle challenge__subtitle--danger">Try again next time.</p>
       </div>

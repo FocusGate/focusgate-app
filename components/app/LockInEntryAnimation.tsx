@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { TalonLockIcon } from "@/components/icons/TalonLockIcon";
 
 /** Brief full-screen moment right as a session begins — black background, gold glow
  *  radiating from center, dramatic type. Purely ceremonial (the session is already
@@ -50,7 +51,9 @@ export default function LockInEntryAnimation({ onDone }: { onDone: () => void })
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           style={{ position: "relative", textAlign: "center" }}
         >
-          <div style={{ fontSize: 40, marginBottom: 18 }}>🔒</div>
+          <div style={{ marginBottom: 18, display: "flex", justifyContent: "center" }}>
+            <TalonLockIcon size={40} />
+          </div>
           <motion.h1
             initial={{ opacity: 0, y: 14, letterSpacing: "0.35em" }}
             animate={{ opacity: 1, y: 0, letterSpacing: "0.02em" }}
