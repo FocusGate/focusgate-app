@@ -20,7 +20,7 @@ export default function PrivacyPolicyPage() {
       <header style={{ padding: "22px 24px", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
         <Link href="/" style={{ display: "inline-flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
           <RavenMark size={22} />
-          <span style={{ fontFamily: "'Geist', sans-serif", fontSize: 18, fontWeight: 800, letterSpacing: "0.08em", color: "#F59E0B" }}>RAVEN</span>
+          <span style={{ fontFamily: "'Geist', sans-serif", fontSize: 18, fontWeight: 800, letterSpacing: "0.08em", color: "#b08d57" }}>RAVEN</span>
         </Link>
       </header>
 

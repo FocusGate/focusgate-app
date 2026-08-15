@@ -46,7 +46,7 @@ export default function Comparison() {
         >
           <div style={{ display: "inline-flex", alignItems: "center", gap: 8, marginBottom: 34 }}>
             <RavenMark size={22} />
-            <span style={{ fontSize: 26, fontWeight: 800, color: "#F59E0B", letterSpacing: "0.02em" }}>RAVEN</span>
+            <span style={{ fontSize: 26, fontWeight: 800, color: "#b08d57", letterSpacing: "0.02em" }}>RAVEN</span>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
             {FG_ITEMS.map((t) => (

@@ -16,7 +16,7 @@ export function Logo({ size = 120, glow = 0 }: { size?: number; glow?: number })
       }}
     >
       <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-        <path d="M2 12L6 8L14 5L22 9L13 11L20 18L12 14L7 15Z" fill="#F59E0B" />
+        <path d="M2 12L6 8L14 5L22 9L13 11L20 18L12 14L7 15Z" fill="#b08d57" />
       </svg>
     </div>
   );

@@ -42,7 +42,7 @@ export default function Navbar() {
                 fontSize: 21,
                 fontWeight: 800,
                 letterSpacing: "0.08em",
-                color: "#F59E0B",
+                color: "#b08d57",
               }}
             >
               RAVEN
@@ -162,7 +162,7 @@ function NavLink({ href, children }: { href: string; children: React.ReactNode }
 export function RavenMark({ size = 26 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <path d="M2 12L6 8L14 5L22 9L13 11L20 18L12 14L7 15Z" fill="#F59E0B" />
+      <path d="M2 12L6 8L14 5L22 9L13 11L20 18L12 14L7 15Z" fill="#b08d57" />
     </svg>
   );
 }

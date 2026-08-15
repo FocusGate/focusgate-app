@@ -53,7 +53,7 @@ export default function ResetPasswordForm() {
       <div style={{ width: "100%", maxWidth: 380 }}>
         <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, justifyContent: "center", marginBottom: 40 }}>
           <RavenMark />
-          <span style={{ fontFamily: "'Geist', sans-serif", fontSize: 21, fontWeight: 800, letterSpacing: "0.08em", color: "#F59E0B" }}>RAVEN</span>
+          <span style={{ fontFamily: "'Geist', sans-serif", fontSize: 21, fontWeight: 800, letterSpacing: "0.08em", color: "#b08d57" }}>RAVEN</span>
         </Link>
 
         <h1 style={{ color: "#fff", fontSize: 26, fontWeight: 700, textAlign: "center", marginBottom: 6 }}>Set a new password</h1>

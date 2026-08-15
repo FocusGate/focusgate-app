@@ -19,7 +19,7 @@ function drawCard(canvas: HTMLCanvasElement, { durationLabel, streak, focusScore
   ctx.strokeRect(12, 12, W - 24, H - 24);
 
   ctx.textAlign = "center";
-  ctx.fillStyle = "#F59E0B";
+  ctx.fillStyle = "#b08d57";
   ctx.font = "800 30px Arial, sans-serif";
   ctx.fillText("RAVEN", W / 2, 90);
 
