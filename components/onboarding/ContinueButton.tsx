@@ -21,7 +21,7 @@ export default function ContinueButton({
         onClick={onClick}
         disabled={disabled}
         style={{
-          background: disabled ? "#26262b" : "#b08d57",
+          background: disabled ? "#26262b" : "#C2660A",
           color: disabled ? "#5b5e66" : "#fff",
           border: "none",
           padding: "16px 36px",
@@ -29,7 +29,7 @@ export default function ContinueButton({
           fontSize: 16,
           fontWeight: 700,
           cursor: disabled ? "default" : "pointer",
-          boxShadow: disabled ? "none" : "0 0 30px rgba(176,141,87,0.35)",
+          boxShadow: disabled ? "none" : "0 0 30px rgba(194, 102, 10,0.35)",
         }}
       >
         {children}

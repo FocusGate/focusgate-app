@@ -8,9 +8,9 @@ function ChartTooltip({ active, payload }: TooltipContentProps) {
   const point = payload[0].payload as { date: string; minutes: number };
   const dateLabel = new Date(`${point.date}T00:00:00Z`).toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
   return (
-    <div style={{ background: "#101012", border: "1px solid rgba(245,158,11,0.3)", borderRadius: 10, padding: "8px 12px" }}>
+    <div style={{ background: "#101012", border: "1px solid rgba(255, 176, 32,0.3)", borderRadius: 10, padding: "8px 12px" }}>
       <div style={{ color: "#7a7d84", fontSize: 11, fontWeight: 600 }}>{dateLabel}</div>
-      <div style={{ color: "#F59E0B", fontSize: 14, fontWeight: 700 }}>{point.minutes} min</div>
+      <div style={{ color: "#FFB020", fontSize: 14, fontWeight: 700 }}>{point.minutes} min</div>
     </div>
   );
 }
@@ -23,8 +23,8 @@ export default function FocusTrendChart({ data }: { data: { date: string; minute
       <AreaChart data={data} margin={{ top: 8, right: 8, left: -20, bottom: 0 }}>
         <defs>
           <linearGradient id="fg-trend-fill" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#F59E0B" stopOpacity={0.35} />
-            <stop offset="100%" stopColor="#F59E0B" stopOpacity={0} />
+            <stop offset="0%" stopColor="#FFB020" stopOpacity={0.35} />
+            <stop offset="100%" stopColor="#FFB020" stopOpacity={0} />
           </linearGradient>
         </defs>
         <CartesianGrid vertical={false} stroke="rgba(255,255,255,0.06)" />
@@ -38,8 +38,8 @@ export default function FocusTrendChart({ data }: { data: { date: string; minute
           tickFormatter={(value: string) => new Date(`${value}T00:00:00Z`).toLocaleDateString("en-US", { month: "numeric", day: "numeric", timeZone: "UTC" })}
         />
         <YAxis stroke="#5b5e66" fontSize={12} tickLine={false} axisLine={false} width={36} />
-        <Tooltip cursor={{ stroke: "rgba(245,158,11,0.4)", strokeWidth: 1 }} content={(props) => <ChartTooltip {...props} />} />
-        <Area type="monotone" dataKey="minutes" stroke="#F59E0B" strokeWidth={2} fill="url(#fg-trend-fill)" dot={false} activeDot={{ r: 4, fill: "#F59E0B", stroke: "#0A0A0A", strokeWidth: 2 }} />
+        <Tooltip cursor={{ stroke: "rgba(255, 176, 32,0.4)", strokeWidth: 1 }} content={(props) => <ChartTooltip {...props} />} />
+        <Area type="monotone" dataKey="minutes" stroke="#FFB020" strokeWidth={2} fill="url(#fg-trend-fill)" dot={false} activeDot={{ r: 4, fill: "#FFB020", stroke: "#0A0A0A", strokeWidth: 2 }} />
       </AreaChart>
     </ResponsiveContainer>
   );

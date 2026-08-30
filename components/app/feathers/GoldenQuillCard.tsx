@@ -44,7 +44,7 @@ export default function GoldenQuillCard({
         cursor: "pointer",
         font: "inherit",
         background: unlocked ? "linear-gradient(180deg, #100c04, #0A0A0A)" : "#0A0A0A",
-        border: `2px solid ${unlocked ? "#F59E0B" : "#1E293B"}`,
+        border: `2px solid ${unlocked ? "#FFB020" : "#1E293B"}`,
         borderRadius: 22,
         padding: "52px 34px 44px",
         display: "flex",
@@ -81,8 +81,8 @@ export default function GoldenQuillCard({
                   width: p.size,
                   height: p.size,
                   borderRadius: "50%",
-                  background: i % 2 === 0 ? "#F59E0B" : "#FCD34D",
-                  boxShadow: `0 0 6px ${i % 2 === 0 ? "#F59E0B" : "#FCD34D"}`,
+                  background: i % 2 === 0 ? "#FFB020" : "#FFF4E0",
+                  boxShadow: `0 0 6px ${i % 2 === 0 ? "#FFB020" : "#FFF4E0"}`,
                   animation: `fg-gold-particle ${5 + (i % 4)}s ease-in-out ${p.delay}s infinite`,
                 }}
               />
@@ -96,8 +96,8 @@ export default function GoldenQuillCard({
           fontSize: 11,
           fontWeight: 800,
           letterSpacing: "0.18em",
-          color: unlocked ? "#FCD34D" : "#475569",
-          border: `1px solid ${unlocked ? "rgba(245,158,11,0.5)" : "#1E293B"}`,
+          color: unlocked ? "#FFF4E0" : "#475569",
+          border: `1px solid ${unlocked ? "rgba(255, 176, 32,0.5)" : "#1E293B"}`,
           borderRadius: 999,
           padding: "5px 14px",
           marginBottom: 24,
@@ -114,13 +114,13 @@ export default function GoldenQuillCard({
 
       <div
         style={{
-          fontFamily: "'Instrument Serif', serif",
+          fontFamily: "'Space Grotesk', sans-serif",
           fontWeight: 400,
           fontSize: 30,
           letterSpacing: "0.01em",
-          color: unlocked ? "#F59E0B" : "#475569",
+          color: unlocked ? "#FFB020" : "#475569",
           marginTop: 16,
-          textShadow: unlocked ? "0 0 20px rgba(245,158,11,0.5)" : "none",
+          textShadow: unlocked ? "0 0 20px rgba(255, 176, 32,0.5)" : "none",
         }}
       >
         {unlocked ? "The Golden Quill" : "???"}
@@ -133,7 +133,7 @@ export default function GoldenQuillCard({
       ) : (
         progress && (
           <div style={{ marginTop: 16, width: "100%", maxWidth: 260 }}>
-            <FeatherProgressBarView current={progress.current} target={progress.target} color="#F59E0B" />
+            <FeatherProgressBarView current={progress.current} target={progress.target} color="#FFB020" />
           </div>
         )
       )}

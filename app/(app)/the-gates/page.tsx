@@ -186,7 +186,7 @@ export default function TheGatesPage() {
 
   return (
     <>
-      <h1 style={{ fontFamily: "'Instrument Serif', serif", fontSize: "clamp(32px, 4vw, 44px)", color: "#fff", margin: 0 }}>The Gates</h1>
+      <h1 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "clamp(32px, 4vw, 44px)", color: "#fff", margin: 0 }}>The Gates</h1>
       <p style={{ color: "#9a9da4", fontSize: 15, marginTop: 8 }}>The system that keeps you locked in — configured your way.</p>
 
       <div style={{ display: "flex", flexDirection: "column", gap: 20, marginTop: 32, maxWidth: 720 }}>
@@ -195,16 +195,16 @@ export default function TheGatesPage() {
          *  mandatory, not optional. Only which challenge and how hard it is stay
          *  user-configurable. */}
         <GateSection
-          icon={<Unlock size={19} color="#F59E0B" />}
+          icon={<Unlock size={19} color="#FFB020" />}
           title="Break Gates"
           subtitle="Solve a challenge before your break starts. Always on."
-          accent="#F59E0B"
+          accent="#FFB020"
         >
           <GateRow label="Default challenge" hint="What you're asked to solve for a break">
-            <PillSelect options={CHALLENGE_OPTIONS} value={prefs.break_gate_default_challenge} onChange={(v) => patchPrefs({ break_gate_default_challenge: v })} accent="#F59E0B" />
+            <PillSelect options={CHALLENGE_OPTIONS} value={prefs.break_gate_default_challenge} onChange={(v) => patchPrefs({ break_gate_default_challenge: v })} accent="#FFB020" />
           </GateRow>
           <GateRow label="Difficulty" hint="How much time you get to solve it">
-            <PillSelect options={DIFFICULTY_OPTIONS} value={prefs.break_gate_difficulty} onChange={(v) => patchPrefs({ break_gate_difficulty: v })} accent="#F59E0B" />
+            <PillSelect options={DIFFICULTY_OPTIONS} value={prefs.break_gate_difficulty} onChange={(v) => patchPrefs({ break_gate_difficulty: v })} accent="#FFB020" />
           </GateRow>
           {gateStats && (
             <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0,1fr))", gap: 12, marginTop: 16 }}>
@@ -296,10 +296,10 @@ export default function TheGatesPage() {
 
         {/* ---------- Break Notes ---------- */}
         <GateSection
-          icon={<PenLine size={19} color="#D97706" />}
+          icon={<PenLine size={19} color="#C2660A" />}
           title="Break Notes"
           subtitle="Say why before you go."
-          accent="#D97706"
+          accent="#C2660A"
           disabled={!prefs.break_notes_enabled}
         >
           <PreferenceToggle label="Enable Break Notes" checked={prefs.break_notes_enabled} onChange={(v) => patchPrefs({ break_notes_enabled: v })} />
@@ -312,7 +312,7 @@ export default function TheGatesPage() {
                   Your top break reasons:{" "}
                   {noteStats.themeBreakdown.map((t, i) => (
                     <span key={t.theme}>
-                      <span style={{ color: "#D97706", fontWeight: 700 }}>
+                      <span style={{ color: "#C2660A", fontWeight: 700 }}>
                         {t.theme} ({t.pct}%)
                       </span>
                       {i < noteStats.themeBreakdown.length - 1 ? ", " : ""}
@@ -322,7 +322,7 @@ export default function TheGatesPage() {
               )}
               {noteStats.longestGapMinutes > 0 && (
                 <p style={{ color: "#d8d8dc", fontSize: 13, marginTop: 2 }}>
-                  Longest streak without a break: <span style={{ color: "#F59E0B", fontWeight: 700 }}>{formatGap(noteStats.longestGapMinutes)}</span>
+                  Longest streak without a break: <span style={{ color: "#FFB020", fontWeight: 700 }}>{formatGap(noteStats.longestGapMinutes)}</span>
                 </p>
               )}
             </div>

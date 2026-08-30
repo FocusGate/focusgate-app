@@ -18,7 +18,7 @@ export default function Screen03Science({ onNext }: { onNext: () => void }) {
 function FactRow({ text }: { text: string }) {
   return (
     <div style={{ display: "flex", gap: 12, background: "#0A0A0A", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 14, padding: "16px 18px" }}>
-      <span style={{ color: "#b08d57", fontSize: 16, flexShrink: 0 }}>—</span>
+      <span style={{ color: "#C2660A", fontSize: 16, flexShrink: 0 }}>—</span>
       <p style={{ color: "#d8d8dc", fontSize: 14, lineHeight: 1.6, margin: 0 }}>{text}</p>
     </div>
   );

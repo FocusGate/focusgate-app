@@ -200,7 +200,7 @@ export default function FriendsPage() {
           {joinError && <p style={{ color: "#f87171", fontSize: 13, marginTop: 10 }}>{joinError}</p>}
           {!entitlements.canUseFriendGroups && !joinError && (
             <p style={{ color: "#7a7d84", fontSize: 12, marginTop: 10 }}>
-              Your trial ended — <Link href="/#pricing" onClick={() => track("upgrade_button_clicked")} style={{ color: "#F59E0B" }}>upgrade</Link> to create or join groups.
+              Your trial ended — <Link href="/#pricing" onClick={() => track("upgrade_button_clicked")} style={{ color: "#FFB020" }}>upgrade</Link> to create or join groups.
             </p>
           )}
         </div>
@@ -264,9 +264,9 @@ const inputStyle: React.CSSProperties = {
 };
 
 const btnStyle: React.CSSProperties = {
-  background: "rgba(245,158,11,0.15)",
-  color: "#F59E0B",
-  border: "1px solid rgba(245,158,11,0.4)",
+  background: "rgba(255, 176, 32,0.15)",
+  color: "#FFB020",
+  border: "1px solid rgba(255, 176, 32,0.4)",
   padding: "10px 18px",
   borderRadius: 10,
   fontSize: 14,

@@ -17,7 +17,7 @@ import Footer from "@/components/landing/Footer";
 
 export default function Home() {
   return (
-    <div style={{ fontFamily: "'Geist', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif", color: "#fff", background: "#060606" }}>
+    <div style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif", color: "#fff", background: "#060606" }}>
       <Navbar />
       <Hero />
       <HowItWorks />

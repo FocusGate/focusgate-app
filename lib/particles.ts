@@ -13,7 +13,7 @@ type SpawnOptions = {
 /** Bursts small gold dots outward from the center of `container` and cleans up after itself. */
 export function spawnParticles(container: HTMLElement, opts: SpawnOptions = {}) {
   const count = opts.count ?? 10;
-  const colors = opts.colors ?? ["#F59E0B", "#FCD34D", "#FDE68A"];
+  const colors = opts.colors ?? ["#FFB020", "#FFF4E0", "#FDE68A"];
   const distance = opts.distance ?? 90;
   const duration = opts.duration ?? 0.8;
   const [minSize, maxSize] = opts.size ?? [3, 6];
@@ -53,7 +53,7 @@ export function spawnParticles(container: HTMLElement, opts: SpawnOptions = {}) 
 export function spawnConfetti(container: HTMLElement, opts: SpawnOptions = {}) {
   spawnParticles(container, {
     count: opts.count ?? 60,
-    colors: opts.colors ?? ["#F59E0B", "#FCD34D", "#FDE68A", "#ffffff"],
+    colors: opts.colors ?? ["#FFB020", "#FFF4E0", "#FDE68A", "#ffffff"],
     distance: opts.distance ?? 260,
     duration: opts.duration ?? 1.4,
     size: opts.size ?? [4, 9],

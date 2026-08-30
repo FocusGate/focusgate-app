@@ -37,7 +37,7 @@ export default function LockedInShowcase() {
           <h2
             className="fg-h2"
             style={{
-              fontFamily: "'Geist', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif",
+              fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif",
               fontWeight: 700,
               fontSize: 64,
               lineHeight: 1.02,

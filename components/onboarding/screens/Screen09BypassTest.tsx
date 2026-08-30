@@ -36,9 +36,9 @@ export default function Screen09BypassTest({ onNext }: { onNext: () => void }) {
         }}
       >
         <div style={{ display: "flex", justifyContent: "center", marginBottom: 18 }}>
-          <Lock size={32} color="#b08d57" />
+          <Lock size={32} color="#C2660A" />
         </div>
-        <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 48, color: "#fff", fontVariantNumeric: "tabular-nums" }}>
+        <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 48, color: "#fff", fontVariantNumeric: "tabular-nums" }}>
           {String(secondsLeft).padStart(2, "0")}s
         </div>
 

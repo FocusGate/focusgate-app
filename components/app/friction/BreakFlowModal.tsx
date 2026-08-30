@@ -167,7 +167,7 @@ export default function BreakFlowModal({
         initial={{ opacity: 0, scale: 0.95, y: 10 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-        style={{ background: "#0A0A0A", border: "1px solid rgba(245,158,11,0.3)", borderRadius: 24, padding: 32, maxWidth: 460, width: "100%", position: "relative" }}
+        style={{ background: "#0A0A0A", border: "1px solid rgba(255, 176, 32,0.3)", borderRadius: 24, padding: 32, maxWidth: 460, width: "100%", position: "relative" }}
       >
         {step !== "gate" && step !== "failed" && step !== "loading" && (
           <button
@@ -201,7 +201,7 @@ export default function BreakFlowModal({
               style={{
                 marginTop: 18,
                 width: "100%",
-                background: noteValid ? "#F59E0B" : "#26262b",
+                background: noteValid ? "#FFB020" : "#26262b",
                 color: noteValid ? "#0a0a0a" : "#5b5e66",
                 border: "none",
                 padding: 14,
@@ -223,7 +223,7 @@ export default function BreakFlowModal({
             <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 18 }}>
               <GateChoiceButton
                 label="Math Sprint"
-                accent="#F59E0B"
+                accent="#FFB020"
                 onClick={() => {
                   setChoice("math-sprint");
                   setStep("gate");
@@ -264,7 +264,7 @@ export default function BreakFlowModal({
               Your sites stay blocked either way — this is just how long your session clock pauses for.
             </p>
             <div style={{ textAlign: "center", marginTop: 28, marginBottom: 8 }}>
-              <span style={{ color: "#F59E0B", fontSize: 32, fontWeight: 800, fontVariantNumeric: "tabular-nums" }}>
+              <span style={{ color: "#FFB020", fontSize: 32, fontWeight: 800, fontVariantNumeric: "tabular-nums" }}>
                 {formatBreakDuration(requestedSeconds)}
               </span>
             </div>
@@ -275,7 +275,7 @@ export default function BreakFlowModal({
               step={1}
               value={requestedSeconds}
               onChange={(e) => setRequestedSeconds(Number(e.target.value))}
-              style={{ width: "100%", accentColor: "#F59E0B", cursor: "pointer" }}
+              style={{ width: "100%", accentColor: "#FFB020", cursor: "pointer" }}
               aria-label="Break duration"
             />
             <div style={{ display: "flex", justifyContent: "space-between", color: "#5b5e66", fontSize: 11, marginTop: 4 }}>
@@ -288,7 +288,7 @@ export default function BreakFlowModal({
               style={{
                 marginTop: 22,
                 width: "100%",
-                background: "#F59E0B",
+                background: "#FFB020",
                 color: "#0a0a0a",
                 border: "none",
                 padding: 14,

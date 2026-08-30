@@ -158,7 +158,7 @@ export default function SessionModeFlow({ userId, onConfirmed }: { userId: strin
               {groups?.length === 0 && (
                 <p style={{ color: "#f87171", fontSize: 13 }}>
                   You&apos;re not in a group yet — join or create one on the{" "}
-                  <a href="/friends" style={{ color: "#F59E0B" }}>
+                  <a href="/friends" style={{ color: "#FFB020" }}>
                     Friends page
                   </a>{" "}
                   first.
@@ -215,9 +215,9 @@ export default function SessionModeFlow({ userId, onConfirmed }: { userId: strin
                       setCustomInputOpen(false);
                     }}
                     style={{
-                      background: !customInputOpen && customMinutes === d.minutes ? "rgba(245,158,11,0.15)" : "transparent",
-                      color: !customInputOpen && customMinutes === d.minutes ? "#F59E0B" : "#9a9da4",
-                      border: `1px solid ${!customInputOpen && customMinutes === d.minutes ? "rgba(245,158,11,0.5)" : "#26262b"}`,
+                      background: !customInputOpen && customMinutes === d.minutes ? "rgba(255, 176, 32,0.15)" : "transparent",
+                      color: !customInputOpen && customMinutes === d.minutes ? "#FFB020" : "#9a9da4",
+                      border: `1px solid ${!customInputOpen && customMinutes === d.minutes ? "rgba(255, 176, 32,0.5)" : "#26262b"}`,
                       padding: "10px 18px",
                       borderRadius: 999,
                       fontSize: 14,
@@ -231,9 +231,9 @@ export default function SessionModeFlow({ userId, onConfirmed }: { userId: strin
                 <button
                   onClick={() => setCustomInputOpen(true)}
                   style={{
-                    background: customInputOpen ? "rgba(245,158,11,0.15)" : "transparent",
-                    color: customInputOpen ? "#F59E0B" : "#9a9da4",
-                    border: `1px solid ${customInputOpen ? "rgba(245,158,11,0.5)" : "#26262b"}`,
+                    background: customInputOpen ? "rgba(255, 176, 32,0.15)" : "transparent",
+                    color: customInputOpen ? "#FFB020" : "#9a9da4",
+                    border: `1px solid ${customInputOpen ? "rgba(255, 176, 32,0.5)" : "#26262b"}`,
                     padding: "10px 18px",
                     borderRadius: 999,
                     fontSize: 14,
@@ -271,7 +271,7 @@ export default function SessionModeFlow({ userId, onConfirmed }: { userId: strin
             style={{
               marginTop: 22,
               width: "100%",
-              background: canContinue ? "linear-gradient(180deg, #FBBF24, #F59E0B)" : "#26262b",
+              background: canContinue ? "linear-gradient(180deg, #FFB020, #C2660A)" : "#26262b",
               color: canContinue ? "#0a0a0a" : "#5b5e66",
               border: "none",
               padding: "16px 0",
@@ -334,9 +334,9 @@ function ModeCard({ mode, onClick }: { mode: (typeof ALL_MODE_CARDS)[number]; on
             position: "absolute",
             top: 14,
             right: 14,
-            background: "rgba(245,158,11,0.14)",
-            border: "1px solid rgba(245,158,11,0.4)",
-            color: "#F59E0B",
+            background: "rgba(255, 176, 32,0.14)",
+            border: "1px solid rgba(255, 176, 32,0.4)",
+            color: "#FFB020",
             fontSize: 10,
             fontWeight: 700,
             letterSpacing: "0.03em",
@@ -353,7 +353,7 @@ function ModeCard({ mode, onClick }: { mode: (typeof ALL_MODE_CARDS)[number]; on
       <div style={{ position: "relative", color: "#7a7d84", fontSize: 13, marginTop: 6, lineHeight: 1.45 }}>{mode.tagline}</div>
       <div style={{ position: "relative", display: "flex", alignItems: "center", gap: 10, marginTop: 12, flexWrap: "wrap" }}>
         <span style={{ color: "#5b5e66", fontSize: 11, fontWeight: 600, letterSpacing: "0.04em", textTransform: "uppercase" }}>{mode.typicalDuration}</span>
-        {mode.requirement && <span style={{ color: "#f59e0b99", fontSize: 11, fontWeight: 600 }}>· {mode.requirement}</span>}
+        {mode.requirement && <span style={{ color: "#FFB02099", fontSize: 11, fontWeight: 600 }}>· {mode.requirement}</span>}
       </div>
     </motion.button>
   );
@@ -401,9 +401,9 @@ function PresetRow({ options, selected, onSelect, format }: { options: number[];
           key={o}
           onClick={() => onSelect(o)}
           style={{
-            background: selected === o ? "rgba(245,158,11,0.15)" : "transparent",
-            color: selected === o ? "#F59E0B" : "#9a9da4",
-            border: `1px solid ${selected === o ? "rgba(245,158,11,0.5)" : "#26262b"}`,
+            background: selected === o ? "rgba(255, 176, 32,0.15)" : "transparent",
+            color: selected === o ? "#FFB020" : "#9a9da4",
+            border: `1px solid ${selected === o ? "rgba(255, 176, 32,0.5)" : "#26262b"}`,
             padding: "10px 18px",
             borderRadius: 999,
             fontSize: 14,

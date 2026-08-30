@@ -11,9 +11,9 @@ export function GoldenQuillGlyph({ size = 130, gradientId = "rv-quill-gold" }: {
     <svg width={size} height={size} viewBox="0 0 48 48" fill="none">
       <defs>
         <linearGradient id={gradientId} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#FCD34D" />
-          <stop offset="0.45" stopColor="#F59E0B" />
-          <stop offset="1" stopColor="#B45309" />
+          <stop offset="0" stopColor="#FFF4E0" />
+          <stop offset="0.45" stopColor="#FFB020" />
+          <stop offset="1" stopColor="#C2660A" />
         </linearGradient>
       </defs>
       <g transform="rotate(-18 24 24) scale(1.28) translate(-4 -3)">

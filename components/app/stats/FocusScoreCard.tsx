@@ -15,7 +15,7 @@ export default function FocusScoreCard({ score, label = "Focus score" }: { score
             cy="50"
             r={R}
             fill="none"
-            stroke="#F59E0B"
+            stroke="#FFB020"
             strokeWidth="8"
             strokeLinecap="round"
             strokeDasharray={CIRC}
@@ -25,7 +25,7 @@ export default function FocusScoreCard({ score, label = "Focus score" }: { score
           />
         </svg>
         <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <span style={{ color: "#F59E0B", fontSize: 26, fontWeight: 800 }}>{score}</span>
+          <span style={{ color: "#FFB020", fontSize: 26, fontWeight: 800 }}>{score}</span>
         </div>
       </div>
       <span style={{ color: "#7a7d84", fontSize: 12, fontWeight: 600 }}>{label}</span>

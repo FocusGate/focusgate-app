@@ -10,7 +10,7 @@
 // in the document at any moment, built the instant its button is pressed and nothing
 // before that.
 
-const DASHBOARD_URL = "https://focusgate.site/dashboard";
+const DASHBOARD_URL = "https://ravenlock.pro/dashboard";
 
 const MIN_REASON_LENGTH = 15; // mirrors EmergencyUnblockModal.tsx — must match background.js
 const MAX_FREE_EMERGENCY_UNBLOCKS_DISPLAY = 2; // mirrors lib/supabase.ts's MAX_FREE_EMERGENCY_UNBLOCKS, for copy only

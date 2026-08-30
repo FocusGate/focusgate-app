@@ -4,8 +4,8 @@
 // them. Keep both in sync by hand if the brand shell ever changes — there's no build step
 // that enforces it.
 
-export const GOLD = "#b08d57";
-export const GOLD_BRIGHT = "#F59E0B";
+export const GOLD = "#C2660A";
+export const GOLD_BRIGHT = "#FFB020";
 const INK = "#141413";
 const MUTED = "#6b6b6b";
 
@@ -28,7 +28,7 @@ function emailShell(preheader: string, bodyHtml: string): string {
         </td></tr>
       </table>
       <p style="max-width:480px; margin:20px 0 0; color:${MUTED}; font-size:12px; text-align:center;">
-        Raven · <a href="https://focusgate.site/settings" style="color:${MUTED};">Manage email preferences</a>
+        Raven · <a href="https://ravenlock.pro/settings" style="color:${MUTED};">Manage email preferences</a>
       </p>
     </td></tr>
   </table>
@@ -54,7 +54,7 @@ export function welcomeEmail(name: string): { subject: string; html: string } {
       <p style="margin:0 0 16px;">Hey ${fn},</p>
       <p style="margin:0 0 16px;">Welcome to Raven. You said you'd study — now let's make it stick.</p>
       <p style="margin:0 0 16px;">Pick your sites to block, choose a session length, and lock in. Once it starts, there's no backing out until it's done — that's the whole point.</p>
-      ${button("Start your first session", "https://focusgate.site/dashboard")}
+      ${button("Start your first session", "https://ravenlock.pro/dashboard")}
       `
     ),
   };
@@ -70,7 +70,7 @@ export function trialEndingEmail(name: string): { subject: string; html: string 
       <p style="margin:0 0 16px;">Hey ${fn},</p>
       <p style="margin:0 0 16px;">Your 5-day free trial ends tomorrow. After that, RavenLock still works, but you'll lose Break Gates, friend groups, Dead Man's Switch, and feathers above Common tier — plus your blocked sites cap at 1.</p>
       <p style="margin:0 0 16px; color:${MUTED};">Your streak, stats, and feathers stay exactly as they are — upgrading just unlocks them again.</p>
-      ${button("Keep everything — upgrade now", "https://focusgate.site/#pricing")}
+      ${button("Keep everything — upgrade now", "https://ravenlock.pro/#pricing")}
       `
     ),
   };
@@ -85,7 +85,7 @@ export function reEngagementEmail(name: string): { subject: string; html: string
       `
       <p style="margin:0 0 16px;">Hey ${fn},</p>
       <p style="margin:0 0 16px;">It's been a few days since your last RavenLock session. No pressure — just a nudge that your dashboard, your blocked sites, and your streak are all still right where you left them.</p>
-      ${button("Get back to it", "https://focusgate.site/dashboard")}
+      ${button("Get back to it", "https://ravenlock.pro/dashboard")}
       `
     ),
   };
@@ -101,7 +101,7 @@ export function milestoneStreakEmail(name: string, streak: number): { subject: s
       <p style="margin:0 0 16px;">Nice work, ${fn}.</p>
       <p style="margin:0 0 4px; font-size:19px; font-weight:800;">🔥 ${streak}-day streak</p>
       <p style="margin:0 0 16px; color:${MUTED};">That's ${streak} days in a row you showed up and locked in. Keep it alive.</p>
-      ${button("Start today's session", "https://focusgate.site/dashboard")}
+      ${button("Start today's session", "https://ravenlock.pro/dashboard")}
       `
     ),
   };
@@ -118,7 +118,7 @@ export function milestoneFeatherEmail(name: string, feather: { name: string; des
       <p style="margin:0 0 8px; font-size:12px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:${GOLD};">${feather.rarity} feather earned</p>
       <p style="margin:0 0 4px; font-size:19px; font-weight:800;">🪶 ${feather.name}</p>
       <p style="margin:0 0 16px; color:${MUTED};">${feather.description}</p>
-      ${button("See all your feathers", "https://focusgate.site/feathers")}
+      ${button("See all your feathers", "https://ravenlock.pro/feathers")}
       `
     ),
   };
@@ -134,7 +134,7 @@ export function launchAnnouncementEmail(name: string): { subject: string; html: 
       <p style="margin:0 0 16px;">Hey ${fn},</p>
       <p style="margin:0 0 16px;">Raven is officially out of beta. Because you joined early, your account keeps full access — RavenLock, unlimited blocked sites, every feather tier, unlimited friend groups, Dead Man's Switch, Break Gates, all of it — for free, permanently. No trial, no downgrade, no catch.</p>
       <p style="margin:0 0 16px; color:${MUTED};">That's our thank-you for being here before anyone else was.</p>
-      ${button("Open your dashboard", "https://focusgate.site/dashboard")}
+      ${button("Open your dashboard", "https://ravenlock.pro/dashboard")}
       `
     ),
   };

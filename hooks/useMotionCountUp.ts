@@ -62,7 +62,7 @@ export function useMotionCountUp(ref: RefObject<HTMLElement | null>, opts: Count
       onComplete: () => {
         animate(
           el,
-          { textShadow: ["0 0 0px rgba(245,158,11,0)", "0 0 22px rgba(245,158,11,0.85)", "0 0 0px rgba(245,158,11,0)"] },
+          { textShadow: ["0 0 0px rgba(255, 176, 32,0)", "0 0 22px rgba(255, 176, 32,0.85)", "0 0 0px rgba(255, 176, 32,0)"] },
           { duration: 0.7, ease: "easeOut" }
         );
       },

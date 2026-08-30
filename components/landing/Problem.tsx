@@ -33,7 +33,7 @@ function StatCard({ target, suffix, label }: { target: number; suffix: string; l
       className="fg-statcard"
       style={{
         background: "#101012",
-        borderTop: "2px solid #F59E0B",
+        borderTop: "2px solid #FFB020",
         borderRadius: "0 0 12px 12px",
         padding: "20px 10px",
         flex: "1 1 0",
@@ -45,7 +45,7 @@ function StatCard({ target, suffix, label }: { target: number; suffix: string; l
         ref={ref}
         className="fg-statcard-num"
         style={{
-          fontFamily: "'Geist', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif",
+          fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif",
           fontWeight: 800,
           fontSize: 26,
           color: "#fff",
@@ -75,7 +75,7 @@ export default function Problem() {
           <h2
             className="fg-h2"
             style={{
-              fontFamily: "'Geist', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif",
+              fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif",
               fontWeight: 700,
               fontSize: 76,
               lineHeight: 1.0,
@@ -120,7 +120,7 @@ export default function Problem() {
               boxShadow: "0 40px 90px rgba(0,0,0,0.5)",
             }}
           >
-            <div style={{ color: "#F59E0B", fontSize: 12, fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 20 }}>
+            <div style={{ color: "#FFB020", fontSize: 12, fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 20 }}>
               The Science
             </div>
             <motion.h3
@@ -133,7 +133,7 @@ export default function Problem() {
               <span
                 style={{
                   display: "block",
-                  fontFamily: "'Instrument Serif', serif",
+                  fontFamily: "'Space Grotesk', sans-serif",
                   fontWeight: 400,
                   fontSize: 40,
                   lineHeight: 1.15,
@@ -147,7 +147,7 @@ export default function Problem() {
               <span
                 style={{
                   display: "block",
-                  fontFamily: "'Instrument Serif', serif",
+                  fontFamily: "'Space Grotesk', sans-serif",
                   fontWeight: 400,
                   fontSize: 40,
                   lineHeight: 1.15,
@@ -168,7 +168,7 @@ export default function Problem() {
                 <StatCard key={s.label} {...s} />
               ))}
             </div>
-            <div style={{ color: "#F59E0B", fontSize: 16, fontWeight: 700, marginTop: 26 }}>
+            <div style={{ color: "#FFB020", fontSize: 16, fontWeight: 700, marginTop: 26 }}>
               Raven rewires it back.
             </div>
           </div>

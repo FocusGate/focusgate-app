@@ -12,15 +12,15 @@ const h2Style: React.CSSProperties = { color: "#fff", fontSize: 21, fontWeight: 
 const h3Style: React.CSSProperties = { color: "#e8e8ea", fontSize: 15, fontWeight: 700, marginTop: 20, marginBottom: 6 };
 const pStyle: React.CSSProperties = { color: "#9a9da4", fontSize: 15, lineHeight: 1.75 };
 const ulStyle: React.CSSProperties = { color: "#9a9da4", fontSize: 15, lineHeight: 1.75, paddingLeft: 20, margin: "8px 0" };
-const codeStyle: React.CSSProperties = { color: "#b08d57", background: "rgba(176,141,87,0.1)", padding: "1px 6px", borderRadius: 4, fontSize: 13.5 };
+const codeStyle: React.CSSProperties = { color: "#C2660A", background: "rgba(194, 102, 10,0.1)", padding: "1px 6px", borderRadius: 4, fontSize: 13.5 };
 
 export default function PrivacyPolicyPage() {
   return (
-    <div style={{ minHeight: "100vh", background: "#060606", color: "#fff", fontFamily: "'Geist', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" }}>
+    <div style={{ minHeight: "100vh", background: "#060606", color: "#fff", fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" }}>
       <header style={{ padding: "22px 24px", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
         <Link href="/" style={{ display: "inline-flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
           <RavenMark size={22} />
-          <span style={{ fontFamily: "'Geist', sans-serif", fontSize: 18, fontWeight: 800, letterSpacing: "0.08em", color: "#b08d57" }}>RAVEN</span>
+          <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 18, fontWeight: 800, letterSpacing: "0.08em", color: "#C2660A" }}>RAVEN</span>
         </Link>
       </header>
 
@@ -71,7 +71,7 @@ export default function PrivacyPolicyPage() {
             contractually/technically restricted to that purpose — we do not sell data to them or anyone else.
           </p>
           <ul style={ulStyle}>
-            <li><strong style={{ color: "#d8d8dc" }}>Supabase</strong> — hosts our database and handles authentication. See <a href="https://supabase.com/privacy" target="_blank" rel="noopener noreferrer" style={{ color: "#b08d57" }}>Supabase&apos;s privacy policy</a>.</li>
+            <li><strong style={{ color: "#d8d8dc" }}>Supabase</strong> — hosts our database and handles authentication. See <a href="https://supabase.com/privacy" target="_blank" rel="noopener noreferrer" style={{ color: "#C2660A" }}>Supabase&apos;s privacy policy</a>.</li>
             <li><strong style={{ color: "#d8d8dc" }}>WorldTimeAPI</strong> — the Chrome extension periodically checks the current UTC time from this public API to stop a session timer from being shortened by changing your computer&apos;s clock. No account or personal information is sent with this request.</li>
           </ul>
         </section>
@@ -107,9 +107,12 @@ export default function PrivacyPolicyPage() {
 
         <section style={sectionStyle}>
           <h2 style={h2Style}>8. Contact us</h2>
+          {/* HOLD (ravenlock.pro brand pass): still the real, working support address —
+              see lib/email.ts's matching note. Swap once support@ravenlock.pro actually
+              exists and receives mail. */}
           <p style={pStyle}>
             Questions about this policy or your data? Email{" "}
-            <a href="mailto:support@focusgate.site" style={{ color: "#b08d57" }}>support@focusgate.site</a>.
+            <a href="mailto:support@focusgate.site" style={{ color: "#C2660A" }}>support@focusgate.site</a>.
           </p>
         </section>
       </main>

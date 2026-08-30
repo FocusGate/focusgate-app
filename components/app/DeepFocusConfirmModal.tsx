@@ -34,8 +34,8 @@ export default function DeepFocusConfirmModal({ onConfirm, onCancel }: { onConfi
           background: "rgba(10,10,10,0.9)",
           backdropFilter: "blur(20px)",
           WebkitBackdropFilter: "blur(20px)",
-          border: "1px solid rgba(245,158,11,0.5)",
-          boxShadow: "0 0 60px rgba(245,158,11,0.15)",
+          border: "1px solid rgba(255, 176, 32,0.5)",
+          boxShadow: "0 0 60px rgba(255, 176, 32,0.15)",
           borderRadius: 24,
           padding: 36,
           maxWidth: 460,
@@ -47,7 +47,7 @@ export default function DeepFocusConfirmModal({ onConfirm, onCancel }: { onConfi
         <h2 style={{ color: "#fff", fontSize: 22, fontWeight: 800, margin: 0, lineHeight: 1.3 }}>
           This is Deep Focus.
         </h2>
-        <p style={{ color: "#F59E0B", fontSize: 15, fontWeight: 700, marginTop: 10 }}>
+        <p style={{ color: "#FFB020", fontSize: 15, fontWeight: 700, marginTop: 10 }}>
           One task. No shortcuts. {DEEP_FOCUS_MINUTES} minutes, fixed.
         </p>
         <p style={{ color: "#9a9da4", fontSize: 14, lineHeight: 1.6, marginTop: 12 }}>
@@ -55,7 +55,7 @@ export default function DeepFocusConfirmModal({ onConfirm, onCancel }: { onConfi
           Emergency Unblock gets you out before the 90 minutes are up, and that still ends the session outright.
         </p>
         <p style={{ color: "#7a7d84", fontSize: 12, marginTop: 18 }}>
-          Type <span style={{ color: "#F59E0B", fontWeight: 700 }}>{DEEP_FOCUS_CONFIRM_PHRASE}</span> to confirm.
+          Type <span style={{ color: "#FFB020", fontWeight: 700 }}>{DEEP_FOCUS_CONFIRM_PHRASE}</span> to confirm.
         </p>
         <input
           autoFocus
@@ -69,7 +69,7 @@ export default function DeepFocusConfirmModal({ onConfirm, onCancel }: { onConfi
             width: "100%",
             marginTop: 12,
             background: "#0A0A0A",
-            border: `1px solid ${ready ? "#F59E0B" : "rgba(255,255,255,0.12)"}`,
+            border: `1px solid ${ready ? "#FFB020" : "rgba(255,255,255,0.12)"}`,
             color: "#fff",
             padding: "14px 16px",
             borderRadius: 12,
@@ -101,7 +101,7 @@ export default function DeepFocusConfirmModal({ onConfirm, onCancel }: { onConfi
             disabled={!ready}
             style={{
               flex: 1,
-              background: ready ? "linear-gradient(180deg, #FBBF24, #F59E0B)" : "#26262b",
+              background: ready ? "linear-gradient(180deg, #FFB020, #C2660A)" : "#26262b",
               color: ready ? "#0a0a0a" : "#5b5e66",
               border: "none",
               padding: "13px 0",
@@ -109,7 +109,7 @@ export default function DeepFocusConfirmModal({ onConfirm, onCancel }: { onConfi
               fontSize: 14,
               fontWeight: 800,
               cursor: ready ? "pointer" : "default",
-              boxShadow: ready ? "0 0 30px rgba(245,158,11,0.4)" : "none",
+              boxShadow: ready ? "0 0 30px rgba(255, 176, 32,0.4)" : "none",
             }}
           >
             Lock In

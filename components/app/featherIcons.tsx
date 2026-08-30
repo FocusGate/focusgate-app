@@ -58,7 +58,7 @@ export const TIER_META: Record<BadgeTier, { label: string; glow: string; glowSof
   rare: { label: "Rare", glow: "#3B82F6", glowSoft: "rgba(59,130,246,0.18)" }, // blue
   epic: { label: "Epic", glow: "#A855F7", glowSoft: "rgba(168,85,247,0.2)" }, // purple
   mythic: { label: "Mythic", glow: "#FB7185", glowSoft: "rgba(251,113,133,0.24)" }, // coral/red — rarer, louder
-  legendary: { label: "Legendary", glow: "#F59E0B", glowSoft: "rgba(245,158,11,0.28)" }, // The Golden Quill only
+  legendary: { label: "Legendary", glow: "#FFB020", glowSoft: "rgba(255, 176, 32,0.28)" }, // The Golden Quill only
 };
 
 export function isValidTier(rarity: string): rarity is BadgeTier {

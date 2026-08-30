@@ -278,12 +278,12 @@ export default function DashboardPage() {
 
       <h1 style={{ fontSize: 28, fontWeight: 700 }}>{greeting(user.name)}</h1>
       <p style={{ color: "#9a9da4", marginTop: 6 }}>Ready to get locked in?</p>
-      {goalLine && <p style={{ color: "#b08d57", fontSize: 13, fontWeight: 600, marginTop: 10 }}>{goalLine}</p>}
+      {goalLine && <p style={{ color: "#C2660A", fontSize: 13, fontWeight: 600, marginTop: 10 }}>{goalLine}</p>}
 
       <TrialStatusBanner betaMode={betaMode} entitlements={entitlements} />
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 18, marginTop: 30 }}>
-        <StatCard label="Current streak" target={user.streak} suffix={user.streak === 1 ? " day" : " days"} icon={<Flame size={14} color="#F59E0B" />} />
+        <StatCard label="Current streak" target={user.streak} suffix={user.streak === 1 ? " day" : " days"} icon={<Flame size={14} color="#FFB020" />} />
         <StatCard label="Focus time today" target={todayMinutes} formatValue={formatHoursMinutes} />
         <StatCard label="Blocked sites" target={blockedSites.length} />
       </div>
@@ -317,7 +317,7 @@ export default function DashboardPage() {
           <button
             type="submit"
             disabled={addingSite}
-            style={{ background: "rgba(245,158,11,0.15)", color: "#F59E0B", border: "1px solid rgba(245,158,11,0.4)", padding: "12px 20px", borderRadius: 10, fontSize: 14, fontWeight: 700, cursor: "pointer", opacity: addingSite ? 0.6 : 1 }}
+            style={{ background: "rgba(255, 176, 32,0.15)", color: "#FFB020", border: "1px solid rgba(255, 176, 32,0.4)", padding: "12px 20px", borderRadius: 10, fontSize: 14, fontWeight: 700, cursor: "pointer", opacity: addingSite ? 0.6 : 1 }}
           >
             {addingSite ? "Adding…" : "Add"}
           </button>
@@ -351,7 +351,7 @@ export default function DashboardPage() {
           {todaysSessions.map((s) => (
             <div key={s.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 0", borderBottom: "1px solid rgba(255,255,255,0.06)", fontSize: 14 }}>
               <span style={{ display: "flex", alignItems: "center", gap: 8, color: "#d8d8dc" }}>
-                <Lock size={13} color="#F59E0B" />
+                <Lock size={13} color="#FFB020" />
                 {new Date(s.start_time).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", timeZone: "UTC" })}
               </span>
               <span style={{ color: s.completed ? "#22c55e" : "#f87171" }}>{s.completed ? `${s.duration_minutes ?? 0} min` : "Incomplete"}</span>

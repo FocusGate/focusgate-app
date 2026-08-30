@@ -25,13 +25,15 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 // sender/domain in Resend's own dashboard (SPF/DKIM/DMARC DNS records on focusgate.site)
 // for these to actually deliver; that verification lives in Resend's dashboard, not in this
 // repo, and isn't something this code can confirm on its own.
-// NOTE (Raven rebrand): the domain itself is intentionally NOT changed here — focusgate.site
-// is still the live, DNS-verified sending domain. Swapping it is a separate manual step
-// (new domain, new SPF/DKIM/DMARC records, re-verification in Resend) once that's ready.
+// HOLD (ravenlock.pro brand pass): every *link* below now points at ravenlock.pro, but this
+// FROM address deliberately still sends from focusgate.site — flipping it to
+// support@ravenlock.pro before that domain has its own verified SPF/DKIM/DMARC records in
+// Resend would silently break every outbound email (bounces or outright rejection at send
+// time). Swap this the moment ravenlock.pro is verified there; nothing else needs to change.
 const FROM = "Raven <support@focusgate.site>";
 
-const GOLD = "#b08d57";
-const GOLD_BRIGHT = "#F59E0B";
+const GOLD = "#C2660A";
+const GOLD_BRIGHT = "#FFB020";
 const INK = "#141413";
 const MUTED = "#6b6b6b";
 
@@ -57,7 +59,7 @@ function emailShell(preheader: string, bodyHtml: string): string {
         </td></tr>
       </table>
       <p style="max-width:480px; margin:20px 0 0; color:${MUTED}; font-size:12px; text-align:center;">
-        Raven · <a href="https://focusgate.site/settings" style="color:${MUTED};">Manage email preferences</a>
+        Raven · <a href="https://ravenlock.pro/settings" style="color:${MUTED};">Manage email preferences</a>
       </p>
     </td></tr>
   </table>
@@ -99,7 +101,7 @@ export async function sendWelcomeEmail(to: string, name: string): Promise<void> 
     <p style="margin:0 0 16px;">Hey ${firstName},</p>
     <p style="margin:0 0 16px;">Welcome to Raven. You said you'd study — now let's make it stick.</p>
     <p style="margin:0 0 16px;">Pick your sites to block, choose a session length, and lock in. Once it starts, there's no backing out until it's done — that's the whole point.</p>
-    ${button("Start your first session", "https://focusgate.site/dashboard")}
+    ${button("Start your first session", "https://ravenlock.pro/dashboard")}
     `
   );
   await deliver("sendWelcomeEmail", to, "Welcome to Raven 🐦‍⬛", html);
@@ -117,7 +119,7 @@ export async function sendFeatherUnlockEmail(to: string, name: string, feather: 
     <p style="margin:0 0 8px; font-size:12px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:${GOLD};">${feather.rarity} feather earned</p>
     <p style="margin:0 0 4px; font-size:19px; font-weight:800;">🪶 ${feather.name}</p>
     <p style="margin:0 0 16px; color:${MUTED};">${feather.description}</p>
-    ${button("See all your feathers", "https://focusgate.site/feathers")}
+    ${button("See all your feathers", "https://ravenlock.pro/feathers")}
     `
   );
   await deliver("sendFeatherUnlockEmail", to, `🪶 You earned ${feather.name}`, html);
@@ -132,7 +134,7 @@ export async function sendFriendGroupNotificationEmail(to: string, name: string,
     `
     <p style="margin:0 0 16px;">Hey ${firstName},</p>
     <p style="margin:0 0 16px;">${message}</p>
-    ${button("Open Friends", "https://focusgate.site/friends")}
+    ${button("Open Friends", "https://ravenlock.pro/friends")}
     `
   );
   await deliver("sendFriendGroupNotificationEmail", to, "Raven — activity in your group", html);
@@ -150,7 +152,7 @@ export async function sendBreakReminderEmail(to: string, name: string): Promise<
     <p style="margin:0 0 16px;">Hey ${firstName},</p>
     <p style="margin:0 0 16px;">You've been locked in for a while now. A short break — even a minute — tends to help you finish stronger than pushing straight through.</p>
     <p style="margin:0 0 16px; color:${MUTED};">Your sites stay blocked either way. This is just a nudge, not a requirement.</p>
-    ${button("Take a break", "https://focusgate.site/dashboard")}
+    ${button("Take a break", "https://ravenlock.pro/dashboard")}
     `
   );
   await deliver("sendBreakReminderEmail", to, "Raven — still locked in?", html);

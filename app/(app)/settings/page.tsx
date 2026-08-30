@@ -162,7 +162,7 @@ export default function SettingsPage() {
           <button
             type="submit"
             disabled={savingName || !name.trim()}
-            style={{ background: "rgba(245,158,11,0.15)", color: "#F59E0B", border: "1px solid rgba(245,158,11,0.4)", padding: "10px 18px", borderRadius: 10, fontSize: 14, fontWeight: 700, cursor: "pointer", opacity: savingName ? 0.6 : 1 }}
+            style={{ background: "rgba(255, 176, 32,0.15)", color: "#FFB020", border: "1px solid rgba(255, 176, 32,0.4)", padding: "10px 18px", borderRadius: 10, fontSize: 14, fontWeight: 700, cursor: "pointer", opacity: savingName ? 0.6 : 1 }}
           >
             {savingName ? "Saving…" : "Save"}
           </button>
@@ -184,7 +184,7 @@ export default function SettingsPage() {
           <button
             type="submit"
             disabled={addingSite}
-            style={{ background: "rgba(245,158,11,0.15)", color: "#F59E0B", border: "1px solid rgba(245,158,11,0.4)", padding: "12px 20px", borderRadius: 10, fontSize: 14, fontWeight: 700, cursor: "pointer", opacity: addingSite ? 0.6 : 1, flexShrink: 0 }}
+            style={{ background: "rgba(255, 176, 32,0.15)", color: "#FFB020", border: "1px solid rgba(255, 176, 32,0.4)", padding: "12px 20px", borderRadius: 10, fontSize: 14, fontWeight: 700, cursor: "pointer", opacity: addingSite ? 0.6 : 1, flexShrink: 0 }}
           >
             {addingSite ? "Adding…" : "Add"}
           </button>
@@ -258,9 +258,9 @@ export default function SettingsPage() {
                     key={d}
                     onClick={() => handlePrefChange({ default_session_minutes: d })}
                     style={{
-                      background: prefs.default_session_minutes === d ? "rgba(245,158,11,0.15)" : "transparent",
-                      color: prefs.default_session_minutes === d ? "#F59E0B" : "#9a9da4",
-                      border: `1px solid ${prefs.default_session_minutes === d ? "rgba(245,158,11,0.5)" : "#26262b"}`,
+                      background: prefs.default_session_minutes === d ? "rgba(255, 176, 32,0.15)" : "transparent",
+                      color: prefs.default_session_minutes === d ? "#FFB020" : "#9a9da4",
+                      border: `1px solid ${prefs.default_session_minutes === d ? "rgba(255, 176, 32,0.5)" : "#26262b"}`,
                       padding: "8px 16px",
                       borderRadius: 999,
                       fontSize: 13,

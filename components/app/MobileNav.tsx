@@ -29,7 +29,7 @@ export default function MobileNav() {
             key={item.href}
             href={item.href}
             className="fg-mobile-app-nav-link"
-            style={{ color: active ? "#F59E0B" : "#7a7d84" }}
+            style={{ color: active ? "#FFB020" : "#7a7d84" }}
           >
             <Icon size={20} strokeWidth={active ? 2.4 : 1.8} />
             <span>{item.label}</span>

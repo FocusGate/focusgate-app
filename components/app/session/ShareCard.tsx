@@ -14,16 +14,16 @@ function drawCard(canvas: HTMLCanvasElement, { durationLabel, streak, focusScore
   ctx.fillStyle = bg;
   ctx.fillRect(0, 0, W, H);
 
-  ctx.strokeStyle = "rgba(245,158,11,0.5)";
+  ctx.strokeStyle = "rgba(255, 176, 32,0.5)";
   ctx.lineWidth = 3;
   ctx.strokeRect(12, 12, W - 24, H - 24);
 
   ctx.textAlign = "center";
-  ctx.fillStyle = "#b08d57";
+  ctx.fillStyle = "#C2660A";
   ctx.font = "800 30px Arial, sans-serif";
   ctx.fillText("RAVEN", W / 2, 90);
 
-  ctx.fillStyle = "#F59E0B";
+  ctx.fillStyle = "#FFB020";
   ctx.font = "800 76px Arial, sans-serif";
   ctx.fillText(durationLabel, W / 2, H / 2 - 10);
 

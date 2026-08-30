@@ -77,9 +77,9 @@ export default function FeatherModal({ feather, onClose }: { feather: FeatherMod
               onClick={onClose}
               style={{
                 marginTop: 22,
-                background: "rgba(245,158,11,0.15)",
-                color: "#F59E0B",
-                border: "1px solid rgba(245,158,11,0.4)",
+                background: "rgba(255, 176, 32,0.15)",
+                color: "#FFB020",
+                border: "1px solid rgba(255, 176, 32,0.4)",
                 padding: "10px 24px",
                 borderRadius: 999,
                 fontSize: 14,

@@ -1,4 +1,4 @@
-export default function FeatherProgressBar({ current, target, color = "#F59E0B" }: { current: number; target: number; color?: string }) {
+export default function FeatherProgressBar({ current, target, color = "#FFB020" }: { current: number; target: number; color?: string }) {
   const pct = target > 0 ? Math.max(0, Math.min(100, Math.round((current / target) * 100))) : 0;
   return (
     <div style={{ width: "100%" }}>

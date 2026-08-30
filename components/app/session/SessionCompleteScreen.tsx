@@ -58,11 +58,11 @@ export default function SessionCompleteScreen({
           width: 84,
           height: 84,
           borderRadius: "50%",
-          background: "linear-gradient(135deg, #FBBF24, #F59E0B)",
+          background: "linear-gradient(135deg, #FFB020, #C2660A)",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          boxShadow: "0 0 60px rgba(245,158,11,0.5)",
+          boxShadow: "0 0 60px rgba(255, 176, 32,0.5)",
           marginBottom: 22,
         }}
       >
@@ -124,7 +124,7 @@ export default function SessionCompleteScreen({
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }} style={{ display: "flex", gap: 12, marginTop: 34, flexWrap: "wrap", justifyContent: "center" }}>
         <button
           onClick={onStartAnother}
-          style={{ background: "#F59E0B", color: "#0a0a0a", border: "none", padding: "14px 24px", borderRadius: 999, fontSize: 14, fontWeight: 700, cursor: "pointer" }}
+          style={{ background: "#FFB020", color: "#0a0a0a", border: "none", padding: "14px 24px", borderRadius: 999, fontSize: 14, fontWeight: 700, cursor: "pointer" }}
         >
           Start another session
         </button>

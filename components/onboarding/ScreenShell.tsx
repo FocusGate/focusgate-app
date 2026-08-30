@@ -15,13 +15,13 @@ export function ScreenHeading({ eyebrow, title, subtitle }: { eyebrow?: string; 
   return (
     <div style={{ marginBottom: 32 }}>
       {eyebrow && (
-        <div style={{ color: "#b08d57", fontSize: 13, fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", marginBottom: 16 }}>
+        <div style={{ color: "#C2660A", fontSize: 13, fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", marginBottom: 16 }}>
           {eyebrow}
         </div>
       )}
       <h1
         style={{
-          fontFamily: "'Instrument Serif', serif",
+          fontFamily: "'Space Grotesk', sans-serif",
           fontSize: "clamp(32px, 5vw, 44px)",
           lineHeight: 1.15,
           color: "#fff",

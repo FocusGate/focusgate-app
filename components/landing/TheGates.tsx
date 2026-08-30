@@ -15,7 +15,7 @@ const GATES = [
     tag: "Earn it",
     description: "Want a 5 minute break? Solve a 30-second challenge first. Fail it and the session just keeps going.",
     icon: Unlock,
-    color: "#F59E0B",
+    color: "#FFB020",
   },
   {
     name: "Emergency Unblock",
@@ -29,7 +29,7 @@ const GATES = [
     tag: "Say it out loud",
     description: "Write a full sentence explaining why you deserve the break. Most people stop halfway through.",
     icon: PenLine,
-    color: "#D97706",
+    color: "#C2660A",
   },
   {
     name: "Dead Man's Switch",
@@ -106,7 +106,7 @@ export default function TheGates() {
       id="the-gates"
       className="fg-sec"
       style={{
-        background: "radial-gradient(ellipse 1000px 500px at 50% 0%, rgba(245,158,11,0.05), transparent 60%), #060606",
+        background: "radial-gradient(ellipse 1000px 500px at 50% 0%, rgba(255, 176, 32,0.05), transparent 60%), #060606",
         padding: "150px 0 60px",
         borderTop: "1px solid rgba(255,255,255,0.06)",
       }}
@@ -118,7 +118,7 @@ export default function TheGates() {
         <h2
           className="fg-h2"
           style={{
-            fontFamily: "'Geist', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif",
+            fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif",
             fontWeight: 700,
             fontSize: 64,
             lineHeight: 1.02,

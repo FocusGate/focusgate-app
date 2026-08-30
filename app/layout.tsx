@@ -11,13 +11,13 @@ const TITLE = "Raven — You said you'd study. Now prove it.";
 const DESCRIPTION = "Raven locks you in, blocks every distraction, and won't let you leave until you're done.";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://focusgate.site"),
+  metadataBase: new URL("https://ravenlock.pro"),
   title: TITLE,
   description: DESCRIPTION,
   openGraph: {
     title: TITLE,
     description: DESCRIPTION,
-    url: "https://focusgate.site",
+    url: "https://ravenlock.pro",
     siteName: "Raven",
     type: "website",
     // No og:image yet — public/ only has Next.js's default starter icons, no real
@@ -55,12 +55,17 @@ export default function RootLayout({
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        {/* Loaded via <link> (not next/font) so the literal family names "Geist" / "Mulish" /
-            "Instrument Serif" match the hundreds of inline font-family references ported verbatim
-            from the FocusGate.dc.html design — next/font would rename them and break every one. */}
+        {/* Loaded via <link> (not next/font) so the literal family names "Inter" / "Space
+            Grotesk" match every inline font-family reference across the app — next/font
+            would rename them and break every one. Raven brand pass: replaces the old
+            Geist/Mulish/Instrument Serif trio (Space Grotesk covers both the old serif
+            display role and Geist's headline role; Inter covers body text and what Mulish
+            used to). No italic weights loaded for Space Grotesk — the handful of spots using
+            fontStyle: "italic" fall back to the browser's synthetic italic, which reads fine
+            on a geometric sans. */}
         {/* eslint-disable-next-line @next/next/no-page-custom-font */}
         <link
-          href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Mulish:wght@400;500;600;700;800&family=Geist:wght@400;500;600;700;800&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
           rel="stylesheet"
         />
       </head>

@@ -40,7 +40,7 @@ export default function TiltCard({
           inset: 0,
           borderRadius: "inherit",
           pointerEvents: "none",
-          boxShadow: "0 0 40px 6px rgba(245,158,11,0.35)",
+          boxShadow: "0 0 40px 6px rgba(255, 176, 32,0.35)",
         }}
         aria-hidden="true"
       />

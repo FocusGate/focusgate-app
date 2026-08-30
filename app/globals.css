@@ -2,8 +2,8 @@
 
 :root {
   --fg-bg: #060606;
-  --fg-gold: #b08d57;
-  --fg-gold-bright: #F59E0B;
+  --fg-gold: #C2660A;
+  --fg-gold-bright: #FFB020;
   /* the "Apple spring" ease — matches the GSAP `EASE` in lib/gsap.ts */
   --fg-ease: cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -40,7 +40,7 @@ a:hover { color: #fff; }
 @keyframes fg-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 @keyframes fg-float { 0%,100% { transform: translateY(0); opacity: 0.18; } 50% { transform: translateY(-24px); opacity: 0.5; } }
 @keyframes fg-pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.35; transform: scale(0.7); } }
-@keyframes fg-legend-border { 0% { border-color: #F59E0B; box-shadow: 0 0 60px rgba(245,158,11,0.5); } 50% { border-color: #ffffff; box-shadow: 0 0 90px rgba(255,255,255,0.45); } 100% { border-color: #F59E0B; box-shadow: 0 0 60px rgba(245,158,11,0.5); } }
+@keyframes fg-legend-border { 0% { border-color: #FFB020; box-shadow: 0 0 60px rgba(255, 176, 32,0.5); } 50% { border-color: #ffffff; box-shadow: 0 0 90px rgba(255,255,255,0.45); } 100% { border-color: #FFB020; box-shadow: 0 0 60px rgba(255, 176, 32,0.5); } }
 @keyframes fg-gem-rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 @keyframes fg-shimmer-sweep { from { transform: translateX(0) rotate(20deg); } to { transform: translateX(260%) rotate(20deg); } }
 @keyframes fg-gold-particle { 0%,100% { opacity: 0.15; transform: translateY(0); } 50% { opacity: 0.85; transform: translateY(-16px); } }
@@ -55,10 +55,10 @@ a:hover { color: #fff; }
 
 .fg-reveal { opacity: 0; transform: translateY(16px); }
 
-.fg-live-pill { animation: fg-hover-up 3s ease-in-out infinite; border: 1px solid rgba(176,141,87,0.5); box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: border-color 0.3s var(--fg-ease), box-shadow 0.3s var(--fg-ease); }
+.fg-live-pill { animation: fg-hover-up 3s ease-in-out infinite; border: 1px solid rgba(194, 102, 10,0.5); box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: border-color 0.3s var(--fg-ease), box-shadow 0.3s var(--fg-ease); }
 
 .fg-presence-dot { animation: fg-pulse 1.6s ease-in-out infinite; box-shadow: 0 0 6px rgba(34,197,94,0.8); }
-.fg-live-pill:hover { border-color: #e0c48f; box-shadow: 0 12px 40px rgba(176,141,87,0.4), 0 0 24px rgba(176,141,87,0.35); }
+.fg-live-pill:hover { border-color: #e0c48f; box-shadow: 0 12px 40px rgba(194, 102, 10,0.4), 0 0 24px rgba(194, 102, 10,0.35); }
 
 .fg-timer-card { transition: transform 0.4s var(--fg-ease), border-color 0.4s var(--fg-ease), box-shadow 0.4s var(--fg-ease); }
 .fg-timer-card:hover { transform: translateY(-4px); border-color: rgba(255,255,255,0.34) !important; box-shadow: 0 55px 95px rgba(0,0,0,0.7), 0 0 90px rgba(255,255,255,0.13) !important; }
@@ -75,8 +75,8 @@ a:hover { color: #fff; }
 .fg-float-nav { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 1180px; z-index: 200; border-radius: 999px; background: transparent; border: 1px solid transparent; box-shadow: none; transition: background 0.3s var(--fg-ease), border-color 0.3s var(--fg-ease), box-shadow 0.3s var(--fg-ease), backdrop-filter 0.3s var(--fg-ease); }
 .fg-float-nav.scrolled { background: rgba(10,10,10,0.8); border-color: #1E293B; box-shadow: 0 12px 40px rgba(0,0,0,0.45); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
 
-.fg-cta-nav { background: #b08d57; color: #fff; padding: 10px 20px; border-radius: 999px; font-size: 13px; font-weight: 700; text-decoration: none; box-shadow: 0 0 20px rgba(176,141,87,0.4); transition: box-shadow 0.3s var(--fg-ease), transform 0.3s var(--fg-ease); }
-.fg-cta-nav:hover { box-shadow: 0 0 34px rgba(176,141,87,0.75); transform: translateY(-1px); color: #fff; }
+.fg-cta-nav { background: #C2660A; color: #fff; padding: 10px 20px; border-radius: 999px; font-size: 13px; font-weight: 700; text-decoration: none; box-shadow: 0 0 20px rgba(194, 102, 10,0.4); transition: box-shadow 0.3s var(--fg-ease), transform 0.3s var(--fg-ease); }
+.fg-cta-nav:hover { box-shadow: 0 0 34px rgba(194, 102, 10,0.75); transform: translateY(-1px); color: #fff; }
 
 .fg-hamburger { display: none; background: transparent; border: none; cursor: pointer; padding: 6px; align-items: center; justify-content: center; }
 /* 1024px, not the more typical 760px "mobile" cutoff: the desktop nav's 4 links + logo +
@@ -199,10 +199,10 @@ a:hover { color: #fff; }
 .fg-mobile-menu { position: fixed; inset: 0; z-index: 300; background: rgba(6,6,6,0.98); backdrop-filter: blur(10px); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 32px; opacity: 0; pointer-events: none; transition: opacity 0.3s var(--fg-ease); }
 .fg-mobile-menu.fg-open { opacity: 1; pointer-events: auto; }
 .fg-mobile-menu a { font-size: 22px; font-weight: 600; color: #d8d8dc; letter-spacing: 0.02em; }
-.fg-mobile-menu a:hover { color: #b08d57; }
+.fg-mobile-menu a:hover { color: #C2660A; }
 
 /* ---------- gold custom cursor ---------- */
-.fg-cursor { position: fixed; top: 0; left: 0; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%; background: #F59E0B; box-shadow: 0 0 12px rgba(245,158,11,0.8); pointer-events: none; z-index: 9999; mix-blend-mode: normal; will-change: transform; }
+.fg-cursor { position: fixed; top: 0; left: 0; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%; background: #FFB020; box-shadow: 0 0 12px rgba(255, 176, 32,0.8); pointer-events: none; z-index: 9999; mix-blend-mode: normal; will-change: transform; }
 @media (hover: none), (pointer: coarse) { .fg-cursor { display: none; } }
 body.fg-has-cursor, body.fg-has-cursor * { cursor: none !important; }
 
@@ -222,16 +222,16 @@ body.fg-has-cursor, body.fg-has-cursor * { cursor: none !important; }
 .fg-flip-face { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; background: linear-gradient(180deg, #1b160e, #0A0A0A); }
 .fg-flip-half.fg-top .fg-flip-face, .fg-flip-fold.fg-fold-top .fg-flip-face { border-radius: 14px 14px 0 0; }
 .fg-flip-half.fg-bottom .fg-flip-face, .fg-flip-fold.fg-fold-bottom .fg-flip-face { border-radius: 0 0 14px 14px; }
-.fg-flip-face span { font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif; font-weight: 800; font-size: 56px; color: #F59E0B; text-shadow: 0 0 22px rgba(245,158,11,0.45); font-variant-numeric: tabular-nums; line-height: 1; display: block; }
+.fg-flip-face span { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif; font-weight: 800; font-size: 56px; color: #FFB020; text-shadow: 0 0 22px rgba(255, 176, 32,0.45); font-variant-numeric: tabular-nums; line-height: 1; display: block; }
 .fg-flip-face.fg-face-top span { transform: translateY(50%); }
 .fg-flip-face.fg-face-bottom span { transform: translateY(-50%); }
 .fg-flip-label { text-align: center; color: #6b5f47; font-size: 11px; letter-spacing: 0.22em; margin-top: 10px; font-weight: 600; }
-.fg-flip-colon { width: 22px; text-align: center; font-family: 'Geist', sans-serif; font-weight: 800; font-size: 44px; color: #F59E0B; align-self: flex-start; margin-top: 26px; transition: opacity 0.15s ease, text-shadow 0.15s ease; }
+.fg-flip-colon { width: 22px; text-align: center; font-family: 'Inter', sans-serif; font-weight: 800; font-size: 44px; color: #FFB020; align-self: flex-start; margin-top: 26px; transition: opacity 0.15s ease, text-shadow 0.15s ease; }
 .fg-flip-colon.fg-dim { opacity: 0.25; text-shadow: none; }
-.fg-flip-colon.fg-bright { opacity: 1; text-shadow: 0 0 10px rgba(245,158,11,0.8); }
+.fg-flip-colon.fg-bright { opacity: 1; text-shadow: 0 0 10px rgba(255, 176, 32,0.8); }
 
-.fg-timer-badge { display: inline-flex; align-items: center; gap: 9px; padding: 7px 16px 7px 12px; border-radius: 999px; background: rgba(10,10,10,0.7); border: 1px solid rgba(245,158,11,0.4); }
-.fg-timer-dot { width: 8px; height: 8px; border-radius: 50%; background: #F59E0B; box-shadow: 0 0 10px #F59E0B; }
+.fg-timer-badge { display: inline-flex; align-items: center; gap: 9px; padding: 7px 16px 7px 12px; border-radius: 999px; background: rgba(10,10,10,0.7); border: 1px solid rgba(255, 176, 32,0.4); }
+.fg-timer-dot { width: 8px; height: 8px; border-radius: 50%; background: #FFB020; box-shadow: 0 0 10px #FFB020; }
 
 .fg-cannot-end { transition: none; }
 .fg-cannot-end.fg-shake { animation: fg-shake 0.4s ease-in-out; }
@@ -241,8 +241,8 @@ body.fg-has-cursor, body.fg-has-cursor * { cursor: none !important; }
    needed without pairing it with .fg-cannot-end's own transition reset. */
 .fg-shake-standalone { animation: fg-shake 0.4s ease-in-out; }
 
-@keyframes fg-complete-flash { 0% { opacity: 0; } 15% { opacity: 1; background: rgba(245,158,11,0.55); } 100% { opacity: 1; background: rgba(245,158,11,0.12); } }
+@keyframes fg-complete-flash { 0% { opacity: 0; } 15% { opacity: 1; background: rgba(255, 176, 32,0.55); } 100% { opacity: 1; background: rgba(255, 176, 32,0.12); } }
 
 .fg-blocked-pill { position: relative; }
-.fg-blocked-pill .fg-tooltip { position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%) translateY(4px); background: #0A0A0A; border: 1px solid rgba(245,158,11,0.5); color: #F59E0B; font-size: 11px; font-weight: 600; padding: 5px 10px; border-radius: 8px; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.3s var(--fg-ease), transform 0.3s var(--fg-ease); }
+.fg-blocked-pill .fg-tooltip { position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%) translateY(4px); background: #0A0A0A; border: 1px solid rgba(255, 176, 32,0.5); color: #FFB020; font-size: 11px; font-weight: 600; padding: 5px 10px; border-radius: 8px; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.3s var(--fg-ease), transform 0.3s var(--fg-ease); }
 .fg-blocked-pill:hover .fg-tooltip { opacity: 1; transform: translateX(-50%) translateY(0); }

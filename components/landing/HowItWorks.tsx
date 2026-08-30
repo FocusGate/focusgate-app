@@ -18,7 +18,7 @@ export default function HowItWorks() {
           </div>
           <h2
             style={{
-              fontFamily: "'Geist', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif",
+              fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif",
               fontWeight: 700,
               fontSize: 40,
               letterSpacing: "-0.02em",
@@ -36,7 +36,7 @@ export default function HowItWorks() {
               key={s.n}
               style={{
                 background: "#0A0A0A",
-                border: "1px solid rgba(176,141,87,0.15)",
+                border: "1px solid rgba(194, 102, 10,0.15)",
                 borderRadius: 20,
                 padding: "34px 26px",
                 textAlign: "left",
@@ -47,9 +47,9 @@ export default function HowItWorks() {
                   width: 40,
                   height: 40,
                   borderRadius: 12,
-                  background: "rgba(176,141,87,0.12)",
-                  border: "1px solid rgba(176,141,87,0.35)",
-                  color: "#d4af7a",
+                  background: "rgba(194, 102, 10,0.12)",
+                  border: "1px solid rgba(194, 102, 10,0.35)",
+                  color: "#C2660A",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",

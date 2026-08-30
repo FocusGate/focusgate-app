@@ -14,12 +14,12 @@ export default function BetaBanner() {
         <h2
           className="fg-h2"
           style={{
-            fontFamily: "'Geist', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif",
+            fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif",
             fontWeight: 700,
             fontSize: 68,
             lineHeight: 1.0,
             letterSpacing: "-0.02em",
-            color: "#b08d57",
+            color: "#C2660A",
           }}
         >
           Free during beta.

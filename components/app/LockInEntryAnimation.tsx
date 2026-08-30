@@ -41,7 +41,7 @@ export default function LockInEntryAnimation({ onDone }: { onDone: () => void })
             width: 520,
             height: 520,
             borderRadius: "50%",
-            background: "radial-gradient(circle, rgba(176,141,87,0.4), transparent 70%)",
+            background: "radial-gradient(circle, rgba(194, 102, 10,0.4), transparent 70%)",
             filter: "blur(50px)",
           }}
         />
@@ -59,13 +59,13 @@ export default function LockInEntryAnimation({ onDone }: { onDone: () => void })
             animate={{ opacity: 1, y: 0, letterSpacing: "0.02em" }}
             transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
             style={{
-              fontFamily: "'Instrument Serif', serif",
+              fontFamily: "'Space Grotesk', sans-serif",
               fontSize: "clamp(38px, 7vw, 68px)",
               color: "#fff",
               margin: 0,
             }}
           >
-            You are now <span style={{ color: "#b08d57", fontStyle: "italic" }}>in RavenLock.</span>
+            You are now <span style={{ color: "#C2660A", fontStyle: "italic" }}>in RavenLock.</span>
           </motion.h1>
         </motion.div>
       </motion.div>

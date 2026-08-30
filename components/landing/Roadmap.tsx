@@ -6,14 +6,14 @@ import { Monitor, Smartphone } from "lucide-react";
 import { RevealGroup, RevealItem } from "@/components/motion/Reveal";
 import { joinRoadmapWaitlist, type RoadmapPlatform } from "@/lib/supabase";
 
-// #b08d57 is Raven's signature brand gold — the same color as the wordmark in the
+// #C2660A is Raven's signature brand gold — the same color as the wordmark in the
 // Navbar, the Pricing "BEST DEAL" card, and the BetaBanner headline — used here for the
 // ribbons/badges/form so this section still reads as "ours," just quieter than the
-// vibrant "available now" feel of Pricing right above it. #F59E0B is a separate, brighter
+// vibrant "available now" feel of Pricing right above it. #FFB020 is a separate, brighter
 // accent used elsewhere in the app (Problem.tsx's eyebrow, The Gates, FlipClock).
-const MUTED_GOLD = "#b08d57";
-const MUTED_GOLD_RGB = "176, 141, 87"; // same color as MUTED_GOLD, decomposed for rgba() alpha blends below
-const BRIGHT_GOLD = "#F59E0B";
+const MUTED_GOLD = "#C2660A";
+const MUTED_GOLD_RGB = "194, 102, 10"; // same color as MUTED_GOLD, decomposed for rgba() alpha blends below
+const BRIGHT_GOLD = "#FFB020";
 
 type RoadmapCardData = {
   id: RoadmapPlatform;
@@ -128,7 +128,7 @@ function RoadmapCard({ card }: { card: RoadmapCardData }) {
             {card.icon}
           </div>
 
-          <h3 style={{ fontFamily: "'Geist', sans-serif", fontWeight: 700, fontSize: 19, color: "#fff", margin: "20px 0 0" }}>{card.title}</h3>
+          <h3 style={{ fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 19, color: "#fff", margin: "20px 0 0" }}>{card.title}</h3>
 
           <span
             style={{
@@ -197,7 +197,7 @@ export default function Roadmap() {
   return (
     <section className="fg-sec" style={{ background: "#060606", color: "#fff", padding: "130px 32px", textAlign: "center" }}>
       <RevealItem standalone style={{ maxWidth: 640, margin: "0 auto" }}>
-        <h2 style={{ fontFamily: "'Instrument Serif', serif", fontWeight: 400, fontSize: 58, lineHeight: 1.1, color: "#fff" }}>
+        <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 400, fontSize: 58, lineHeight: 1.1, color: "#fff" }}>
           This is just the beginning.
         </h2>
         <p style={{ color: "#9a9da4", fontSize: 17, marginTop: 16 }}>Raven is expanding beyond the browser.</p>

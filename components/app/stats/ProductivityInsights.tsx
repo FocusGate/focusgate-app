@@ -15,8 +15,8 @@ export default function ProductivityInsights({
         <div style={{ color: "#7a7d84", fontSize: 13, fontWeight: 600 }}>Most productive time</div>
         <div style={{ color: "#fff", fontSize: 22, fontWeight: 800, marginTop: 8 }}>{mostProductive ? mostProductive.label : "—"}</div>
       </div>
-      <div style={{ background: "#0A0A0A", border: "1px solid rgba(245,158,11,0.3)", borderRadius: 16, padding: 20, minWidth: 0 }}>
-        <div style={{ color: "#F59E0B", fontSize: 13, fontWeight: 700 }}>🏆 Best day ever</div>
+      <div style={{ background: "#0A0A0A", border: "1px solid rgba(255, 176, 32,0.3)", borderRadius: 16, padding: 20, minWidth: 0 }}>
+        <div style={{ color: "#FFB020", fontSize: 13, fontWeight: 700 }}>🏆 Best day ever</div>
         <div style={{ color: "#fff", fontSize: 22, fontWeight: 800, marginTop: 8 }}>{hasBestDay ? formatHoursMinutes(bestDay.minutes) : "—"}</div>
         {hasBestDay && (
           <div style={{ color: "#7a7d84", fontSize: 12, marginTop: 4 }}>
