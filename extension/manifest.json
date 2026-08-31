@@ -1,8 +1,9 @@
 {
   "manifest_version": 3,
   "name": "Raven",
-  "description": "Built to make quitting harder than finishing. Start a RavenLock session, eliminate distractions, and force 100% study focus with zero cheat codes.",
+  "description": "Start a RavenLock session, eliminate distractions, and force 100% study focus. Zero cheat codes, zero exceptions.",
   "version": "1.0.0",
+  "homepage_url": "https://ravenlock.pro",
 
   "permissions": ["declarativeNetRequest", "storage", "alarms", "activeTab", "tabs"],
   "host_permissions": ["<all_urls>"],

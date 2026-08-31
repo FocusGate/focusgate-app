@@ -62,9 +62,9 @@ export default function FlipClock({
         cardRef.current,
         {
           boxShadow: [
-            "0 40px 80px rgba(0,0,0,0.6), 0 0 0px rgba(255, 176, 32,0)",
-            "0 40px 80px rgba(0,0,0,0.6), 0 0 20px rgba(255, 176, 32,0.55)",
-            "0 40px 80px rgba(0,0,0,0.6), 0 0 0px rgba(255, 176, 32,0)",
+            "0 40px 80px rgba(0,0,0,0.6), 0 0 0px rgba(245, 158, 11,0)",
+            "0 40px 80px rgba(0,0,0,0.6), 0 0 20px rgba(245, 158, 11,0.55)",
+            "0 40px 80px rgba(0,0,0,0.6), 0 0 0px rgba(245, 158, 11,0)",
           ],
         },
         { duration: 0.3, ease: "easeOut" }
@@ -108,7 +108,7 @@ export default function FlipClock({
     <div style={{ position: "relative", display: "inline-flex", flexDirection: "column", alignItems: "center", gap: 20 }}>
       <div className="fg-timer-badge">
         <span className="fg-timer-dot" style={{ animation: "fg-heartbeat 1.4s ease-in-out infinite" }} />
-        <span style={{ color: "#FFB020", fontSize: 11, fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase" }}>
+        <span style={{ color: "#F59E0B", fontSize: 11, fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase" }}>
           RavenLock
         </span>
       </div>
@@ -120,7 +120,7 @@ export default function FlipClock({
           viewBox="0 0 200 200"
           style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", opacity: 0.35, pointerEvents: "none" }}
         >
-          <circle cx="100" cy="100" r="92" fill="none" stroke="rgba(255, 176, 32,0.12)" strokeWidth="1" />
+          <circle cx="100" cy="100" r="92" fill="none" stroke="rgba(245, 158, 11,0.12)" strokeWidth="1" />
           <motion.circle
             cx="100"
             cy="100"
@@ -199,8 +199,8 @@ export default function FlipClock({
                   left: "50%",
                   transform: "translateX(-50%)",
                   background: "#0A0A0A",
-                  border: "1px solid rgba(255, 176, 32,0.5)",
-                  color: "#FFB020",
+                  border: "1px solid rgba(245, 158, 11,0.5)",
+                  color: "#F59E0B",
                   fontSize: 11,
                   fontWeight: 600,
                   padding: "5px 10px",
@@ -249,17 +249,17 @@ export default function FlipClock({
                 alignItems: "center",
                 justifyContent: "center",
                 gap: 14,
-                background: "rgba(255, 176, 32,0.12)",
+                background: "rgba(245, 158, 11,0.12)",
                 backdropFilter: "blur(2px)",
                 animation: "fg-complete-flash 1s ease-out",
               }}
             >
-              <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: 800, fontSize: 28, color: "#FFB020", textShadow: "0 0 30px rgba(255, 176, 32,0.7)" }}>
+              <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: 800, fontSize: 28, color: "#F59E0B", textShadow: "0 0 30px rgba(245, 158, 11,0.7)" }}>
                 Session Complete 🏆
               </span>
               <div className="fg-timer-badge">
                 <span className="fg-timer-dot" />
-                <span style={{ color: "#FFB020", fontSize: 11, fontWeight: 700, letterSpacing: "0.18em" }}>RAVENLOCK</span>
+                <span style={{ color: "#F59E0B", fontSize: 11, fontWeight: 700, letterSpacing: "0.18em" }}>RAVENLOCK</span>
               </div>
             </div>
           )}

@@ -157,7 +157,7 @@ export default function OnboardingFlow() {
         <motion.div
           animate={{ width: `${progressPct}%` }}
           transition={{ duration: 0.4, ease: EASE }}
-          style={{ height: "100%", background: "linear-gradient(90deg, #C2660A, #FFB020)" }}
+          style={{ height: "100%", background: "linear-gradient(90deg, #b08d57, #F59E0B)" }}
         />
       </div>
 

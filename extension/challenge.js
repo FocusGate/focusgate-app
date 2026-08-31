@@ -27,7 +27,7 @@ const TALON_LOCK_SVG = `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="
   </g>
 </svg>`;
 
-const ACCENTS = { "math-sprint": "#FFB020", "memory-match": "#A78BFA", "geography-quiz": "#FB923C" };
+const ACCENTS = { "math-sprint": "#F59E0B", "memory-match": "#A78BFA", "geography-quiz": "#FB923C" };
 const LABELS = { "math-sprint": "Math Sprint", "memory-match": "Memory Match", "geography-quiz": "Geography Quiz" };
 
 // Break length, picked here (not before the gate) — mirrors lib/stats.ts's

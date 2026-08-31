@@ -3,10 +3,10 @@
  *  out explicitly as "glowing gold". */
 function intensity(minutes: number): { background: string; boxShadow?: string } {
   if (minutes <= 0) return { background: "#141416" };
-  if (minutes < 30) return { background: "rgba(255, 176, 32,0.28)" };
-  if (minutes < 60) return { background: "rgba(255, 176, 32,0.55)" };
-  if (minutes < 120) return { background: "#FFB020" };
-  return { background: "#FFB020", boxShadow: "0 0 8px 2px rgba(255, 176, 32,0.85)" };
+  if (minutes < 30) return { background: "rgba(245, 158, 11,0.28)" };
+  if (minutes < 60) return { background: "rgba(245, 158, 11,0.55)" };
+  if (minutes < 120) return { background: "#F59E0B" };
+  return { background: "#F59E0B", boxShadow: "0 0 8px 2px rgba(245, 158, 11,0.85)" };
 }
 
 export default function HabitGrid({ data, days = 365 }: { data: { date: string; minutes: number }[]; days?: number }) {

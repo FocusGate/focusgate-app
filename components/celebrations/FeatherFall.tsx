@@ -39,13 +39,13 @@ function FallingQuillShape({ size }: { size: number }) {
     <svg width={size} height={size * 1.6} viewBox="0 0 30 48" fill="none">
       <defs>
         <linearGradient id="ff-quill-gold" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#FFF4E0" />
-          <stop offset="0.5" stopColor="#FFB020" />
-          <stop offset="1" stopColor="#C2660A" />
+          <stop offset="0" stopColor="#FCD34D" />
+          <stop offset="0.5" stopColor="#F59E0B" />
+          <stop offset="1" stopColor="#b08d57" />
         </linearGradient>
       </defs>
       <path d="M15 4C22 8 26 15 24 23C22 30 18 35 15 40L15 44" fill="url(#ff-quill-gold)" opacity="0.95" />
-      <path d="M15 4C15 4 15 22 15 40" stroke="#C2660A" strokeWidth="0.8" opacity="0.6" />
+      <path d="M15 4C15 4 15 22 15 40" stroke="#b08d57" strokeWidth="0.8" opacity="0.6" />
       <path d="M13.6 40L12 46L15.1 43.5L18 46L16.4 40Z" fill="url(#ff-quill-gold)" />
     </svg>
   );
@@ -117,7 +117,7 @@ export type FeatherFallProps = {
  *  bottom, each with its own gentle sine-wave side-to-side drift and rotation speed so the
  *  fall reads as physical, not like a uniform particle system. Pointer-events are off
  *  throughout — this never blocks interaction with whatever's underneath. */
-export function FeatherFall({ active, count = 20, slow = false, includeQuills = false, gold = "#FFB020", onDone }: FeatherFallProps) {
+export function FeatherFall({ active, count = 20, slow = false, includeQuills = false, gold = "#F59E0B", onDone }: FeatherFallProps) {
   const [playing, setPlaying] = useState(false);
 
   useEffect(() => {

@@ -4,8 +4,8 @@
 // them. Keep both in sync by hand if the brand shell ever changes — there's no build step
 // that enforces it.
 
-export const GOLD = "#C2660A";
-export const GOLD_BRIGHT = "#FFB020";
+export const GOLD = "#b08d57";
+export const GOLD_BRIGHT = "#F59E0B";
 const INK = "#141413";
 const MUTED = "#6b6b6b";
 

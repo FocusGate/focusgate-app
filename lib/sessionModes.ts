@@ -32,13 +32,13 @@ export const SESSION_MODES: ModeDefinition[] = [
     accent: "#EF4444",
     badge: "Recommended",
   },
-  { id: "exam_cram", name: "Exam Cram", emoji: "📚", tagline: "Longer stretch. Higher stakes. No easy breaks.", typicalDuration: "2–4 hours", accent: "#C2660A" },
+  { id: "exam_cram", name: "Exam Cram", emoji: "📚", tagline: "Longer stretch. Higher stakes. No easy breaks.", typicalDuration: "2–4 hours", accent: "#b08d57" },
   { id: "group_study", name: "Group Study", emoji: "👥", tagline: "Lock in together. Stay accountable.", typicalDuration: "Set by you", accent: "#3B82F6", requirement: "Requires a friend group" },
   { id: "all_nighter", name: "All Nighter", emoji: "🌙", tagline: "Long haul session. Built-in rest reminders.", typicalDuration: "4+ hours", accent: "#4F46E5" },
   // "Zero interruptions" dropped from the tagline now that Break Gates apply here too (see
   // LockedInOverlay's manualBreaksAllowed) — what actually still sets this mode apart is the
   // fixed, non-adjustable duration and the heavier DeepFocusConfirmModal commitment gate.
-  { id: "deep_focus", name: "Deep Focus", emoji: "🎯", tagline: "One task. 90 minutes, no shortcuts.", typicalDuration: "90 min, fixed", accent: "#FFB020" },
+  { id: "deep_focus", name: "Deep Focus", emoji: "🎯", tagline: "One task. 90 minutes, no shortcuts.", typicalDuration: "90 min, fixed", accent: "#F59E0B" },
 ];
 
 export const CUSTOM_MODE: ModeDefinition = {

@@ -24,10 +24,10 @@ export default function TrialStatusBanner({ betaMode, entitlements }: { betaMode
           gap: 8,
           marginTop: 14,
           padding: "8px 16px",
-          background: "rgba(255, 176, 32,0.08)",
-          border: "1px solid rgba(255, 176, 32,0.3)",
+          background: "rgba(245, 158, 11,0.08)",
+          border: "1px solid rgba(245, 158, 11,0.3)",
           borderRadius: 999,
-          color: "#FFB020",
+          color: "#F59E0B",
           fontSize: 13,
           fontWeight: 600,
         }}
@@ -60,7 +60,7 @@ export default function TrialStatusBanner({ betaMode, entitlements }: { betaMode
           href="/#pricing"
           onClick={() => track("upgrade_button_clicked")}
           style={{
-            background: "linear-gradient(180deg, #FFB020, #C2660A)",
+            background: "linear-gradient(180deg, #F59E0B, #b08d57)",
             color: "#0A0A0A",
             fontSize: 13,
             fontWeight: 800,

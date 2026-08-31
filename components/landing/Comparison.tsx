@@ -39,20 +39,20 @@ export default function Comparison() {
       <RevealGroup stagger={0.05} amount={0.1} className="fg-split" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0, position: "relative" }}>
         <div
           style={{
-            background: "radial-gradient(ellipse 700px 500px at 30% 0%, rgba(194, 102, 10,0.08), transparent 65%), #0b0b0d",
+            background: "radial-gradient(ellipse 700px 500px at 30% 0%, rgba(176, 141, 87,0.08), transparent 65%), #0b0b0d",
             padding: "110px 8% 120px",
             borderRight: "1px solid rgba(255,255,255,0.09)",
           }}
         >
           <div style={{ display: "inline-flex", alignItems: "center", gap: 8, marginBottom: 34 }}>
             <RavenMark size={22} />
-            <span style={{ fontSize: 26, fontWeight: 800, color: "#C2660A", letterSpacing: "0.02em" }}>RAVEN</span>
+            <span style={{ fontSize: 26, fontWeight: 800, color: "#b08d57", letterSpacing: "0.02em" }}>RAVEN</span>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
             {FG_ITEMS.map((t) => (
               <RevealItem key={t} style={{ display: "flex", alignItems: "center", gap: 14 }}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
-                  <path d="M5 13l4 4 10-11" stroke="#C2660A" strokeWidth="2.4" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M5 13l4 4 10-11" stroke="#b08d57" strokeWidth="2.4" fill="none" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
                 <span style={{ color: "#f3f3f5", fontSize: 17, fontWeight: 500 }}>{t}</span>
               </RevealItem>

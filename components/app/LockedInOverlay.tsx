@@ -417,9 +417,9 @@ export default function LockedInOverlay({
                 display: "flex",
                 alignItems: "center",
                 gap: 8,
-                background: "rgba(255, 176, 32,0.1)",
-                color: "#FFB020",
-                border: "1px solid rgba(255, 176, 32,0.35)",
+                background: "rgba(245, 158, 11,0.1)",
+                color: "#F59E0B",
+                border: "1px solid rgba(245, 158, 11,0.35)",
                 padding: "10px 18px",
                 borderRadius: 999,
                 fontSize: 13,
@@ -512,7 +512,7 @@ export default function LockedInOverlay({
               initial={{ opacity: 0, scale: 0.94 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.15, duration: 0.5 }}
-              style={{ color: "#FFB020", fontSize: 28, fontWeight: 800, letterSpacing: "-0.01em" }}
+              style={{ color: "#F59E0B", fontSize: 28, fontWeight: 800, letterSpacing: "-0.01em" }}
             >
               Back to it.
             </motion.span>

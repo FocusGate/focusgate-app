@@ -31,8 +31,8 @@ export interface SignInPageProps {
 
 /** Raven gold, matching --fg-gold-bright / --fg-gold in globals.css. */
 const GOLD_DOTS = [
-  [255, 176, 32],
-  [194, 102, 10],
+  [245, 158, 11],
+  [176, 141, 87],
 ];
 
 export const CanvasRevealEffect = ({
@@ -297,7 +297,7 @@ const AnimatedNavLink = ({ href, children }: { href: string; children: React.Rea
   <Link href={href} className="group relative block overflow-hidden h-5 text-xs tracking-[0.14em] uppercase">
     <div className="flex flex-col transition-transform duration-300 ease-out group-hover:-translate-y-1/2">
       <span className="h-5 flex items-center text-[#b79a6f]">{children}</span>
-      <span className="h-5 flex items-center text-[#FFB020]">{children}</span>
+      <span className="h-5 flex items-center text-[#F59E0B]">{children}</span>
     </div>
   </Link>
 );
@@ -332,13 +332,13 @@ function RavenAuthNav({ mode }: { mode: "login" | "signup" }) {
   const swapButton = (
     <div className="relative group w-full sm:w-auto">
       <div
-        className="absolute inset-0 -m-2 rounded-full hidden sm:block bg-[#FFB020] opacity-25 filter blur-lg
+        className="absolute inset-0 -m-2 rounded-full hidden sm:block bg-[#F59E0B] opacity-25 filter blur-lg
                    pointer-events-none transition-all duration-300 ease-out group-hover:opacity-40 group-hover:blur-xl group-hover:-m-3"
       />
       <Link
         href={swapHref}
         className="relative z-10 block text-center px-4 py-2 sm:px-3 text-xs sm:text-sm font-semibold text-black
-                   bg-gradient-to-br from-[#FFB020] to-[#C2660A] rounded-full transition-all duration-200 w-full sm:w-auto"
+                   bg-gradient-to-br from-[#F59E0B] to-[#b08d57] rounded-full transition-all duration-200 w-full sm:w-auto"
       >
         {swapLabel}
       </Link>
@@ -355,7 +355,7 @@ function RavenAuthNav({ mode }: { mode: "login" | "signup" }) {
       <div className="flex items-center justify-between w-full gap-x-6 sm:gap-x-8">
         <Link href="/" className="flex items-center gap-2.5">
           <RavenMark size={22} />
-          <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 17, fontWeight: 800, letterSpacing: "0.08em", color: "#C2660A" }}>RAVEN</span>
+          <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 17, fontWeight: 800, letterSpacing: "0.08em", color: "#b08d57" }}>RAVEN</span>
         </Link>
 
         <nav className="hidden sm:flex items-center space-x-6">
@@ -369,7 +369,7 @@ function RavenAuthNav({ mode }: { mode: "login" | "signup" }) {
         <div className="hidden sm:flex items-center gap-3">{swapButton}</div>
 
         <button
-          className="sm:hidden flex items-center justify-center w-8 h-8 text-[#C2660A] focus:outline-none"
+          className="sm:hidden flex items-center justify-center w-8 h-8 text-[#b08d57] focus:outline-none"
           onClick={() => setIsOpen(!isOpen)}
           aria-label={isOpen ? "Close menu" : "Open menu"}
         >
@@ -390,7 +390,7 @@ function RavenAuthNav({ mode }: { mode: "login" | "signup" }) {
       >
         <nav className="flex flex-col items-center space-y-4 text-base w-full">
           {navLinksData.map((link) => (
-            <Link key={link.href} href={link.href} className="text-[#b79a6f] hover:text-[#FFB020] transition-colors w-full text-center">
+            <Link key={link.href} href={link.href} className="text-[#b79a6f] hover:text-[#F59E0B] transition-colors w-full text-center">
               {link.label}
             </Link>
           ))}
@@ -559,7 +559,7 @@ export const SignInPage = ({ className, mode = "login" }: SignInPageProps) => {
                           value={name}
                           onChange={(e) => setName(e.target.value)}
                           className="w-full backdrop-blur-[1px] text-white border border-white/10 rounded-full py-3 px-4
-                                     focus:outline-none focus:border-[#FFB020]/50 text-center bg-transparent transition-colors"
+                                     focus:outline-none focus:border-[#F59E0B]/50 text-center bg-transparent transition-colors"
                         />
                       )}
                       <div className="relative">
@@ -570,14 +570,14 @@ export const SignInPage = ({ className, mode = "login" }: SignInPageProps) => {
                           onChange={(e) => setEmail(e.target.value)}
                           required
                           className="w-full backdrop-blur-[1px] text-white border border-white/10 rounded-full py-3 pl-4 pr-12
-                                     focus:outline-none focus:border-[#FFB020]/50 text-center bg-transparent transition-colors"
+                                     focus:outline-none focus:border-[#F59E0B]/50 text-center bg-transparent transition-colors"
                         />
                         <button
                           type="submit"
                           disabled={busy}
                           aria-label="Send my code"
                           className="absolute right-1.5 top-1.5 text-black w-9 h-9 flex items-center justify-center rounded-full
-                                     bg-[#FFB020] hover:bg-[#FFB020] disabled:opacity-50 transition-colors group overflow-hidden"
+                                     bg-[#F59E0B] hover:bg-[#F59E0B] disabled:opacity-50 transition-colors group overflow-hidden"
                         >
                           <span className="relative w-full h-full block overflow-hidden">
                             <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover:translate-x-full">
@@ -656,7 +656,7 @@ export const SignInPage = ({ className, mode = "login" }: SignInPageProps) => {
 
                     <motion.p
                       onClick={handleResend}
-                      className="text-[#9a9da4] hover:text-[#FFB020] transition-colors cursor-pointer text-sm"
+                      className="text-[#9a9da4] hover:text-[#F59E0B] transition-colors cursor-pointer text-sm"
                       whileHover={{ scale: 1.02 }}
                       transition={{ duration: 0.2 }}
                     >
@@ -677,7 +677,7 @@ export const SignInPage = ({ className, mode = "login" }: SignInPageProps) => {
                         onClick={() => void submitCode(code.join(""))}
                         className={`flex-1 rounded-full font-medium py-3 border transition-all duration-300 ${
                           code.every((d) => d !== "")
-                            ? "bg-[#FFB020] text-black border-transparent hover:bg-[#FFB020] cursor-pointer"
+                            ? "bg-[#F59E0B] text-black border-transparent hover:bg-[#F59E0B] cursor-pointer"
                             : "bg-[#111] text-white/40 border-white/10 cursor-not-allowed"
                         }`}
                         disabled={!code.every((d) => d !== "") || busy}
@@ -717,8 +717,8 @@ export const SignInPage = ({ className, mode = "login" }: SignInPageProps) => {
                       className="py-10"
                     >
                       <div
-                        className="mx-auto w-16 h-16 rounded-full bg-gradient-to-br from-[#FFB020] to-[#C2660A] flex items-center justify-center"
-                        style={{ boxShadow: "0 0 40px rgba(255, 176, 32,0.45)" }}
+                        className="mx-auto w-16 h-16 rounded-full bg-gradient-to-br from-[#F59E0B] to-[#b08d57] flex items-center justify-center"
+                        style={{ boxShadow: "0 0 40px rgba(245, 158, 11,0.45)" }}
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-black" viewBox="0 0 20 20" fill="currentColor">
                           <path
@@ -735,7 +735,7 @@ export const SignInPage = ({ className, mode = "login" }: SignInPageProps) => {
                       animate={{ opacity: 1 }}
                       transition={{ delay: 1 }}
                       onClick={() => router.push("/dashboard")}
-                      className="w-full rounded-full bg-[#FFB020] text-black font-semibold py-3 hover:bg-[#FFB020] transition-colors"
+                      className="w-full rounded-full bg-[#F59E0B] text-black font-semibold py-3 hover:bg-[#F59E0B] transition-colors"
                     >
                       Start a session →
                     </motion.button>

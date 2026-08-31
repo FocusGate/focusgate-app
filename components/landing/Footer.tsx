@@ -47,7 +47,7 @@ export default function Footer() {
       <div style={{ maxWidth: 1240, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 24, flexWrap: "wrap" }}>
         <motion.div variants={logoVariants} style={{ display: "flex", alignItems: "center", gap: 9, transformOrigin: "left center" }}>
           <RavenMark size={20} />
-          <span style={{ fontSize: 16, fontWeight: 800, letterSpacing: "0.06em", color: "#C2660A" }}>RAVEN</span>
+          <span style={{ fontSize: 16, fontWeight: 800, letterSpacing: "0.06em", color: "#b08d57" }}>RAVEN</span>
         </motion.div>
         <motion.div variants={linksContainerVariants} style={{ display: "flex", gap: 26 }}>
           {LINKS.map((l) => (

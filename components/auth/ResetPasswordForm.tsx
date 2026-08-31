@@ -53,7 +53,7 @@ export default function ResetPasswordForm() {
       <div style={{ width: "100%", maxWidth: 380 }}>
         <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, justifyContent: "center", marginBottom: 40 }}>
           <RavenMark />
-          <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 21, fontWeight: 800, letterSpacing: "0.08em", color: "#C2660A" }}>RAVEN</span>
+          <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 21, fontWeight: 800, letterSpacing: "0.08em", color: "#b08d57" }}>RAVEN</span>
         </Link>
 
         <h1 style={{ color: "#fff", fontSize: 26, fontWeight: 700, textAlign: "center", marginBottom: 6 }}>Set a new password</h1>
@@ -84,7 +84,7 @@ export default function ResetPasswordForm() {
         </form>
 
         <p style={{ color: "#7a7d84", fontSize: 14, textAlign: "center", marginTop: 24 }}>
-          <Link href="/login" style={{ color: "#C2660A", fontWeight: 600 }}>
+          <Link href="/login" style={{ color: "#b08d57", fontWeight: 600 }}>
             Back to sign in
           </Link>
         </p>
@@ -104,7 +104,7 @@ const inputStyle: React.CSSProperties = {
 };
 
 const submitStyle: React.CSSProperties = {
-  background: "#FFB020",
+  background: "#F59E0B",
   color: "#0a0a0a",
   border: "none",
   padding: "14px",

@@ -32,8 +32,8 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 // time). Swap this the moment ravenlock.pro is verified there; nothing else needs to change.
 const FROM = "Raven <support@focusgate.site>";
 
-const GOLD = "#C2660A";
-const GOLD_BRIGHT = "#FFB020";
+const GOLD = "#b08d57";
+const GOLD_BRIGHT = "#F59E0B";
 const INK = "#141413";
 const MUTED = "#6b6b6b";
 

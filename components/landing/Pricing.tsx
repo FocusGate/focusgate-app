@@ -47,7 +47,7 @@ function StruckPriceReveal({
         transition={{ duration: 0.4, delay: 0.8 }}
         style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 8, flexWrap: "wrap" }}
       >
-        <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: 800, fontSize: 46, color: "#C2660A" }}>{newPrice}</span>
+        <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: 800, fontSize: 46, color: "#b08d57" }}>{newPrice}</span>
         <span style={{ color: "#999", fontSize: 14 }}>{newUnit}</span>
         {badge && (
           <span style={{ background: "#22c55e", color: "#fff", fontSize: 10, fontWeight: 700, padding: "3px 9px", borderRadius: 999, letterSpacing: "0.04em" }}>
@@ -138,8 +138,8 @@ export default function Pricing() {
             display: "inline-flex",
             alignItems: "center",
             gap: 8,
-            background: "rgba(255, 176, 32,0.08)",
-            border: "1px solid rgba(255, 176, 32,0.35)",
+            background: "rgba(245, 158, 11,0.08)",
+            border: "1px solid rgba(245, 158, 11,0.35)",
             borderRadius: 999,
             padding: "10px 20px",
             margin: "36px auto 0",
@@ -240,13 +240,13 @@ export default function Pricing() {
         <RevealItem
           whileHover={{ y: -8 }}
           transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-          style={{ background: "#060606", border: "1.5px solid #C2660A", borderRadius: 20, padding: "34px 30px", display: "flex", flexDirection: "column", color: "#fff", boxShadow: "0 0 30px rgba(194, 102, 10,0.16)" }}
+          style={{ background: "#060606", border: "1.5px solid #b08d57", borderRadius: 20, padding: "34px 30px", display: "flex", flexDirection: "column", color: "#fff", boxShadow: "0 0 30px rgba(176, 141, 87,0.16)" }}
         >
-          <span style={{ alignSelf: "flex-start", background: "#C2660A", color: "#fff", fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", padding: "5px 12px", borderRadius: 999 }}>
+          <span style={{ alignSelf: "flex-start", background: "#b08d57", color: "#fff", fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", padding: "5px 12px", borderRadius: 999 }}>
             BEST DEAL
           </span>
           <StruckPriceReveal oldPrice="$79.99" oldUnit=" one-time" newPrice="$0" newUnit=" one-time" />
-          <p style={{ color: "#C2660A", fontSize: 13, fontWeight: 700, marginTop: 12 }}>Pay once. Yours forever.</p>
+          <p style={{ color: "#b08d57", fontSize: 13, fontWeight: 700, marginTop: 12 }}>Pay once. Yours forever.</p>
           <div style={{ display: "flex", flexDirection: "column", gap: 11, margin: "22px 0 0", color: "#cbccd2", fontSize: 14 }}>
             <span>✓ Everything in Pro, forever</span>
             <span>✓ Exclusive gold Founder badge</span>
@@ -262,7 +262,7 @@ export default function Pricing() {
             type="button"
             onClick={goToSignup}
             style={{
-              background: "#C2660A",
+              background: "#b08d57",
               color: "#fff",
               border: "none",
               padding: "18px 40px",
@@ -270,7 +270,7 @@ export default function Pricing() {
               fontSize: 17,
               fontWeight: 800,
               cursor: "pointer",
-              boxShadow: "0 0 40px rgba(194, 102, 10,0.45), 0 10px 30px rgba(0,0,0,0.4)",
+              boxShadow: "0 0 40px rgba(176, 141, 87,0.45), 0 10px 30px rgba(0,0,0,0.4)",
             }}
           >
             Claim Free Beta Access →

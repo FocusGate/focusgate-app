@@ -35,7 +35,7 @@ function CramReport({ sessionId }: { sessionId: string }) {
 
   return (
     <div style={{ background: "#0A0A0A", border: "1px solid rgba(217,119,6,0.3)", borderRadius: 16, padding: 22 }}>
-      <div style={{ color: "#C2660A", fontSize: 12, fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase" }}>Cram Report</div>
+      <div style={{ color: "#b08d57", fontSize: 12, fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase" }}>Cram Report</div>
       {stats ? (
         <div style={{ display: "flex", justifyContent: "space-around", marginTop: 14, textAlign: "center" }}>
           <Stat label="Gates faced" value={stats.gatesFaced} />

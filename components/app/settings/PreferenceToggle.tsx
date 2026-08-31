@@ -30,7 +30,7 @@ export default function PreferenceToggle({
           height: 24,
           borderRadius: 999,
           border: "none",
-          background: checked ? "#FFB020" : "#26262b",
+          background: checked ? "#F59E0B" : "#26262b",
           position: "relative",
           cursor: disabled ? "default" : "pointer",
           opacity: disabled ? 0.6 : 1,

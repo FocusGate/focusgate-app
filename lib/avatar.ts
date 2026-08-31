@@ -1,6 +1,6 @@
 /** Deterministic colored-circle-with-initial avatars — no photo upload, no storage bucket. */
 
-const PALETTE = ["#FFB020", "#C2660A", "#0EA5E9", "#22c55e", "#a855f7", "#ef4444", "#14b8a6", "#f472b6"];
+const PALETTE = ["#F59E0B", "#b08d57", "#0EA5E9", "#22c55e", "#a855f7", "#ef4444", "#14b8a6", "#f472b6"];
 
 function hashString(s: string): number {
   let hash = 0;

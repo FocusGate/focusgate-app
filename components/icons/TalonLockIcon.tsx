@@ -25,7 +25,7 @@ export function TalonLockIcon({
   tone?: "dark" | "light";
   color?: string;
 }) {
-  const fill = color ?? (tone === "dark" ? "#FFB020" : "#0A0A0A");
+  const fill = color ?? (tone === "dark" ? "#F59E0B" : "#0A0A0A");
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       {/* the central bar/perch the three talons close around */}

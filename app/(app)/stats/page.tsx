@@ -63,8 +63,8 @@ export default function StatsPage() {
       {dataLoading && <p style={{ color: "#7a7d84", fontSize: 13, marginTop: 14 }}>Loading your stats…</p>}
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 18, marginTop: 28 }}>
-        <StatCard label="Current streak" target={user.streak} suffix={user.streak === 1 ? " day" : " days"} icon={<Flame size={14} color="#FFB020" />} />
-        <StatCard label="Longest streak" target={user.longest_streak} suffix={user.longest_streak === 1 ? " day" : " days"} icon={<Trophy size={14} color="#FFB020" />} />
+        <StatCard label="Current streak" target={user.streak} suffix={user.streak === 1 ? " day" : " days"} icon={<Flame size={14} color="#F59E0B" />} />
+        <StatCard label="Longest streak" target={user.longest_streak} suffix={user.longest_streak === 1 ? " day" : " days"} icon={<Trophy size={14} color="#F59E0B" />} />
         <StatCard label="Sessions completed" target={completed.length} />
         <StatCard label="Avg. session length" target={avgMinutes} formatValue={formatHoursMinutes} />
       </div>

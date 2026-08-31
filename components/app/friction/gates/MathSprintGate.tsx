@@ -6,7 +6,7 @@ import { logBreakGateAttempt, type GameSlug } from "@/lib/supabase";
 
 const DEFAULT_GATE_SECONDS = 30;
 const QUESTION_COUNT = 5;
-const ACCENT = "#FFB020";
+const ACCENT = "#F59E0B";
 const GAME_SLUG: GameSlug = "math-sprint";
 
 type Problem = { text: string; answer: number; options: number[] };
@@ -146,7 +146,7 @@ export default function MathSprintGate({
           let border = "1px solid #26262b";
           let color = "#d8d8dc";
           if (feedback && isCorrectOption) {
-            bg = practiceMode ? "rgba(254,243,199,0.14)" : "rgba(255, 176, 32,0.16)";
+            bg = practiceMode ? "rgba(254,243,199,0.14)" : "rgba(245, 158, 11,0.16)";
             border = practiceMode ? "1px solid #A8A29E" : `1px solid ${ACCENT}`;
             color = practiceMode ? "#FEF3C7" : ACCENT;
           } else if (isPicked && !feedback?.correct) {

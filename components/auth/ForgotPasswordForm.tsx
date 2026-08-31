@@ -41,7 +41,7 @@ export default function ForgotPasswordForm() {
         <div style={{ width: "100%", maxWidth: 380, textAlign: "center" }}>
           <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, justifyContent: "center", marginBottom: 40 }}>
             <RavenMark />
-            <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 21, fontWeight: 800, letterSpacing: "0.08em", color: "#C2660A" }}>RAVEN</span>
+            <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 21, fontWeight: 800, letterSpacing: "0.08em", color: "#b08d57" }}>RAVEN</span>
           </Link>
 
           <div
@@ -49,12 +49,12 @@ export default function ForgotPasswordForm() {
               width: 56,
               height: 56,
               borderRadius: "50%",
-              background: "linear-gradient(135deg, #FFB020, #C2660A)",
+              background: "linear-gradient(135deg, #F59E0B, #b08d57)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               margin: "0 auto 20px",
-              boxShadow: "0 0 30px rgba(255, 176, 32,0.4)",
+              boxShadow: "0 0 30px rgba(245, 158, 11,0.4)",
             }}
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 20 20" fill="#0a0a0a">
@@ -68,7 +68,7 @@ export default function ForgotPasswordForm() {
             password.
           </p>
 
-          <Link href="/login" style={{ display: "inline-block", marginTop: 26, color: "#C2660A", fontWeight: 600, fontSize: 14 }}>
+          <Link href="/login" style={{ display: "inline-block", marginTop: 26, color: "#b08d57", fontWeight: 600, fontSize: 14 }}>
             Back to sign in
           </Link>
         </div>
@@ -91,7 +91,7 @@ export default function ForgotPasswordForm() {
       <div style={{ width: "100%", maxWidth: 380 }}>
         <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, justifyContent: "center", marginBottom: 40 }}>
           <RavenMark />
-          <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 21, fontWeight: 800, letterSpacing: "0.08em", color: "#C2660A" }}>RAVEN</span>
+          <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 21, fontWeight: 800, letterSpacing: "0.08em", color: "#b08d57" }}>RAVEN</span>
         </Link>
 
         <h1 style={{ color: "#fff", fontSize: 26, fontWeight: 700, textAlign: "center", marginBottom: 6 }}>Reset your password</h1>
@@ -115,7 +115,7 @@ export default function ForgotPasswordForm() {
         </form>
 
         <p style={{ color: "#7a7d84", fontSize: 14, textAlign: "center", marginTop: 24 }}>
-          <Link href="/login" style={{ color: "#C2660A", fontWeight: 600 }}>
+          <Link href="/login" style={{ color: "#b08d57", fontWeight: 600 }}>
             Back to sign in
           </Link>
         </p>
@@ -135,7 +135,7 @@ const inputStyle: React.CSSProperties = {
 };
 
 const submitStyle: React.CSSProperties = {
-  background: "#FFB020",
+  background: "#F59E0B",
   color: "#0a0a0a",
   border: "none",
   padding: "14px",

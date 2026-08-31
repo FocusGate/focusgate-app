@@ -79,7 +79,7 @@ export default function Stats() {
 
         <div style={{ display: "flex", justifyContent: "center", marginTop: 60 }}>
           <div className="fg-live-pill" style={{ display: "inline-flex", alignItems: "center", gap: 12, background: "#0A0A0A", borderRadius: 999, padding: "13px 24px" }}>
-            <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#FFB020", boxShadow: "0 0 10px #FFB020", animation: "fg-heartbeat 1.4s ease-in-out infinite" }} />
+            <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#F59E0B", boxShadow: "0 0 10px #F59E0B", animation: "fg-heartbeat 1.4s ease-in-out infinite" }} />
             <span style={{ color: "#9a9da4", fontSize: 15, fontWeight: 500 }}>
               <span style={{ color: "#fff", fontWeight: 700, fontVariantNumeric: "tabular-nums" }}>{liveCount.toLocaleString("en-US")}</span> minutes
               saved with Raven
@@ -114,7 +114,7 @@ function StatGold({ target, prefix, label }: { target: number; prefix?: string; 
           fontSize: 88,
           lineHeight: 1,
           letterSpacing: "-0.02em",
-          color: "#C2660A",
+          color: "#b08d57",
           fontVariantNumeric: "tabular-nums",
         }}
       />

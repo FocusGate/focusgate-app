@@ -195,16 +195,16 @@ export default function TheGatesPage() {
          *  mandatory, not optional. Only which challenge and how hard it is stay
          *  user-configurable. */}
         <GateSection
-          icon={<Unlock size={19} color="#FFB020" />}
+          icon={<Unlock size={19} color="#F59E0B" />}
           title="Break Gates"
           subtitle="Solve a challenge before your break starts. Always on."
-          accent="#FFB020"
+          accent="#F59E0B"
         >
           <GateRow label="Default challenge" hint="What you're asked to solve for a break">
-            <PillSelect options={CHALLENGE_OPTIONS} value={prefs.break_gate_default_challenge} onChange={(v) => patchPrefs({ break_gate_default_challenge: v })} accent="#FFB020" />
+            <PillSelect options={CHALLENGE_OPTIONS} value={prefs.break_gate_default_challenge} onChange={(v) => patchPrefs({ break_gate_default_challenge: v })} accent="#F59E0B" />
           </GateRow>
           <GateRow label="Difficulty" hint="How much time you get to solve it">
-            <PillSelect options={DIFFICULTY_OPTIONS} value={prefs.break_gate_difficulty} onChange={(v) => patchPrefs({ break_gate_difficulty: v })} accent="#FFB020" />
+            <PillSelect options={DIFFICULTY_OPTIONS} value={prefs.break_gate_difficulty} onChange={(v) => patchPrefs({ break_gate_difficulty: v })} accent="#F59E0B" />
           </GateRow>
           {gateStats && (
             <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0,1fr))", gap: 12, marginTop: 16 }}>
@@ -296,10 +296,10 @@ export default function TheGatesPage() {
 
         {/* ---------- Break Notes ---------- */}
         <GateSection
-          icon={<PenLine size={19} color="#C2660A" />}
+          icon={<PenLine size={19} color="#b08d57" />}
           title="Break Notes"
           subtitle="Say why before you go."
-          accent="#C2660A"
+          accent="#b08d57"
           disabled={!prefs.break_notes_enabled}
         >
           <PreferenceToggle label="Enable Break Notes" checked={prefs.break_notes_enabled} onChange={(v) => patchPrefs({ break_notes_enabled: v })} />
@@ -312,7 +312,7 @@ export default function TheGatesPage() {
                   Your top break reasons:{" "}
                   {noteStats.themeBreakdown.map((t, i) => (
                     <span key={t.theme}>
-                      <span style={{ color: "#C2660A", fontWeight: 700 }}>
+                      <span style={{ color: "#b08d57", fontWeight: 700 }}>
                         {t.theme} ({t.pct}%)
                       </span>
                       {i < noteStats.themeBreakdown.length - 1 ? ", " : ""}
@@ -322,7 +322,7 @@ export default function TheGatesPage() {
               )}
               {noteStats.longestGapMinutes > 0 && (
                 <p style={{ color: "#d8d8dc", fontSize: 13, marginTop: 2 }}>
-                  Longest streak without a break: <span style={{ color: "#FFB020", fontWeight: 700 }}>{formatGap(noteStats.longestGapMinutes)}</span>
+                  Longest streak without a break: <span style={{ color: "#F59E0B", fontWeight: 700 }}>{formatGap(noteStats.longestGapMinutes)}</span>
                 </p>
               )}
             </div>

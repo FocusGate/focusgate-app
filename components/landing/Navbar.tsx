@@ -42,7 +42,7 @@ export default function Navbar() {
                 fontSize: 21,
                 fontWeight: 800,
                 letterSpacing: "0.08em",
-                color: "#C2660A",
+                color: "#b08d57",
               }}
             >
               RAVEN
@@ -74,8 +74,8 @@ export default function Navbar() {
 
           <button className="fg-hamburger" aria-label="Menu" onClick={() => setMenuOpen(true)}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <line x1="4" y1="8" x2="20" y2="8" stroke="#C2660A" strokeWidth="1.8" strokeLinecap="round" />
-              <line x1="4" y1="14" x2="20" y2="14" stroke="#C2660A" strokeWidth="1.8" strokeLinecap="round" />
+              <line x1="4" y1="8" x2="20" y2="8" stroke="#b08d57" strokeWidth="1.8" strokeLinecap="round" />
+              <line x1="4" y1="14" x2="20" y2="14" stroke="#b08d57" strokeWidth="1.8" strokeLinecap="round" />
             </svg>
           </button>
         </div>
@@ -88,8 +88,8 @@ export default function Navbar() {
           style={{ position: "absolute", top: 22, right: 24, background: "transparent", border: "none", cursor: "pointer" }}
         >
           <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
-            <line x1="6" y1="6" x2="18" y2="18" stroke="#C2660A" strokeWidth="1.8" strokeLinecap="round" />
-            <line x1="18" y1="6" x2="6" y2="18" stroke="#C2660A" strokeWidth="1.8" strokeLinecap="round" />
+            <line x1="6" y1="6" x2="18" y2="18" stroke="#b08d57" strokeWidth="1.8" strokeLinecap="round" />
+            <line x1="18" y1="6" x2="6" y2="18" stroke="#b08d57" strokeWidth="1.8" strokeLinecap="round" />
           </svg>
         </button>
         {["features", "feathers", "pricing"].map((id) => (
@@ -147,7 +147,7 @@ function NavLink({ href, children }: { href: string; children: React.ReactNode }
           right: 0,
           bottom: -4,
           height: 1,
-          background: "#C2660A",
+          background: "#b08d57",
           transformOrigin: "left center",
         }}
       />
@@ -162,7 +162,7 @@ function NavLink({ href, children }: { href: string; children: React.ReactNode }
 export function RavenMark({ size = 26 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <path d="M2 12L6 8L14 5L22 9L13 11L20 18L12 14L7 15Z" fill="#C2660A" />
+      <path d="M2 12L6 8L14 5L22 9L13 11L20 18L12 14L7 15Z" fill="#b08d57" />
     </svg>
   );
 }

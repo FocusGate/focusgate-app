@@ -24,8 +24,8 @@ export default function ScrollProgressBar() {
         style={{
           height: "100%",
           width: "100%",
-          background: "linear-gradient(90deg, #C2660A, #FFB020)",
-          boxShadow: "0 0 8px rgba(255, 176, 32,0.6)",
+          background: "linear-gradient(90deg, #b08d57, #F59E0B)",
+          boxShadow: "0 0 8px rgba(245, 158, 11,0.6)",
           transformOrigin: "left center",
           scaleX: scrollYProgress,
         }}

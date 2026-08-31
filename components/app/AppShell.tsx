@@ -27,9 +27,9 @@ function BetaBadge() {
   return (
     <span
       style={{
-        background: "rgba(255, 176, 32,0.12)",
-        color: "#FFB020",
-        border: "1px solid rgba(255, 176, 32,0.4)",
+        background: "rgba(245, 158, 11,0.12)",
+        color: "#F59E0B",
+        border: "1px solid rgba(245, 158, 11,0.4)",
         fontSize: 10,
         fontWeight: 800,
         letterSpacing: "0.08em",
@@ -87,13 +87,13 @@ export default function AppShell({
         {hasActiveSession ? (
           <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "0 6px" }}>
             <RavenMark size={24} />
-            <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 18, fontWeight: 800, letterSpacing: "0.08em", color: "#C2660A" }}>RAVEN</span>
+            <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 18, fontWeight: 800, letterSpacing: "0.08em", color: "#b08d57" }}>RAVEN</span>
             {betaMode && <BetaBadge />}
           </div>
         ) : (
           <Link href="/dashboard" style={{ display: "flex", alignItems: "center", gap: 10, padding: "0 6px" }}>
             <RavenMark size={24} />
-            <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 18, fontWeight: 800, letterSpacing: "0.08em", color: "#C2660A" }}>RAVEN</span>
+            <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 18, fontWeight: 800, letterSpacing: "0.08em", color: "#b08d57" }}>RAVEN</span>
             {betaMode && <BetaBadge />}
           </Link>
         )}
@@ -120,8 +120,8 @@ export default function AppShell({
                     borderRadius: 10,
                     fontSize: 14,
                     fontWeight: 600,
-                    color: active ? "#FFB020" : "#9a9da4",
-                    background: active ? "rgba(255, 176, 32,0.1)" : "transparent",
+                    color: active ? "#F59E0B" : "#9a9da4",
+                    background: active ? "rgba(245, 158, 11,0.1)" : "transparent",
                   }}
                 >
                   <Icon size={17} strokeWidth={active ? 2.3 : 1.8} style={item.subtitle ? { marginTop: 2, flexShrink: 0 } : undefined} />
@@ -157,7 +157,7 @@ export default function AppShell({
                 <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                   {user.name}
                 </div>
-                <div style={{ fontSize: 12, color: "#FFB020" }}>🔥 {user.streak} day{user.streak === 1 ? "" : "s"}</div>
+                <div style={{ fontSize: 12, color: "#F59E0B" }}>🔥 {user.streak} day{user.streak === 1 ? "" : "s"}</div>
               </div>
             </div>
           )}

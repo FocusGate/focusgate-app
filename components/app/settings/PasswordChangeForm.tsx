@@ -71,9 +71,9 @@ const inputStyle: React.CSSProperties = {
 };
 
 const btnStyle: React.CSSProperties = {
-  background: "rgba(255, 176, 32,0.15)",
-  color: "#FFB020",
-  border: "1px solid rgba(255, 176, 32,0.4)",
+  background: "rgba(245, 158, 11,0.15)",
+  color: "#F59E0B",
+  border: "1px solid rgba(245, 158, 11,0.4)",
   padding: "10px 18px",
   borderRadius: 10,
   fontSize: 14,

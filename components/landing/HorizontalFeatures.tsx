@@ -16,8 +16,8 @@ const CARDS = [
     desc: "Your study group sees when you start a session, when you finish it, and if you never show up at all.",
     icon: (
       <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
-        <path d="M12 3a6 6 0 0 0-6 6v4l-2 3h16l-2-3V9a6 6 0 0 0-6-6z" stroke="#FFB020" strokeWidth="1.7" fill="none" strokeLinejoin="round" />
-        <path d="M9.5 19a2.5 2.5 0 0 0 5 0" stroke="#FFB020" strokeWidth="1.7" fill="none" strokeLinecap="round" />
+        <path d="M12 3a6 6 0 0 0-6 6v4l-2 3h16l-2-3V9a6 6 0 0 0-6-6z" stroke="#F59E0B" strokeWidth="1.7" fill="none" strokeLinejoin="round" />
+        <path d="M9.5 19a2.5 2.5 0 0 0 5 0" stroke="#F59E0B" strokeWidth="1.7" fill="none" strokeLinecap="round" />
       </svg>
     ),
   },
@@ -26,8 +26,8 @@ const CARDS = [
     desc: "Collect achievements for real focus habits — first sessions, streaks, deep-work marathons, and more.",
     icon: (
       <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
-        <circle cx="12" cy="9" r="6" stroke="#FFB020" strokeWidth="1.7" fill="none" />
-        <path d="M8.5 14.5L7 21l5-2.5 5 2.5-1.5-6.5" stroke="#FFB020" strokeWidth="1.7" fill="none" strokeLinejoin="round" />
+        <circle cx="12" cy="9" r="6" stroke="#F59E0B" strokeWidth="1.7" fill="none" />
+        <path d="M8.5 14.5L7 21l5-2.5 5 2.5-1.5-6.5" stroke="#F59E0B" strokeWidth="1.7" fill="none" strokeLinejoin="round" />
       </svg>
     ),
   },
@@ -36,8 +36,8 @@ const CARDS = [
     desc: "Weekly reports that show when you focus best, where you get distracted, and how to build a stronger habit.",
     icon: (
       <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
-        <path d="M12 3l1.8 4.6L18 9.2l-4.2 1.6L12 15l-1.8-4.2L6 9.2l4.2-1.6L12 3z" stroke="#FFB020" strokeWidth="1.7" fill="none" strokeLinejoin="round" />
-        <path d="M18.5 15l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8.8-2z" stroke="#FFB020" strokeWidth="1.4" fill="none" strokeLinejoin="round" />
+        <path d="M12 3l1.8 4.6L18 9.2l-4.2 1.6L12 15l-1.8-4.2L6 9.2l4.2-1.6L12 3z" stroke="#F59E0B" strokeWidth="1.7" fill="none" strokeLinejoin="round" />
+        <path d="M18.5 15l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8.8-2z" stroke="#F59E0B" strokeWidth="1.4" fill="none" strokeLinejoin="round" />
       </svg>
     ),
   },
@@ -116,7 +116,7 @@ export default function HorizontalFeatures() {
                   width: 64,
                   height: 64,
                   borderRadius: 16,
-                  background: "rgba(255, 176, 32,0.1)",
+                  background: "rgba(245, 158, 11,0.1)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",

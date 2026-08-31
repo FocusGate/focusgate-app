@@ -14,7 +14,7 @@ export default function Screen10SocialProof({ onNext }: { onNext: () => void }) 
       <div style={{ display: "flex", flexDirection: "column", gap: 14, marginBottom: 28, textAlign: "left" }}>
         {TESTIMONIALS.map((t) => (
           <div key={t.name} style={{ background: "#0A0A0A", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: "18px 20px" }}>
-            <div style={{ color: "#C2660A", fontSize: 13, marginBottom: 8 }}>★★★★★</div>
+            <div style={{ color: "#b08d57", fontSize: 13, marginBottom: 8 }}>★★★★★</div>
             <p style={{ color: "#d8d8dc", fontSize: 14, lineHeight: 1.6, margin: 0 }}>&ldquo;{t.quote}&rdquo;</p>
             <div style={{ color: "#7a7d84", fontSize: 12, marginTop: 10 }}>{t.name}</div>
           </div>

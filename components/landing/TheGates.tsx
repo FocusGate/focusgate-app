@@ -15,7 +15,7 @@ const GATES = [
     tag: "Earn it",
     description: "Want a 5 minute break? Solve a 30-second challenge first. Fail it and the session just keeps going.",
     icon: Unlock,
-    color: "#FFB020",
+    color: "#F59E0B",
   },
   {
     name: "Emergency Unblock",
@@ -29,7 +29,7 @@ const GATES = [
     tag: "Say it out loud",
     description: "Write a full sentence explaining why you deserve the break. Most people stop halfway through.",
     icon: PenLine,
-    color: "#C2660A",
+    color: "#b08d57",
   },
   {
     name: "Dead Man's Switch",
@@ -106,7 +106,7 @@ export default function TheGates() {
       id="the-gates"
       className="fg-sec"
       style={{
-        background: "radial-gradient(ellipse 1000px 500px at 50% 0%, rgba(255, 176, 32,0.05), transparent 60%), #060606",
+        background: "radial-gradient(ellipse 1000px 500px at 50% 0%, rgba(245, 158, 11,0.05), transparent 60%), #060606",
         padding: "150px 0 60px",
         borderTop: "1px solid rgba(255,255,255,0.06)",
       }}

@@ -184,7 +184,7 @@ function FullscreenMessage({ status }: { status: Exclude<Status, "paused"> }) {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.1, duration: 0.4 }}
             style={{
-              color: status === "leaving" ? "#FFB020" : "#c9ccd2",
+              color: status === "leaving" ? "#F59E0B" : "#c9ccd2",
               fontSize: status === "leaving" ? 28 : 16,
               fontWeight: status === "leaving" ? 800 : 500,
               letterSpacing: status === "leaving" ? "-0.01em" : "normal",
@@ -195,7 +195,7 @@ function FullscreenMessage({ status }: { status: Exclude<Status, "paused"> }) {
           </motion.span>
         )}
         {showLink && (
-          <a href="/dashboard" style={{ color: "#FFB020", fontSize: 14, fontWeight: 600, textDecoration: "none" }}>
+          <a href="/dashboard" style={{ color: "#F59E0B", fontSize: 14, fontWeight: 600, textDecoration: "none" }}>
             Go to dashboard &rarr;
           </a>
         )}
