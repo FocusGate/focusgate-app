@@ -90,9 +90,9 @@ export default function Stats() {
 
       <section className="fg-sec" style={{ background: "#060606", padding: "70px 32px", borderTop: "1px solid rgba(255,255,255,0.08)", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
         <div className="fg-stats3" style={{ maxWidth: 1180, margin: "0 auto", display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 0 }}>
-          <Stat target={10000} comma suffix="+" label="Students on the waitlist" size={88} weight={700} />
+          <Stat target={10000} comma suffix="+" label="People on the waitlist" size={88} weight={700} />
           <div style={{ borderLeft: "1px solid rgba(255,255,255,0.09)", borderRight: "1px solid rgba(255,255,255,0.09)" }}>
-            <StatGold target={1} prefix="#" label="Focus app built for students" />
+            <StatGold target={1} prefix="#" label="Focus app built for everyone" />
           </div>
           <Stat target={365} label="Days to unlock Legend badge" size={88} weight={700} />
         </div>

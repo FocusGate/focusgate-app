@@ -8,7 +8,7 @@ import MagneticButton from "@/components/MagneticButton";
 import { getEntryPath } from "@/lib/returningUser";
 import { getAppConfig } from "@/lib/entitlements";
 
-const YEARLY_MONTHLY_EQUIVALENT = "$2.50/month";
+const YEARLY_MONTHLY_EQUIVALENT = "$4.17/month";
 
 /** The real future price strikes through on scroll-into-view (a red line animating across
  *  it), then a beat later reveals $0 in gold — "here's what this normally costs, here's
@@ -214,14 +214,14 @@ export default function Pricing() {
               MOST POPULAR
             </span>
             {billing === "yearly" ? (
-              <StruckPriceReveal oldPrice="$29.99" oldUnit="/yr" newPrice="$0" newUnit="/yr" />
+              <StruckPriceReveal oldPrice="$49.99" oldUnit="/yr" newPrice="$0" newUnit="/yr" />
             ) : (
-              <StruckPriceReveal oldPrice="$4.99" oldUnit="/mo" newPrice="$0" newUnit="/mo" />
+              <StruckPriceReveal oldPrice="$6.99" oldUnit="/mo" newPrice="$0" newUnit="/mo" />
             )}
             {billing === "yearly" ? (
               <span style={{ color: "#9a9da4", fontSize: 13, marginTop: 2 }}>Just {YEARLY_MONTHLY_EQUIVALENT}, billed annually</span>
             ) : (
-              <span style={{ color: "#9a9da4", fontSize: 13, marginTop: 2 }}>or $29.99/yr — save 50%</span>
+              <span style={{ color: "#9a9da4", fontSize: 13, marginTop: 2 }}>or $49.99/yr — save 40%</span>
             )}
             <div style={{ display: "flex", flexDirection: "column", gap: 11, margin: "22px 0 0", color: "#cbccd2", fontSize: 14 }}>
               <span>✓ Everything unlocked, always</span>

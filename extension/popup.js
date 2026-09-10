@@ -132,6 +132,7 @@ function renderIdle() {
   hideFlowError();
   rootEl.className = "view";
   rootEl.innerHTML = `
+    <img class="popup__mascot" src="mascot-raven.png" alt="" />
     <div class="popup__status">
       <div class="popup__status-label">Status</div>
       <div class="popup__status-value">Idle</div>

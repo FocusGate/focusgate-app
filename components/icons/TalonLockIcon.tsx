@@ -1,21 +1,12 @@
 /** The Talon-Lock icon — replaces the generic 🔒 padlock everywhere it was standing in for
- *  "this is locked/secured," now that the brand is Raven, not a padlock company. Three
- *  angular talon/claw shapes grip a short central bar from three different angles (like a
- *  bird foot closing around a perch), all built from straight-edged polygons — no organic
- *  curves — so it stays sharp and angular per spec rather than reading as a cute rounded
- *  claw. One base claw path, reused three times at different rotations (same pattern as
- *  FeatherIcon's layered-rotation trick in components/app/featherIcons.tsx).
+ *  "this is locked/secured," now that the brand is Raven, not a padlock company. A single
+ *  solid talon-foot silhouette (a leg gripping down into three splayed toes), not three
+ *  separate spoke shapes — the earlier three-claw-around-a-bar version read as a pinwheel/
+ *  flower at the small sizes it actually renders at (the 40px feature-card icon, 16-24px
+ *  elsewhere), not as a claw. A single filled shape stays legible that small.
  *
  *  `tone="dark"` (default) renders gold-on-transparent for dark backgrounds; `tone="light"`
  *  renders black-on-transparent for light backgrounds, per the brief. `color` overrides both. */
-function ClawShape({ fill }: { fill: string }) {
-  // A single hooked talon: wide where it meets the bar, reaching out at an angle, then
-  // bending sharply back on itself near the tip — the hook-back is what actually reads as
-  // "gripping" rather than just a spoke pointing outward. Straight segments only (angled,
-  // not curved) per spec.
-  return <path d="M-1 0L1 0L2.5 5L0.5 8L-2 6L-1.5 3Z" fill={fill} />;
-}
-
 export function TalonLockIcon({
   size = 24,
   tone = "dark",
@@ -28,19 +19,10 @@ export function TalonLockIcon({
   const fill = color ?? (tone === "dark" ? "#F59E0B" : "#0A0A0A");
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      {/* the central bar/perch the three talons close around */}
-      <rect x="11" y="3" width="2" height="12" rx="0.5" fill={fill} />
-      <g transform="translate(12 12)">
-        <g transform="rotate(-110)">
-          <ClawShape fill={fill} />
-        </g>
-        <g transform="rotate(10)">
-          <ClawShape fill={fill} />
-        </g>
-        <g transform="rotate(130)">
-          <ClawShape fill={fill} />
-        </g>
-      </g>
+      <path
+        d="M12 2.2c-1 0-1.8.8-1.8 1.8v5.1c-1.7.4-3.4 1.6-4.9 3.7-.9 1.3-1.5 2.6-1.8 3.5-.2.6.4 1.1.9.7 1.4-1 3.1-1.7 4.6-1.9.2 1.2.3 2.3.3 2.9 0 .6.5 1 1 1h3.4c.5 0 1-.4 1-1 0-.6.1-1.7.3-2.9 1.5.2 3.2.9 4.6 1.9.5.4 1.1-.1.9-.7-.3-.9-.9-2.2-1.8-3.5-1.5-2.1-3.2-3.3-4.9-3.7V4c0-1-.8-1.8-1.8-1.8Z"
+        fill={fill}
+      />
     </svg>
   );
 }

@@ -186,6 +186,18 @@ textarea:focus {
   box-shadow: 0 4px 24px rgba(176, 141, 87, 0.3);
 }
 
+/* Small idle-state mascot — same floating-raven artwork as the website's hero/waitlist
+   sections (extension/mascot-raven.png, copied from public/mascot-raven.png since an
+   extension page can't reach the Next.js app's own /public folder). Kept small and
+   static (no bob animation) — this popup is tiny and the animation isn't worth the
+   layout jank in a 328px-wide auto-sizing window. */
+.popup__mascot {
+  display: block;
+  width: 72px;
+  height: auto;
+  margin: 0 auto 2px;
+}
+
 .popup__status {
   border: 1px solid var(--fg-border);
   background: linear-gradient(180deg, var(--fg-surface), #161616);
