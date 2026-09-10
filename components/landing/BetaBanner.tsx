@@ -12,15 +12,14 @@ export default function BetaBanner() {
     <section style={{ background: "#060606", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
       <RevealItem standalone style={{ textAlign: "center", padding: "110px 32px", color: "#fff" }}>
         {/* same floating mascot as the hero (rv-mascot-bob keyframe + the <900px hide in
-            globals.css), small and centered above the headline via the parent's own
-            textAlign:center rather than off to the side. No inline `display` here — that
-            would override the media query's display:none and defeat the hide-on-mobile
-            rule the class already carries. */}
+            globals.css), small and centered above the headline. `img` renders block-level
+            here (the app's own reset), so centering needs margin:auto, not the parent's
+            textAlign:center — that only centers inline content. */}
         <img
           src="/mascot-raven.png"
           alt=""
           className="fg-hero-mascot"
-          style={{ width: 120, height: "auto", marginBottom: 28 }}
+          style={{ width: 120, height: "auto", margin: "0 auto 28px" }}
         />
         <h2
           className="fg-h2"

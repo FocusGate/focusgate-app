@@ -163,7 +163,7 @@ export default function Pricing() {
         <button onClick={() => setBilling("yearly")} style={billing === "yearly" ? onBtn : offBtn}>
           Yearly{" "}
           <span style={{ background: "#22c55e", color: "#fff", fontSize: 11, padding: "2px 7px", borderRadius: 999, marginLeft: 4 }}>
-            Save 50%
+            Save 40%
           </span>
         </button>
       </div>
