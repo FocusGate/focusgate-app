@@ -3,7 +3,7 @@ import Hero from "@/components/landing/Hero";
 import HowItWorks from "@/components/landing/HowItWorks";
 import HorizontalFeatures from "@/components/landing/HorizontalFeatures";
 import Problem from "@/components/landing/Problem";
-import LockedInShowcase from "@/components/landing/LockedInShowcase";
+import MeetRave from "@/components/landing/MeetRave";
 import ModesCarousel from "@/components/landing/ModesCarousel";
 import Notifications from "@/components/landing/Notifications";
 import Feathers from "@/components/landing/Feathers";
@@ -23,7 +23,7 @@ export default function Home() {
       <HowItWorks />
       <HorizontalFeatures />
       <Problem />
-      <LockedInShowcase />
+      <MeetRave />
       <ModesCarousel />
       <Notifications />
       <Feathers />
