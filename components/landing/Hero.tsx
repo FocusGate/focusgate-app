@@ -98,9 +98,11 @@ export default function Hero() {
       {/* The mascot — Duolingo-style floating character, background removed so it drops
           straight onto the hero's own gradient rather than sitting in a box. Off to the
           side (not behind the headline), hidden under 900px where there's no room for it
-          without crowding the CTA buttons. */}
+          without crowding the CTA buttons. Uses the dedicated "hero" illustrated pose
+          (public/rave/) rather than the generic sitting mascot-raven.png -- same excited
+          greeting energy as the headline. */}
       <motion.img
-        src="/mascot-raven.png"
+        src="/rave/rave-hero.png"
         alt=""
         className="fg-hero-mascot"
         initial={{ opacity: 0, scale: 0.8 }}

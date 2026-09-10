@@ -3,6 +3,7 @@
 import { RevealItem } from "@/components/motion/Reveal";
 import TwoRowFeatherShowcase, { type ShowcaseFeather } from "@/components/feathers/TwoRowFeatherShowcase";
 import GoldenQuillCard from "@/components/app/feathers/GoldenQuillCard";
+import { RaveSplit } from "./RaveSplit";
 
 // Mirrors the real catalog seeded in supabase/schema.sql — kept as static copy here (not
 // fetched) since this is marketing content, same as the rest of the landing page. The
@@ -48,28 +49,30 @@ export default function Feathers() {
         padding: "150px 0 60px",
       }}
     >
-      <RevealItem standalone style={{ maxWidth: 1240, margin: "0 auto", padding: "0 32px" }}>
-        <div style={{ color: "#8a8d94", fontSize: 13, fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 22 }}>
-          Achievements
-        </div>
-        <h2
-          className="fg-h2"
-          style={{
-            fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif",
-            fontWeight: 700,
-            fontSize: 64,
-            lineHeight: 1.02,
-            letterSpacing: "-0.02em",
-            color: "#fff",
-            maxWidth: "16ch",
-          }}
-        >
-          Every session earns you something.
-        </h2>
-        <p style={{ color: "#9a9da4", fontSize: 18, lineHeight: 1.7, maxWidth: "54ch", marginTop: 22 }}>
-          Five tiers, fourteen feathers, one quill. Collect proof your focus is real — show it off to your study group.
-        </p>
-      </RevealItem>
+      <div style={{ padding: "0 32px" }}>
+        <RaveSplit image="/rave/rave-feathers.png" imageAlt="Rave holding up a golden feather" side="left" glow="rgba(245,158,11,0.16)">
+          <div style={{ color: "#8a8d94", fontSize: 13, fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 22 }}>
+            Achievements
+          </div>
+          <h2
+            className="fg-h2"
+            style={{
+              fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif",
+              fontWeight: 700,
+              fontSize: 64,
+              lineHeight: 1.02,
+              letterSpacing: "-0.02em",
+              color: "#fff",
+              maxWidth: "16ch",
+            }}
+          >
+            Every session earns you something.
+          </h2>
+          <p style={{ color: "#9a9da4", fontSize: 18, lineHeight: 1.7, maxWidth: "54ch", marginTop: 22 }}>
+            Five tiers, fourteen feathers, one quill. Collect proof your focus is real — show it off to your study group.
+          </p>
+        </RaveSplit>
+      </div>
 
       <div style={{ marginTop: 56, padding: "10px 32px 10px" }}>
         <TwoRowFeatherShowcase items={SHOWCASE} />

@@ -150,6 +150,14 @@ a:hover { color: #fff; }
   .fg-stats3 { grid-template-columns: minmax(0, 1fr) !important; }
   .fg-price3 { grid-template-columns: minmax(0, 1fr) !important; }
   .fg-sec { padding: 100px 28px !important; }
+
+  /* Rave illustration splits (RaveSplit.tsx): same single-column collapse as .fg-split,
+     plus forcing the image column back to first regardless of which side its desktop
+     `order` put it on -- image-above-text on every narrow viewport, not just whichever
+     sections happened to be image-left already. */
+  .rave-split { grid-template-columns: minmax(0, 1fr) !important; }
+  .rave-split__image-col { order: 1 !important; }
+  .rave-split__text-col { order: 2 !important; }
 }
 
 @media (max-width: 760px) {

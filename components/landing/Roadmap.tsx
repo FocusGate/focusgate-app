@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Monitor, Smartphone } from "lucide-react";
 import { RevealGroup, RevealItem } from "@/components/motion/Reveal";
 import { joinRoadmapWaitlist, type RoadmapPlatform } from "@/lib/supabase";
+import { RaveSplit } from "./RaveSplit";
 
 // #b08d57 is Raven's signature brand gold — the same color as the wordmark in the
 // Navbar, the Pricing "BEST DEAL" card, and the BetaBanner headline — used here for the
@@ -195,14 +196,17 @@ export default function Roadmap() {
   }
 
   return (
-    <section className="fg-sec" style={{ background: "#060606", color: "#fff", padding: "130px 32px", textAlign: "center" }}>
-      <RevealItem standalone style={{ maxWidth: 640, margin: "0 auto" }}>
-        <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 400, fontSize: 58, lineHeight: 1.1, color: "#fff" }}>
-          This is just the beginning.
-        </h2>
-        <p style={{ color: "#9a9da4", fontSize: 17, marginTop: 16 }}>Raven is expanding beyond the browser.</p>
-      </RevealItem>
+    <section className="fg-sec" style={{ background: "#060606", color: "#fff", padding: "130px 32px" }}>
+      <div style={{ marginBottom: 64 }}>
+        <RaveSplit image="/rave/rave-coming-soon.png" imageAlt="Rave peeking, teasing what's coming" side="left" glow="rgba(96,165,250,0.14)">
+          <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 400, fontSize: 54, lineHeight: 1.1, color: "#fff" }}>
+            This is just the beginning.
+          </h2>
+          <p style={{ color: "#9a9da4", fontSize: 17, marginTop: 16 }}>Raven is expanding beyond the browser.</p>
+        </RaveSplit>
+      </div>
 
+      <div style={{ textAlign: "center" }}>
       <RevealGroup
         stagger={0.1}
         className="fg-price3"
@@ -287,6 +291,7 @@ export default function Roadmap() {
         </AnimatePresence>
         {status === "error" && <p style={{ color: "#f87171", fontSize: 13, marginTop: 10 }}>Something went wrong — try again.</p>}
       </RevealItem>
+      </div>
     </section>
   );
 }

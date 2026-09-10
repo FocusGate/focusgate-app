@@ -1,32 +1,25 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { RevealItem } from "@/components/motion/Reveal";
 import MagneticButton from "@/components/MagneticButton";
 import { getEntryPath } from "@/lib/returningUser";
+import { RaveSplit } from "./RaveSplit";
 
+// The final CTA before the footer -- Rave's "cheering" pose (thumbs up), last in the
+// alternating sequence down the page (Science-left, Features-right, Feathers-left,
+// Pricing-right, Coming-Soon-left, Cheering-right).
 export default function BetaBanner() {
   const router = useRouter();
 
   return (
-    <section style={{ background: "#060606", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
-      <RevealItem standalone style={{ textAlign: "center", padding: "110px 32px", color: "#fff" }}>
-        {/* same floating mascot as the hero (rv-mascot-bob keyframe + the <900px hide in
-            globals.css), small and centered above the headline. `img` renders block-level
-            here (the app's own reset), so centering needs margin:auto, not the parent's
-            textAlign:center — that only centers inline content. */}
-        <img
-          src="/mascot-raven.png"
-          alt=""
-          className="fg-hero-mascot"
-          style={{ width: 120, height: "auto", margin: "0 auto 28px" }}
-        />
+    <section style={{ background: "#060606", borderTop: "1px solid rgba(255,255,255,0.08)", padding: "110px 32px" }}>
+      <RaveSplit image="/rave/rave-cheering.png" imageAlt="Rave cheering you on" side="right" glow="rgba(176,141,87,0.18)">
         <h2
           className="fg-h2"
           style={{
             fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif",
             fontWeight: 700,
-            fontSize: 68,
+            fontSize: 60,
             lineHeight: 1.0,
             letterSpacing: "-0.02em",
             color: "#b08d57",
@@ -34,10 +27,10 @@ export default function BetaBanner() {
         >
           Free during beta.
         </h2>
-        <p style={{ fontSize: 18, margin: "20px auto 0", maxWidth: "54ch", color: "#9a9da4" }}>
+        <p style={{ fontSize: 18, margin: "20px 0 0", maxWidth: "44ch", color: "#9a9da4" }}>
           No credit card. No catch. Join everyone already on the waitlist.
         </p>
-        <MagneticButton style={{ marginTop: 34 }}>
+        <MagneticButton style={{ marginTop: 34, display: "inline-block" }}>
           <button
             type="button"
             onClick={() => router.push(getEntryPath())}
@@ -47,7 +40,7 @@ export default function BetaBanner() {
             Join the beta →
           </button>
         </MagneticButton>
-      </RevealItem>
+      </RaveSplit>
     </section>
   );
 }

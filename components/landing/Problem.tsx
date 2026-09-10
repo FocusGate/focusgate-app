@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { motion, type Variants } from "framer-motion";
 import { useMotionCountUp } from "@/hooks/useMotionCountUp";
 import MotionWord, { wordContainerVariants } from "@/components/MotionWord";
+import { RaveSplit } from "./RaveSplit";
 
 const LINE_1 = "Social media is";
 const LINE_2 = "rotting your brain.";
@@ -57,22 +58,26 @@ function StatCard({ target, suffix, label }: { target: number; suffix: string; l
   );
 }
 
+/** "The Reality" — the app's own opening claim (3 hours/day lost). Used to sit side-by-side
+ *  with "The Science" card below in one cramped 2-column section; now its own full-width
+ *  intro, with "The Science" broken out into its own RaveSplit section underneath so the
+ *  Science illustration has room to actually read as a companion, not a squeezed-in icon. */
 export default function Problem() {
   return (
-    <section className="fg-sec" style={{ background: "#060606", color: "#fff", padding: "150px 32px", position: "relative", overflow: "hidden" }}>
-      <motion.div
-        className="fg-split"
-        style={{ maxWidth: 1240, margin: "0 auto", display: "grid", gridTemplateColumns: "1.15fr 0.85fr", gap: 56, alignItems: "start", position: "relative" }}
-        variants={containerVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.2 }}
-      >
-        <motion.div variants={itemVariants} style={{ position: "relative", zIndex: 2 }}>
-          <div style={{ color: "#8a8d94", fontSize: 13, fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 26 }}>
+    <>
+      <section className="fg-sec" style={{ background: "#060606", color: "#fff", padding: "150px 32px 90px", position: "relative", overflow: "hidden" }}>
+        <motion.div
+          style={{ maxWidth: 780, margin: "0 auto", position: "relative", zIndex: 2 }}
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+        >
+          <motion.div variants={itemVariants} style={{ color: "#8a8d94", fontSize: 13, fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 26 }}>
             The Reality
-          </div>
-          <h2
+          </motion.div>
+          <motion.h2
+            variants={itemVariants}
             className="fg-h2"
             style={{
               fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif",
@@ -86,12 +91,12 @@ export default function Problem() {
             You waste 3 hours a day
             <br />
             to distraction.
-          </h2>
-          <p style={{ color: "#9a9da4", fontSize: 18, lineHeight: 1.7, maxWidth: "54ch", marginTop: 30, textWrap: "pretty" }}>
+          </motion.h2>
+          <motion.p variants={itemVariants} style={{ color: "#9a9da4", fontSize: 18, lineHeight: 1.7, maxWidth: "54ch", marginTop: 30, textWrap: "pretty" }}>
             Your phone is designed by billion dollar companies to keep you scrolling. Every notification, every
             autoplay, every infinite feed. Raven fights back.
-          </p>
-          <div style={{ display: "flex", gap: 14, flexWrap: "wrap", marginTop: 40 }}>
+          </motion.p>
+          <motion.div variants={itemVariants} style={{ display: "flex", gap: 14, flexWrap: "wrap", marginTop: 40, justifyContent: "center" }}>
             {["3hrs lost daily", "45 days per year", "1 app to fix it"].map((t) => (
               <span
                 key={t}
@@ -106,74 +111,65 @@ export default function Problem() {
                 {t}
               </span>
             ))}
-          </div>
+          </motion.div>
         </motion.div>
+      </section>
 
-        <motion.div variants={itemVariants}>
-          <div
-            className="fg-science-card"
-            style={{
-              background: "linear-gradient(180deg, #101012, #0A0A0A)",
-              border: "1px solid rgba(255,255,255,0.08)",
-              borderRadius: 24,
-              padding: "44px 36px",
-              boxShadow: "0 40px 90px rgba(0,0,0,0.5)",
-            }}
-          >
-            <div style={{ color: "#F59E0B", fontSize: 12, fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 20 }}>
-              The Science
-            </div>
-            <motion.h3
-              variants={wordContainerVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.6 }}
-              style={{ margin: 0 }}
-            >
-              <span
-                style={{
-                  display: "block",
-                  fontFamily: "'Space Grotesk', sans-serif",
-                  fontWeight: 400,
-                  fontSize: 40,
-                  lineHeight: 1.15,
-                  color: "#fff",
-                }}
-              >
-                {LINE_1.split(" ").map((w, i) => (
-                  <MotionWord key={`p1-${i}`} text={w} style={{ color: "#fff" }} />
-                ))}
-              </span>
-              <span
-                style={{
-                  display: "block",
-                  fontFamily: "'Space Grotesk', sans-serif",
-                  fontWeight: 400,
-                  fontSize: 40,
-                  lineHeight: 1.15,
-                  color: "#fff",
-                }}
-              >
-                {LINE_2.split(" ").map((w, i) => (
-                  <MotionWord key={`p2-${i}`} text={w} style={{ color: "#fff" }} />
-                ))}
-              </span>
-            </motion.h3>
-            <p style={{ color: "#9a9da4", fontSize: 15, lineHeight: 1.7, marginTop: 22 }}>
-              Every scroll triggers a dopamine hit. Your brain gets rewired to crave distraction over deep work.
-              Attention spans are shrinking. Focus is becoming rare. And the apps are designed to make it worse.
-            </p>
-            <div className="fg-statcard-row" style={{ display: "flex", gap: 10, marginTop: 30 }}>
-              {STATS.map((s) => (
-                <StatCard key={s.label} {...s} />
-              ))}
-            </div>
-            <div style={{ color: "#F59E0B", fontSize: 16, fontWeight: 700, marginTop: 26 }}>
-              Raven rewires it back.
-            </div>
+      <section className="fg-sec" style={{ background: "#060606", color: "#fff", padding: "60px 32px 150px" }}>
+        <RaveSplit image="/rave/rave-science.png" imageAlt="Rave holding up a chart" side="left" glow="rgba(245,158,11,0.12)">
+          <div style={{ color: "#F59E0B", fontSize: 12, fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 20 }}>
+            The Science
           </div>
-        </motion.div>
-      </motion.div>
-    </section>
+          <motion.h3
+            variants={wordContainerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.6 }}
+            style={{ margin: 0 }}
+          >
+            <span
+              style={{
+                display: "block",
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 400,
+                fontSize: 44,
+                lineHeight: 1.15,
+                color: "#fff",
+              }}
+            >
+              {LINE_1.split(" ").map((w, i) => (
+                <MotionWord key={`p1-${i}`} text={w} style={{ color: "#fff" }} />
+              ))}
+            </span>
+            <span
+              style={{
+                display: "block",
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 400,
+                fontSize: 44,
+                lineHeight: 1.15,
+                color: "#fff",
+              }}
+            >
+              {LINE_2.split(" ").map((w, i) => (
+                <MotionWord key={`p2-${i}`} text={w} style={{ color: "#fff" }} />
+              ))}
+            </span>
+          </motion.h3>
+          <p style={{ color: "#9a9da4", fontSize: 16, lineHeight: 1.7, marginTop: 22, maxWidth: "48ch" }}>
+            Every scroll triggers a dopamine hit. Your brain gets rewired to crave distraction over deep work.
+            Attention spans are shrinking. Focus is becoming rare. And the apps are designed to make it worse.
+          </p>
+          <div className="fg-statcard-row" style={{ display: "flex", gap: 10, marginTop: 30 }}>
+            {STATS.map((s) => (
+              <StatCard key={s.label} {...s} />
+            ))}
+          </div>
+          <div style={{ color: "#F59E0B", fontSize: 16, fontWeight: 700, marginTop: 26 }}>
+            Raven rewires it back.
+          </div>
+        </RaveSplit>
+      </section>
+    </>
   );
 }

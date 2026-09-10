@@ -7,6 +7,7 @@ import { RevealGroup, RevealItem } from "@/components/motion/Reveal";
 import MagneticButton from "@/components/MagneticButton";
 import { getEntryPath } from "@/lib/returningUser";
 import { getAppConfig } from "@/lib/entitlements";
+import { RaveSplit } from "./RaveSplit";
 
 const YEARLY_MONTHLY_EQUIVALENT = "$4.17/month";
 
@@ -114,49 +115,54 @@ export default function Pricing() {
   }
 
   return (
-    <section id="pricing" className="fg-sec" style={{ background: "#060606", color: "#fff", padding: "130px 32px 150px", textAlign: "center" }}>
-      <h2
-        className="fg-h2"
-        style={{
-          fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif",
-          fontWeight: 700,
-          fontSize: 64,
-          lineHeight: 1.02,
-          letterSpacing: "-0.02em",
-          color: "#fff",
-        }}
-      >
-        Pricing that respects students.
-      </h2>
-      <p style={{ color: "#9a9da4", fontSize: 18, lineHeight: 1.6, maxWidth: "60ch", margin: "22px auto 0" }}>
-        Try everything free for 5 days. Keep it for less than a coffee a month.
-      </p>
+    <section id="pricing" className="fg-sec" style={{ background: "#060606", color: "#fff", padding: "130px 32px 150px" }}>
+      <div style={{ marginBottom: 72 }}>
+        <RaveSplit image="/rave/rave-pricing.png" imageAlt="Rave presenting the pricing" side="right" glow="rgba(176,141,87,0.16)">
+          <h2
+            className="fg-h2"
+            style={{
+              fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif",
+              fontWeight: 700,
+              fontSize: 60,
+              lineHeight: 1.02,
+              letterSpacing: "-0.02em",
+              color: "#fff",
+            }}
+          >
+            Pricing that respects students.
+          </h2>
+          <p style={{ color: "#9a9da4", fontSize: 18, lineHeight: 1.6, maxWidth: "48ch", marginTop: 22 }}>
+            Try everything free for 5 days. Keep it for less than a coffee a month.
+          </p>
 
-      {betaMode && (
-        <div
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 8,
-            background: "rgba(245, 158, 11,0.08)",
-            border: "1px solid rgba(245, 158, 11,0.35)",
-            borderRadius: 999,
-            padding: "10px 20px",
-            margin: "36px auto 0",
-            maxWidth: "72ch",
-            color: "#d8d8dc",
-            fontSize: 13,
-            lineHeight: 1.5,
-          }}
-        >
-          <span>🔒</span>
-          <span>
-            Currently in beta — full access free for all early users. Locked-in low pricing when we launch for anyone who joins now.
-          </span>
-        </div>
-      )}
+          {betaMode && (
+            <div
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 8,
+                background: "rgba(245, 158, 11,0.08)",
+                border: "1px solid rgba(245, 158, 11,0.35)",
+                borderRadius: 999,
+                padding: "10px 20px",
+                marginTop: 28,
+                maxWidth: "48ch",
+                color: "#d8d8dc",
+                fontSize: 13,
+                lineHeight: 1.5,
+              }}
+            >
+              <span>🔒</span>
+              <span>
+                Currently in beta — full access free for all early users. Locked-in low pricing when we launch for anyone who joins now.
+              </span>
+            </div>
+          )}
+        </RaveSplit>
+      </div>
 
-      <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "#17171a", borderRadius: 999, padding: 5, margin: "28px 0 12px" }}>
+      <div style={{ textAlign: "center" }}>
+      <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "#17171a", borderRadius: 999, padding: 5, margin: "0 0 12px" }}>
         <button onClick={() => setBilling("monthly")} style={billing === "monthly" ? onBtn : offBtn}>
           Monthly
         </button>
@@ -280,6 +286,7 @@ export default function Pricing() {
           {betaMode ? "⚡ Free full access during beta • No credit card required" : "⚡ No credit card required to start"}
         </p>
       </RevealItem>
+      </div>
     </section>
   );
 }
