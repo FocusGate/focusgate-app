@@ -7,21 +7,27 @@ import GoldenQuillCard from "@/components/app/feathers/GoldenQuillCard";
 // Mirrors the real catalog seeded in supabase/schema.sql — kept as static copy here (not
 // fetched) since this is marketing content, same as the rest of the landing page. The
 // Golden Quill gets its own dramatic centerpiece below instead of sitting in either row.
+//
+// All landing-page feathers render locked (unlocked: false below) — real names/conditions
+// are withheld ("???" / "Download to find out") so the achievement list stays a surprise
+// you only see by actually using the app. FeatherCard/GoldenQuillCard already have this
+// exact grayed-out "???" treatment built in for the real in-app locked state; we're just
+// forcing it on here rather than building a second locked look.
 const SHOWCASE: ShowcaseFeather[] = [
-  { id: "first-lock", name: "First Lock", description: "Complete your first RavenLock session", rarity: "common", tier: "common", unlock_condition: "completed_sessions >= 1" },
-  { id: "early-riser", name: "Early Riser", description: "Start a session before 8am", rarity: "common", tier: "common", unlock_condition: "session started before 08:00 local time" },
-  { id: "clean-slate", name: "Clean Slate", description: "Finish a session with zero break gates used", rarity: "common", tier: "common", unlock_condition: "session completed with zero break gates used" },
-  { id: "weekend-warrior", name: "Weekend Warrior", description: "Study on both Saturday and Sunday", rarity: "common", tier: "common", unlock_condition: "completed sessions on both a Saturday and a Sunday" },
-  { id: "on-fire", name: "On Fire", description: "Complete a 7-day study streak", rarity: "rare", tier: "rare", unlock_condition: "streak >= 7" },
-  { id: "deep-worker", name: "Deep Worker", description: "Complete a single 4-hour RavenLock session", rarity: "rare", tier: "rare", unlock_condition: "longest_session_minutes >= 240" },
-  { id: "gate-keeper", name: "Gate Keeper", description: "Pass 25 break gates", rarity: "rare", tier: "rare", unlock_condition: "break_gates_passed >= 25" },
-  { id: "no-excuses", name: "No Excuses", description: "10 sessions with zero emergency unblocks used", rarity: "rare", tier: "rare", unlock_condition: "clean_sessions >= 10" },
-  { id: "unstoppable", name: "Unstoppable", description: "Complete a 30-day study streak", rarity: "epic", tier: "epic", unlock_condition: "streak >= 30" },
-  { id: "distraction-slayer", name: "Distraction Slayer", description: "Block 1,000 distraction attempts", rarity: "epic", tier: "epic", unlock_condition: "blocked_attempts >= 1000" },
-  { id: "iron-focus", name: "Iron Focus", description: "Top your group leaderboard for 4 straight weeks", rarity: "epic", tier: "epic", unlock_condition: "rank #1 on a friend group leaderboard for 4 consecutive weeks" },
-  { id: "century-club", name: "Century Club", description: "100 total hours focused", rarity: "epic", tier: "epic", unlock_condition: "total_focus_hours >= 100" },
-  { id: "untouchable", name: "Untouchable", description: "90 day streak with zero broken sessions", rarity: "mythic", tier: "mythic", unlock_condition: "streak >= 90 with zero sessions interrupted by uninstalling" },
-  { id: "the-regulator", name: "The Regulator", description: "500 hours focused all time", rarity: "mythic", tier: "mythic", unlock_condition: "total_focus_hours >= 500" },
+  { id: "first-lock", name: "First Lock", description: "Complete your first RavenLock session", rarity: "common", tier: "common", unlock_condition: "Download to find out", unlocked: false },
+  { id: "early-riser", name: "Early Riser", description: "Start a session before 8am", rarity: "common", tier: "common", unlock_condition: "Download to find out", unlocked: false },
+  { id: "clean-slate", name: "Clean Slate", description: "Finish a session with zero break gates used", rarity: "common", tier: "common", unlock_condition: "Download to find out", unlocked: false },
+  { id: "weekend-warrior", name: "Weekend Warrior", description: "Study on both Saturday and Sunday", rarity: "common", tier: "common", unlock_condition: "Download to find out", unlocked: false },
+  { id: "on-fire", name: "On Fire", description: "Complete a 7-day study streak", rarity: "rare", tier: "rare", unlock_condition: "Download to find out", unlocked: false },
+  { id: "deep-worker", name: "Deep Worker", description: "Complete a single 4-hour RavenLock session", rarity: "rare", tier: "rare", unlock_condition: "Download to find out", unlocked: false },
+  { id: "gate-keeper", name: "Gate Keeper", description: "Pass 25 break gates", rarity: "rare", tier: "rare", unlock_condition: "Download to find out", unlocked: false },
+  { id: "no-excuses", name: "No Excuses", description: "10 sessions with zero emergency unblocks used", rarity: "rare", tier: "rare", unlock_condition: "Download to find out", unlocked: false },
+  { id: "unstoppable", name: "Unstoppable", description: "Complete a 30-day study streak", rarity: "epic", tier: "epic", unlock_condition: "Download to find out", unlocked: false },
+  { id: "distraction-slayer", name: "Distraction Slayer", description: "Block 1,000 distraction attempts", rarity: "epic", tier: "epic", unlock_condition: "Download to find out", unlocked: false },
+  { id: "iron-focus", name: "Iron Focus", description: "Top your group leaderboard for 4 straight weeks", rarity: "epic", tier: "epic", unlock_condition: "Download to find out", unlocked: false },
+  { id: "century-club", name: "Century Club", description: "100 total hours focused", rarity: "epic", tier: "epic", unlock_condition: "Download to find out", unlocked: false },
+  { id: "untouchable", name: "Untouchable", description: "90 day streak with zero broken sessions", rarity: "mythic", tier: "mythic", unlock_condition: "Download to find out", unlocked: false },
+  { id: "the-regulator", name: "The Regulator", description: "500 hours focused all time", rarity: "mythic", tier: "mythic", unlock_condition: "Download to find out", unlocked: false },
 ];
 
 const GOLDEN_QUILL = {
@@ -29,7 +35,7 @@ const GOLDEN_QUILL = {
   name: "The Golden Quill",
   description: "Earned by using Raven every single day for 365 days.",
   rarity: "legendary",
-  unlock_condition: "streak >= 365",
+  unlock_condition: "Download to find out",
 };
 
 export default function Feathers() {
@@ -70,7 +76,7 @@ export default function Feathers() {
       </div>
 
       <RevealItem standalone style={{ maxWidth: 460, margin: "48px auto 0", padding: "0 32px" }}>
-        <GoldenQuillCard feather={GOLDEN_QUILL} unlocked unlockedAt={undefined} onClick={() => {}} />
+        <GoldenQuillCard feather={GOLDEN_QUILL} unlocked={false} unlockedAt={undefined} onClick={() => {}} />
       </RevealItem>
 
       <p style={{ maxWidth: 1240, margin: "28px auto 0", padding: "0 32px", color: "#7a7d84", fontSize: 14 }}>

@@ -288,7 +288,7 @@ export default function BreakFlowModal({
               style={{
                 marginTop: 22,
                 width: "100%",
-                background: "#F59E0B",
+                background: "#FFB020",
                 color: "#0a0a0a",
                 border: "none",
                 padding: 14,

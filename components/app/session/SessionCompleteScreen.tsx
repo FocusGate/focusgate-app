@@ -124,7 +124,7 @@ export default function SessionCompleteScreen({
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }} style={{ display: "flex", gap: 12, marginTop: 34, flexWrap: "wrap", justifyContent: "center" }}>
         <button
           onClick={onStartAnother}
-          style={{ background: "#F59E0B", color: "#0a0a0a", border: "none", padding: "14px 24px", borderRadius: 999, fontSize: 14, fontWeight: 700, cursor: "pointer" }}
+          style={{ background: "#FFB020", color: "#0a0a0a", border: "none", padding: "14px 24px", borderRadius: 999, fontSize: 14, fontWeight: 700, cursor: "pointer" }}
         >
           Start another session
         </button>

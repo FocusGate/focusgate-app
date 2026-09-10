@@ -89,8 +89,8 @@ a:hover { color: #fff; }
 .fg-float-nav { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 1180px; z-index: 200; border-radius: 999px; background: transparent; border: 1px solid transparent; box-shadow: none; transition: background 0.3s var(--fg-ease), border-color 0.3s var(--fg-ease), box-shadow 0.3s var(--fg-ease), backdrop-filter 0.3s var(--fg-ease); }
 .fg-float-nav.scrolled { background: rgba(10,10,10,0.8); border-color: #1E293B; box-shadow: 0 12px 40px rgba(0,0,0,0.45); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
 
-.fg-cta-nav { background: #b08d57; color: #fff; padding: 10px 20px; border-radius: 999px; font-size: 13px; font-weight: 700; text-decoration: none; box-shadow: 0 0 20px rgba(176, 141, 87,0.4); transition: box-shadow 0.3s var(--fg-ease), transform 0.3s var(--fg-ease); }
-.fg-cta-nav:hover { box-shadow: 0 0 34px rgba(176, 141, 87,0.75); transform: translateY(-1px); color: #fff; }
+.fg-cta-nav { background: #FFB020; color: #0A0A0A; padding: 10px 20px; border-radius: 999px; font-size: 13px; font-weight: 700; text-decoration: none; box-shadow: 0 0 20px rgba(255, 176, 32, 0.4); transition: box-shadow 0.3s var(--fg-ease), transform 0.3s var(--fg-ease); }
+.fg-cta-nav:hover { box-shadow: 0 0 34px rgba(255, 176, 32, 0.75); transform: translateY(-1px); color: #0A0A0A; }
 
 .fg-hamburger { display: none; background: transparent; border: none; cursor: pointer; padding: 6px; align-items: center; justify-content: center; }
 /* 1024px, not the more typical 760px "mobile" cutoff: the desktop nav's 4 links + logo +

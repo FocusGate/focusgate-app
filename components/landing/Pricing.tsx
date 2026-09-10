@@ -262,15 +262,15 @@ export default function Pricing() {
             type="button"
             onClick={goToSignup}
             style={{
-              background: "#b08d57",
-              color: "#fff",
+              background: "#FFB020",
+              color: "#0a0a0a",
               border: "none",
               padding: "18px 40px",
               borderRadius: 999,
               fontSize: 17,
               fontWeight: 800,
               cursor: "pointer",
-              boxShadow: "0 0 40px rgba(176, 141, 87,0.45), 0 10px 30px rgba(0,0,0,0.4)",
+              boxShadow: "0 0 40px rgba(255, 176, 32, 0.45), 0 10px 30px rgba(0,0,0,0.4)",
             }}
           >
             Claim Free Beta Access →

@@ -185,7 +185,7 @@ export default function Hero() {
                 display: "inline-flex",
                 alignItems: "center",
                 gap: 10,
-                background: "linear-gradient(180deg, #F59E0B, #b08d57)",
+                background: "#FFB020",
                 color: "#0a0a0a",
                 border: "none",
                 padding: "16px 32px",
@@ -194,7 +194,7 @@ export default function Hero() {
                 fontWeight: 800,
                 cursor: "pointer",
                 textDecoration: "none",
-                boxShadow: "0 0 30px rgba(176, 141, 87,0.4)",
+                boxShadow: "0 0 30px rgba(255, 176, 32, 0.4)",
               }}
             >
               🧩 Add to Chrome — Free

@@ -11,7 +11,7 @@ const FG_ITEMS = [
   "Custom block schedules",
   "Real-time session timer",
   "Focus streak tracking",
-  "Built for students",
+  "Built for everyone",
   "Set up in 10 seconds",
   "Premium, modern design",
   "Free during beta",

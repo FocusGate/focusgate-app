@@ -60,7 +60,7 @@ export default function TrialStatusBanner({ betaMode, entitlements }: { betaMode
           href="/#pricing"
           onClick={() => track("upgrade_button_clicked")}
           style={{
-            background: "linear-gradient(180deg, #F59E0B, #b08d57)",
+            background: "#FFB020",
             color: "#0A0A0A",
             fontSize: 13,
             fontWeight: 800,
