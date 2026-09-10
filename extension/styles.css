@@ -811,6 +811,9 @@ textarea:focus {
   width: 100%;
   max-width: 420px;
   margin-bottom: 28px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .challenge__brand {

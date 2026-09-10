@@ -155,14 +155,13 @@ function NavLink({ href, children }: { href: string; children: React.ReactNode }
   );
 }
 
-/** Minimal angled raven silhouette — a bird in flight built from straight edges rather than
- *  an organic curved outline, so it stays crisp and unambiguous at nav-bar size (reads as
- *  a bird mark, not a smudge, all the way down to a 16px favicon). Replaces the old lock
- *  glyph (FocusGateMark) now that the brand itself is Raven, not a padlock. */
+/** The real Raven mark — the user's own logo art (public/raven-logo.png, background
+ *  removed via a flood-fill cutout so it drops cleanly onto any background color), used
+ *  everywhere the brand mark appears: navbar, auth pages, footer, app sidebar, favicon/PWA
+ *  icons, and the Chrome extension. Replaces the earlier hand-drawn angled-bird SVG, which
+ *  was a placeholder stand-in for exactly this. Plain <img>, not next/image — this renders
+ *  in places (the WebGL sign-in canvas, the extension's own plain-HTML popup) that aren't
+ *  all Next.js page contexts. */
 export function RavenMark({ size = 26 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <path d="M2 12L6 8L14 5L22 9L13 11L20 18L12 14L7 15Z" fill="#b08d57" />
-    </svg>
-  );
+  return <img src="/raven-logo.png" width={size} height={size} alt="Raven" style={{ display: "block", objectFit: "contain" }} />;
 }

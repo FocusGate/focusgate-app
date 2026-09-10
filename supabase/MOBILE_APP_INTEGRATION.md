@@ -4,6 +4,67 @@ This is the contract a companion mobile app needs to follow to share sessions, a
 state, and blocking with the existing web app and Chrome extension — same account, same
 `sessions` row, three clients reading/writing the same source of truth in Supabase.
 
+## Direct answers (2026-09-10 request)
+
+**Important limit up front**: this session only has the web app + Chrome extension repo.
+There is no iOS app code here — I can confirm and fix everything on the Supabase/web/
+extension side below, but I cannot read, verify, or edit the iOS app itself. Points 1, 4,
+and 5 below are answered from this side only; closing the loop on the iOS side needs that
+codebase in front of whoever's doing this work next (me in a future session, or your iOS
+dev), ideally with `supabase/MOBILE_APP_INTEGRATION.md` (this file) as the checklist.
+
+1. **Same project, confirmed on this side.** Both `.env.local` (web app,
+   `NEXT_PUBLIC_SUPABASE_URL`) and `extension/lib/config.js` (`SUPABASE_URL`) point at
+   `https://itdwtkvnlztwomalawpy.supabase.co` — matches the ref you gave. Same auth flow
+   here too: both are plain Supabase Auth (email+password), not a custom system, so any
+   client signing in via `supabase.auth.signInWithPassword` against this same project
+   gets the same `auth.uid()` and is the same account everywhere. *Can't confirm from
+   here* whether the iOS app is actually pointed at this same project/using this same
+   auth call — that's the one thing only the iOS repo itself can answer.
+
+2. **Schema is already shared** (there was never a separate copy for the extension —
+   `extension/lib/supabaseApi.js` reads/writes the exact same `public.*` tables as the
+   web app) — `blocked_sites`, `user_preferences` (Gates settings), `users.streak`,
+   `user_feathers`. The one concept that doesn't exist *anywhere* yet, on any platform:
+   **"current theme selection"** — there's no theme/appearance column or table in this
+   schema at all today (grepped for it — nothing). If the iOS app already has a theme
+   picker, its data model for that is the one genuinely new thing to design a shared
+   column for (`user_preferences.theme` is the natural spot) — flagging per your point 5
+   rather than inventing a shape for it unseen.
+
+3. **Realtime coverage was the actual gap, now fixed on the schema side.** Before this
+   change, only `sessions` and `group_violations` were in the `supabase_realtime`
+   publication — every other synced concept (blocked sites, Gates settings, streak,
+   Feathers) only ever updated on a poll or an on-mount fetch, so a change on one
+   platform genuinely would *not* have shown up on another without a refresh. Added
+   `blocked_sites`, `user_preferences`, `users`, and `user_feathers` to the publication
+   (see schema.sql's new "cross-platform realtime" section — same idempotent-guard
+   pattern as the existing entries, safe to re-run). This needs to actually be run in the
+   Supabase SQL editor like every other schema.sql change in this project. Once it's run,
+   any client — including a future iOS build — can subscribe to `postgres_changes` on
+   these tables the same way `lib/supabase.ts`'s `subscribeToSessionPause` already does
+   for sessions. The Chrome extension itself will keep polling regardless (see section 3
+   below, unchanged, for why), but the *data* is now available to push, not just pull.
+
+4. **Extension's current auth storage, audited**: `extension/lib/auth.js` stores the
+   access token, refresh token, and expiry in plain `chrome.storage.local` (see that
+   file's own header comment — it's a *second*, separate sign-in from the web dashboard,
+   since an extension can't read the site's own browser storage across origins). This is
+   sandboxed per-extension by Chrome (other extensions/pages can't read it directly) but
+   it is **not** encrypted at rest the way iOS Keychain is — anyone with local disk/
+   profile access, or the user themselves via chrome://extensions' own inspector, can read
+   it in plaintext. That's normal for a Chrome extension (there's no first-party
+   equivalent of Keychain available to it) but it is a real difference worth stating
+   explicitly rather than assuming iOS's Keychain-backed persistence "just works the same
+   way" — it doesn't, and shouldn't be assumed to carry the same guarantees.
+
+5. **Diverging/duplicated models found on this side**: none beyond the realtime gap
+   (now fixed) and the missing theme concept (both above) — the web app and extension
+   already read/write the identical tables, there's no second copy of this schema
+   anywhere in this repo. The real "diverging models" question is entirely about how the
+   iOS app currently represents sessions/Gates/streak/Feathers *locally* before sync,
+   which requires that codebase to actually answer.
+
 ## 1. Auth: use Supabase Auth directly, nothing extension-specific
 
 Sign in with the same Supabase project's email+password auth (`supabase.auth.signInWithPassword`

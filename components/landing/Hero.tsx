@@ -95,6 +95,28 @@ export default function Hero() {
         ))}
       </motion.div>
 
+      {/* The mascot — Duolingo-style floating character, background removed so it drops
+          straight onto the hero's own gradient rather than sitting in a box. Off to the
+          side (not behind the headline), hidden under 900px where there's no room for it
+          without crowding the CTA buttons. */}
+      <motion.img
+        src="/mascot-raven.png"
+        alt=""
+        className="fg-hero-mascot"
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+        style={{
+          position: "absolute",
+          right: "4%",
+          bottom: "6%",
+          width: 220,
+          height: "auto",
+          zIndex: 2,
+          pointerEvents: "none",
+        }}
+      />
+
       {/* foreground — fixed, no parallax */}
       <div style={{ position: "relative", zIndex: 2, display: "flex", flexDirection: "column", alignItems: "center", gap: 34 }}>
         <div

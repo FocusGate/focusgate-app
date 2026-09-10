@@ -53,6 +53,20 @@ a:hover { color: #fff; }
 }
 @keyframes fg-heartbeat { 0%, 100% { transform: scale(1); opacity: 1; } 12% { transform: scale(1.4); opacity: 0.65; } 24% { transform: scale(1); } 36% { transform: scale(1.28); opacity: 0.8; } 50% { transform: scale(1); } }
 
+/* The hero mascot — a slow, gentle bob (not the sharper fg-float used for background dots,
+   which also pulses opacity; the mascot should stay fully visible throughout, just drift). */
+@keyframes rv-mascot-bob {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-18px) rotate(2deg); }
+}
+.fg-hero-mascot {
+  animation: rv-mascot-bob 5.5s ease-in-out infinite;
+  filter: drop-shadow(0 20px 30px rgba(0,0,0,0.5));
+}
+@media (max-width: 900px) {
+  .fg-hero-mascot { display: none; }
+}
+
 .fg-reveal { opacity: 0; transform: translateY(16px); }
 
 .fg-live-pill { animation: fg-hover-up 3s ease-in-out infinite; border: 1px solid rgba(176, 141, 87,0.5); box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: border-color 0.3s var(--fg-ease), box-shadow 0.3s var(--fg-ease); }

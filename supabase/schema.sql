@@ -869,3 +869,60 @@ language sql security definer as $$
     )
     and coalesce((select p.email_opt_in from public.user_preferences p where p.user_id = u.id), true);
 $$;
+
+-- ---------- cross-platform realtime: extension + iOS app share one backend ----------
+-- Until now only `sessions` and `group_violations` were added to supabase_realtime — every
+-- other synced concept (blocked/distracting sites, Gates settings, streak, Feathers) only
+-- ever updated via a poll or an on-mount fetch. Adding these means ANY client that chooses
+-- to subscribe (a native app's background-execution model can typically hold a Realtime
+-- websocket far more reliably than this repo's own Chrome extension can — see the
+-- `pause_until` columns' own comment above on why background.js polls instead) sees a
+-- change made on another device without a refresh or reopen. Same idempotent-guard pattern
+-- as group_violations/sessions above — ALTER PUBLICATION ADD TABLE has no IF NOT EXISTS.
+do $$
+begin
+  if not exists (
+    select 1 from pg_publication_tables
+    where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = 'blocked_sites'
+  ) then
+    alter publication supabase_realtime add table public.blocked_sites;
+  end if;
+end $$;
+
+do $$
+begin
+  if not exists (
+    select 1 from pg_publication_tables
+    where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = 'user_preferences'
+  ) then
+    -- "The Gates" screen's settings (break_gates_enabled, break_gate_difficulty, etc.) live
+    -- here, not in a separate "rules" table — see this table's own definition above.
+    alter publication supabase_realtime add table public.user_preferences;
+  end if;
+end $$;
+
+do $$
+begin
+  if not exists (
+    select 1 from pg_publication_tables
+    where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = 'users'
+  ) then
+    -- Needed for streak (public.users.streak) to sync live. RLS ("users crud own" / the
+    -- groupmate-read policy) still governs exactly like it does for a plain SELECT — a
+    -- Realtime subscription is not a way around row-level security.
+    alter publication supabase_realtime add table public.users;
+  end if;
+end $$;
+
+do $$
+begin
+  if not exists (
+    select 1 from pg_publication_tables
+    where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = 'user_feathers'
+  ) then
+    -- The per-user unlock events, not the (near-static) `feathers` catalog table itself —
+    -- that one almost never changes at runtime, so there's no real benefit to subscribing
+    -- to it and it's deliberately left out of the publication.
+    alter publication supabase_realtime add table public.user_feathers;
+  end if;
+end $$;
