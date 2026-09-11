@@ -120,10 +120,18 @@ export type FeatherFallProps = {
 export function FeatherFall({ active, count = 20, slow = false, includeQuills = false, gold = "#F59E0B", onDone }: FeatherFallProps) {
   const [playing, setPlaying] = useState(false);
 
-  useEffect(() => {
-    if (!active) return;
-    setPlaying(true);
-  }, [active]);
+  // "Adjust state during rendering" (React's own documented pattern for reacting to a prop
+  // change) instead of an effect that unconditionally calls setState — flagged by
+  // react-hooks/set-state-in-effect as the "calling setState synchronously within an
+  // effect" cascading-render smell. A ref would normally track "previous active" here, but
+  // this project's lint config also forbids reading/writing refs during render
+  // (react-hooks/refs, part of the React Compiler rule set) — so this uses a second piece
+  // of state instead, which React explicitly sanctions for this exact pattern.
+  const [prevActive, setPrevActive] = useState(active);
+  if (active !== prevActive) {
+    setPrevActive(active);
+    if (active) setPlaying(true);
+  }
 
   const feathers = useMemo(() => {
     if (!playing) return [];

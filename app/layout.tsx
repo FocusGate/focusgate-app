@@ -55,17 +55,19 @@ export default function RootLayout({
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        {/* Loaded via <link> (not next/font) so the literal family names "Inter" / "Space
-            Grotesk" match every inline font-family reference across the app — next/font
-            would rename them and break every one. Raven brand pass: replaces the old
-            Geist/Mulish/Instrument Serif trio (Space Grotesk covers both the old serif
-            display role and Geist's headline role; Inter covers body text and what Mulish
-            used to). No italic weights loaded for Space Grotesk — the handful of spots using
-            fontStyle: "italic" fall back to the browser's synthetic italic, which reads fine
-            on a geometric sans. */}
+        {/* Loaded via <link> (not next/font) so the literal family name "Nunito" matches
+            every inline font-family reference across the app — next/font would rename it
+            and break every one. One-font pass: Nunito now covers both the old Inter body
+            role and the old Space Grotesk display role. Real italic weights ARE loaded
+            (ital,wght axis below) — Chromium's synthetic/faux italic (sheared upright
+            glyphs) has a real bug combined with gradient text (background-clip: text,
+            used by the hero headline's first line): the shear can move tall glyphs like
+            apostrophes and ascenders outside the area the gradient was painted for,
+            rendering them as invisible gaps. A true italic outline doesn't have that
+            mismatch. */}
         {/* eslint-disable-next-line @next/next/no-page-custom-font */}
         <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
           rel="stylesheet"
         />
       </head>

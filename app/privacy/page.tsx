@@ -16,11 +16,11 @@ const codeStyle: React.CSSProperties = { color: "#b08d57", background: "rgba(176
 
 export default function PrivacyPolicyPage() {
   return (
-    <div style={{ minHeight: "100vh", background: "#060606", color: "#fff", fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" }}>
+    <div style={{ minHeight: "100vh", background: "#060606", color: "#fff", fontFamily: "'Nunito', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" }}>
       <header style={{ padding: "22px 24px", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
         <Link href="/" style={{ display: "inline-flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
           <RavenMark size={22} />
-          <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 18, fontWeight: 800, letterSpacing: "0.08em", color: "#b08d57" }}>RAVEN</span>
+          <span style={{ fontFamily: "'Nunito', sans-serif", fontSize: 18, fontWeight: 800, letterSpacing: "0.08em", color: "#b08d57" }}>RAVEN</span>
         </Link>
       </header>
 

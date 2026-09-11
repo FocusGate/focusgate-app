@@ -254,7 +254,7 @@ export default function FlipClock({
                 animation: "fg-complete-flash 1s ease-out",
               }}
             >
-              <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: 800, fontSize: 28, color: "#F59E0B", textShadow: "0 0 30px rgba(245, 158, 11,0.7)" }}>
+              <span style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 800, fontSize: 28, color: "#F59E0B", textShadow: "0 0 30px rgba(245, 158, 11,0.7)" }}>
                 Session Complete 🏆
               </span>
               <div className="fg-timer-badge">

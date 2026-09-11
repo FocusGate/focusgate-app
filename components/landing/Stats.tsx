@@ -32,7 +32,7 @@ function Stat({
       <div
         ref={ref}
         style={{
-          fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif",
+          fontFamily: "'Nunito', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif",
           fontWeight: weight,
           fontSize: size,
           lineHeight: 1,
@@ -109,7 +109,7 @@ function StatGold({ target, prefix, label }: { target: number; prefix?: string; 
       <div
         ref={ref}
         style={{
-          fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif",
+          fontFamily: "'Nunito', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif",
           fontWeight: 700,
           fontSize: 88,
           lineHeight: 1,

@@ -189,7 +189,7 @@ export default function FeathersPage() {
               initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: DRIFT_MS / 1000 + 0.05, duration: 0.4 }}
-              style={{ fontFamily: "'Inter', sans-serif", fontWeight: 800, fontSize: 32, color: "#fff" }}
+              style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 800, fontSize: 32, color: "#fff" }}
             >
               {celebrating.name}
             </motion.div>

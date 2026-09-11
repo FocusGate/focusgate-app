@@ -114,7 +114,7 @@ export default function GoldenQuillCard({
 
       <div
         style={{
-          fontFamily: "'Space Grotesk', sans-serif",
+          fontFamily: "'Nunito', sans-serif",
           fontWeight: 400,
           fontSize: 30,
           letterSpacing: "0.01em",

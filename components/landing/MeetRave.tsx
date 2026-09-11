@@ -3,8 +3,10 @@
 import { RaveSplit } from "./RaveSplit";
 
 // Replaces the old LockedInShowcase (RavenLock headline + live FlipClock mockup) in this
-// slot — that mechanic is covered by HowItWorks/HorizontalFeatures/ModesCarousel elsewhere
-// on the page. This section instead introduces Rave, the mascot, as a character rather
+// slot — that mechanic is covered by HorizontalFeatures/ModesCarousel elsewhere on the
+// page (the old "No download, no app store wait" HowItWorks section was removed
+// entirely, not just this slot). This section instead introduces Rave, the mascot, as a
+// character rather
 // than a feature: not another enforcement mechanic, a companion. `id="features"` stays
 // here since the navbar's FEATURES link scrolls to it -- also why this is the "Features"
 // pose in the RaveSplit sequence (image-right/text-left; the next split down the page,
@@ -25,7 +27,7 @@ export default function MeetRave() {
         <h2
           className="fg-h2"
           style={{
-            fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif",
+            fontFamily: "'Nunito', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif",
             fontWeight: 700,
             fontSize: 64,
             lineHeight: 1.02,

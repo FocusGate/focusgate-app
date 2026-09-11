@@ -53,18 +53,29 @@ a:hover { color: #fff; }
 }
 @keyframes fg-heartbeat { 0%, 100% { transform: scale(1); opacity: 1; } 12% { transform: scale(1.4); opacity: 0.65; } 24% { transform: scale(1); } 36% { transform: scale(1.28); opacity: 0.8; } 50% { transform: scale(1); } }
 
-/* The hero mascot — a slow, gentle bob (not the sharper fg-float used for background dots,
-   which also pulses opacity; the mascot should stay fully visible throughout, just drift). */
+/* The hero mascot — a slow, gentle float. Vertical drift only (the earlier version also
+   rotated ±2deg each cycle, which read as a busy wobble rather than a clean float —
+   dropped for something calmer and easier to read at a glance). */
 @keyframes rv-mascot-bob {
-  0%, 100% { transform: translateY(0) rotate(-2deg); }
-  50% { transform: translateY(-18px) rotate(2deg); }
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-14px); }
 }
 .fg-hero-mascot {
   animation: rv-mascot-bob 5.5s ease-in-out infinite;
   filter: drop-shadow(0 20px 30px rgba(0,0,0,0.5));
 }
 @media (max-width: 900px) {
-  .fg-hero-mascot { display: none; }
+  /* Used to be hidden below 900px entirely (no room without crowding the CTA buttons at
+     its desktop size/position). Now shown, smaller, tucked in the top-right corner above
+     the headline instead of bottom-right, which stays clear on every phone width. */
+  .fg-hero-mascot {
+    display: block !important;
+    width: 72px !important;
+    top: 58px !important;
+    right: 14px !important;
+    bottom: auto !important;
+    left: auto !important;
+  }
 }
 
 .fg-reveal { opacity: 0; transform: translateY(16px); }
@@ -89,8 +100,8 @@ a:hover { color: #fff; }
 .fg-float-nav { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 1180px; z-index: 200; border-radius: 999px; background: transparent; border: 1px solid transparent; box-shadow: none; transition: background 0.3s var(--fg-ease), border-color 0.3s var(--fg-ease), box-shadow 0.3s var(--fg-ease), backdrop-filter 0.3s var(--fg-ease); }
 .fg-float-nav.scrolled { background: rgba(10,10,10,0.8); border-color: #1E293B; box-shadow: 0 12px 40px rgba(0,0,0,0.45); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
 
-.fg-cta-nav { background: #FFB020; color: #0A0A0A; padding: 10px 20px; border-radius: 999px; font-size: 13px; font-weight: 700; text-decoration: none; box-shadow: 0 0 20px rgba(255, 176, 32, 0.4); transition: box-shadow 0.3s var(--fg-ease), transform 0.3s var(--fg-ease); }
-.fg-cta-nav:hover { box-shadow: 0 0 34px rgba(255, 176, 32, 0.75); transform: translateY(-1px); color: #0A0A0A; }
+.fg-cta-nav { background: #b08d57; color: #fff; padding: 10px 20px; border-radius: 999px; font-size: 13px; font-weight: 700; text-decoration: none; box-shadow: 0 0 20px rgba(176, 141, 87, 0.4); transition: box-shadow 0.3s var(--fg-ease), transform 0.3s var(--fg-ease); }
+.fg-cta-nav:hover { box-shadow: 0 0 34px rgba(176, 141, 87, 0.75); transform: translateY(-1px); color: #fff; }
 
 .fg-hamburger { display: none; background: transparent; border: none; cursor: pointer; padding: 6px; align-items: center; justify-content: center; }
 /* 1024px, not the more typical 760px "mobile" cutoff: the desktop nav's 4 links + logo +
@@ -244,11 +255,11 @@ body.fg-has-cursor, body.fg-has-cursor * { cursor: none !important; }
 .fg-flip-face { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; background: linear-gradient(180deg, #1b160e, #0A0A0A); }
 .fg-flip-half.fg-top .fg-flip-face, .fg-flip-fold.fg-fold-top .fg-flip-face { border-radius: 14px 14px 0 0; }
 .fg-flip-half.fg-bottom .fg-flip-face, .fg-flip-fold.fg-fold-bottom .fg-flip-face { border-radius: 0 0 14px 14px; }
-.fg-flip-face span { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif; font-weight: 800; font-size: 56px; color: #F59E0B; text-shadow: 0 0 22px rgba(245, 158, 11,0.45); font-variant-numeric: tabular-nums; line-height: 1; display: block; }
+.fg-flip-face span { font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif; font-weight: 800; font-size: 56px; color: #F59E0B; text-shadow: 0 0 22px rgba(245, 158, 11,0.45); font-variant-numeric: tabular-nums; line-height: 1; display: block; }
 .fg-flip-face.fg-face-top span { transform: translateY(50%); }
 .fg-flip-face.fg-face-bottom span { transform: translateY(-50%); }
 .fg-flip-label { text-align: center; color: #6b5f47; font-size: 11px; letter-spacing: 0.22em; margin-top: 10px; font-weight: 600; }
-.fg-flip-colon { width: 22px; text-align: center; font-family: 'Inter', sans-serif; font-weight: 800; font-size: 44px; color: #F59E0B; align-self: flex-start; margin-top: 26px; transition: opacity 0.15s ease, text-shadow 0.15s ease; }
+.fg-flip-colon { width: 22px; text-align: center; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 44px; color: #F59E0B; align-self: flex-start; margin-top: 26px; transition: opacity 0.15s ease, text-shadow 0.15s ease; }
 .fg-flip-colon.fg-dim { opacity: 0.25; text-shadow: none; }
 .fg-flip-colon.fg-bright { opacity: 1; text-shadow: 0 0 10px rgba(245, 158, 11,0.8); }
 

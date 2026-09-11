@@ -87,13 +87,13 @@ export default function AppShell({
         {hasActiveSession ? (
           <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "0 6px" }}>
             <RavenMark size={24} />
-            <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 18, fontWeight: 800, letterSpacing: "0.08em", color: "#b08d57" }}>RAVEN</span>
+            <span style={{ fontFamily: "'Nunito', sans-serif", fontSize: 18, fontWeight: 800, letterSpacing: "0.08em", color: "#b08d57" }}>RAVEN</span>
             {betaMode && <BetaBadge />}
           </div>
         ) : (
           <Link href="/dashboard" style={{ display: "flex", alignItems: "center", gap: 10, padding: "0 6px" }}>
             <RavenMark size={24} />
-            <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 18, fontWeight: 800, letterSpacing: "0.08em", color: "#b08d57" }}>RAVEN</span>
+            <span style={{ fontFamily: "'Nunito', sans-serif", fontSize: 18, fontWeight: 800, letterSpacing: "0.08em", color: "#b08d57" }}>RAVEN</span>
             {betaMode && <BetaBadge />}
           </Link>
         )}
@@ -194,7 +194,7 @@ export default function AppShell({
           minWidth: 0,
           padding: "36px 44px",
           color: "#fff",
-          fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif",
+          fontFamily: "'Nunito', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif",
         }}
       >
         {children}

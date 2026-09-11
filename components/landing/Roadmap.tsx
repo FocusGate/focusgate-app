@@ -129,7 +129,7 @@ function RoadmapCard({ card }: { card: RoadmapCardData }) {
             {card.icon}
           </div>
 
-          <h3 style={{ fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 19, color: "#fff", margin: "20px 0 0" }}>{card.title}</h3>
+          <h3 style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 700, fontSize: 19, color: "#fff", margin: "20px 0 0" }}>{card.title}</h3>
 
           <span
             style={{
@@ -199,7 +199,7 @@ export default function Roadmap() {
     <section className="fg-sec" style={{ background: "#060606", color: "#fff", padding: "130px 32px" }}>
       <div style={{ marginBottom: 64 }}>
         <RaveSplit image="/rave/rave-coming-soon.png" imageAlt="Rave peeking, teasing what's coming" side="left" glow="rgba(96,165,250,0.14)">
-          <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 400, fontSize: 54, lineHeight: 1.1, color: "#fff" }}>
+          <h2 style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 400, fontSize: 54, lineHeight: 1.1, color: "#fff" }}>
             This is just the beginning.
           </h2>
           <p style={{ color: "#9a9da4", fontSize: 17, marginTop: 16 }}>Raven is expanding beyond the browser.</p>

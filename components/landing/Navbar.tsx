@@ -38,7 +38,7 @@ export default function Navbar() {
             <RavenMark />
             <span
               style={{
-                fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif",
+                fontFamily: "'Nunito', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif",
                 fontSize: 21,
                 fontWeight: 800,
                 letterSpacing: "0.08em",

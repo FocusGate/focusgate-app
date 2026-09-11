@@ -21,7 +21,7 @@ export function ScreenHeading({ eyebrow, title, subtitle }: { eyebrow?: string; 
       )}
       <h1
         style={{
-          fontFamily: "'Space Grotesk', sans-serif",
+          fontFamily: "'Nunito', sans-serif",
           fontSize: "clamp(32px, 5vw, 44px)",
           lineHeight: 1.15,
           color: "#fff",

@@ -355,7 +355,7 @@ function RavenAuthNav({ mode }: { mode: "login" | "signup" }) {
       <div className="flex items-center justify-between w-full gap-x-6 sm:gap-x-8">
         <Link href="/" className="flex items-center gap-2.5">
           <RavenMark size={22} />
-          <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 17, fontWeight: 800, letterSpacing: "0.08em", color: "#b08d57" }}>RAVEN</span>
+          <span style={{ fontFamily: "'Nunito', sans-serif", fontSize: 17, fontWeight: 800, letterSpacing: "0.08em", color: "#b08d57" }}>RAVEN</span>
         </Link>
 
         <nav className="hidden sm:flex items-center space-x-6">
@@ -493,7 +493,7 @@ export const SignInPage = ({ className, mode = "login" }: SignInPageProps) => {
     setInitialCanvasVisible(true);
   }
 
-  const headingFont = { fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" };
+  const headingFont = { fontFamily: "'Nunito', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" };
 
   return (
     <div className={cn("flex w-full flex-col min-h-screen bg-[#060606] relative", className)}>

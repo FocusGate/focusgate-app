@@ -46,7 +46,7 @@ function StatCard({ target, suffix, label }: { target: number; suffix: string; l
         ref={ref}
         className="fg-statcard-num"
         style={{
-          fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif",
+          fontFamily: "'Nunito', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif",
           fontWeight: 800,
           fontSize: 26,
           color: "#fff",
@@ -80,7 +80,7 @@ export default function Problem() {
             variants={itemVariants}
             className="fg-h2"
             style={{
-              fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif",
+              fontFamily: "'Nunito', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif",
               fontWeight: 700,
               fontSize: 76,
               lineHeight: 1.0,
@@ -130,7 +130,7 @@ export default function Problem() {
             <span
               style={{
                 display: "block",
-                fontFamily: "'Space Grotesk', sans-serif",
+                fontFamily: "'Nunito', sans-serif",
                 fontWeight: 400,
                 fontSize: 44,
                 lineHeight: 1.15,
@@ -144,7 +144,7 @@ export default function Problem() {
             <span
               style={{
                 display: "block",
-                fontFamily: "'Space Grotesk', sans-serif",
+                fontFamily: "'Nunito', sans-serif",
                 fontWeight: 400,
                 fontSize: 44,
                 lineHeight: 1.15,

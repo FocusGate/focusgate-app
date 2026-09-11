@@ -33,7 +33,7 @@ export default function Screen13Summary({
           marginBottom: 24,
         }}
       >
-        <h1 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "clamp(26px, 4vw, 34px)", color: "#fff", lineHeight: 1.3, margin: 0 }}>
+        <h1 style={{ fontFamily: "'Nunito', sans-serif", fontSize: "clamp(26px, 4vw, 34px)", color: "#fff", lineHeight: 1.3, margin: 0 }}>
           {displayName}, you will have unbreakable focus by <span style={{ color: "#b08d57" }}>{targetDate}</span>.
         </h1>
 

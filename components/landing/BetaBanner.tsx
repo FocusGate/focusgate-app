@@ -17,7 +17,7 @@ export default function BetaBanner() {
         <h2
           className="fg-h2"
           style={{
-            fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif",
+            fontFamily: "'Nunito', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif",
             fontWeight: 700,
             fontSize: 60,
             lineHeight: 1.0,

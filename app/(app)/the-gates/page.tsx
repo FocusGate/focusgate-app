@@ -186,7 +186,7 @@ export default function TheGatesPage() {
 
   return (
     <>
-      <h1 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "clamp(32px, 4vw, 44px)", color: "#fff", margin: 0 }}>The Gates</h1>
+      <h1 style={{ fontFamily: "'Nunito', sans-serif", fontSize: "clamp(32px, 4vw, 44px)", color: "#fff", margin: 0 }}>The Gates</h1>
       <p style={{ color: "#9a9da4", fontSize: 15, marginTop: 8 }}>The system that keeps you locked in — configured your way.</p>
 
       <div style={{ display: "flex", flexDirection: "column", gap: 20, marginTop: 32, maxWidth: 720 }}>

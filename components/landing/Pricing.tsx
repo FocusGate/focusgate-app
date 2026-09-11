@@ -31,7 +31,7 @@ function StruckPriceReveal({
   return (
     <div style={{ margin: "24px 0 6px" }}>
       <div style={{ position: "relative", display: "inline-block" }}>
-        <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 46, color: "#6b6b70" }}>{oldPrice}</span>
+        <span style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 700, fontSize: 46, color: "#6b6b70" }}>{oldPrice}</span>
         <span style={{ color: "#5b5e66", fontSize: 14 }}>{oldUnit}</span>
         <motion.span
           initial={{ width: "0%" }}
@@ -48,7 +48,7 @@ function StruckPriceReveal({
         transition={{ duration: 0.4, delay: 0.8 }}
         style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 8, flexWrap: "wrap" }}
       >
-        <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: 800, fontSize: 46, color: "#b08d57" }}>{newPrice}</span>
+        <span style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 800, fontSize: 46, color: "#b08d57" }}>{newPrice}</span>
         <span style={{ color: "#999", fontSize: 14 }}>{newUnit}</span>
         {badge && (
           <span style={{ background: "#22c55e", color: "#fff", fontSize: 10, fontWeight: 700, padding: "3px 9px", borderRadius: 999, letterSpacing: "0.04em" }}>
@@ -121,7 +121,7 @@ export default function Pricing() {
           <h2
             className="fg-h2"
             style={{
-              fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif",
+              fontFamily: "'Nunito', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif",
               fontWeight: 700,
               fontSize: 60,
               lineHeight: 1.02,
@@ -185,7 +185,7 @@ export default function Pricing() {
             5-DAY FREE TRIAL
           </span>
           <div style={{ margin: "24px 0 6px" }}>
-            <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 58, color: "#fff" }}>$0</span>
+            <span style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 700, fontSize: 58, color: "#fff" }}>$0</span>
             <span style={{ color: "#999", fontSize: 15 }}> /5 days</span>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 11, margin: "22px 0 0", color: "#cbccd2", fontSize: 14 }}>
@@ -268,15 +268,15 @@ export default function Pricing() {
             type="button"
             onClick={goToSignup}
             style={{
-              background: "#FFB020",
-              color: "#0a0a0a",
+              background: "#b08d57",
+              color: "#fff",
               border: "none",
               padding: "18px 40px",
               borderRadius: 999,
               fontSize: 17,
               fontWeight: 800,
               cursor: "pointer",
-              boxShadow: "0 0 40px rgba(255, 176, 32, 0.45), 0 10px 30px rgba(0,0,0,0.4)",
+              boxShadow: "0 0 40px rgba(176, 141, 87, 0.45), 0 10px 30px rgba(0,0,0,0.4)",
             }}
           >
             Claim Free Beta Access →

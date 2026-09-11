@@ -50,7 +50,7 @@ export default function Hero() {
         textAlign: "center",
         padding: "120px 24px 0",
         overflow: "hidden",
-        fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif",
+        fontFamily: "'Nunito', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif",
         background:
           "radial-gradient(ellipse 900px 600px at 50% 34%, rgba(255,255,255,0.045), transparent 70%), #060606",
       }}
@@ -145,10 +145,10 @@ export default function Hero() {
           initial="hidden"
           animate="visible"
           style={{
-            fontFamily: "'Space Grotesk', sans-serif",
+            fontFamily: "'Nunito', sans-serif",
             fontWeight: 400,
             fontSize: 108,
-            lineHeight: 0.98,
+            lineHeight: 1.02,
             letterSpacing: "-0.02em",
             maxWidth: "15ch",
             textWrap: "balance",
@@ -187,8 +187,8 @@ export default function Hero() {
                 display: "inline-flex",
                 alignItems: "center",
                 gap: 10,
-                background: "#FFB020",
-                color: "#0a0a0a",
+                background: "#b08d57",
+                color: "#fff",
                 border: "none",
                 padding: "16px 32px",
                 borderRadius: 999,
@@ -196,7 +196,7 @@ export default function Hero() {
                 fontWeight: 800,
                 cursor: "pointer",
                 textDecoration: "none",
-                boxShadow: "0 0 30px rgba(255, 176, 32, 0.4)",
+                boxShadow: "0 0 30px rgba(176, 141, 87, 0.4)",
               }}
             >
               🧩 Add to Chrome — Free

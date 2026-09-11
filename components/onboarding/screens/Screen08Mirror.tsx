@@ -18,7 +18,7 @@ export default function Screen08Mirror({ hoursLost, onNext }: { hoursLost: strin
           marginBottom: 28,
         }}
       >
-        <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 64, color: "#b08d57", lineHeight: 1 }}>~{days} days</div>
+        <div style={{ fontFamily: "'Nunito', sans-serif", fontSize: 64, color: "#b08d57", lineHeight: 1 }}>~{days} days</div>
         <p style={{ color: "#9a9da4", fontSize: 15, marginTop: 12 }}>lost to distractions every year, at {hours} hours a day.</p>
       </div>
       <p style={{ color: "#7a7d84", fontSize: 14, marginBottom: 28 }}>That&apos;s almost {Math.round(days / 7)} weeks of your life — every single year.</p>

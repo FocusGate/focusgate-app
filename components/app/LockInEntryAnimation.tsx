@@ -59,7 +59,7 @@ export default function LockInEntryAnimation({ onDone }: { onDone: () => void })
             animate={{ opacity: 1, y: 0, letterSpacing: "0.02em" }}
             transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
             style={{
-              fontFamily: "'Space Grotesk', sans-serif",
+              fontFamily: "'Nunito', sans-serif",
               fontSize: "clamp(38px, 7vw, 68px)",
               color: "#fff",
               margin: 0,
